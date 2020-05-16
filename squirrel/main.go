@@ -8,11 +8,15 @@ import (
 	"github.com/squirrel/repl"
 )
 
+const (
+	welcomeMessage = "Hello World, My name is squirrel.\n" +
+					 "A fast, small and multi talented language.\n" +
+					 "Just like a squirrel animal."
+)
+
 func main() {
 
-	fmt.Println("Hello World, My name is squirrel.")
-	fmt.Println("A fast, small and multi talented language.")
-	fmt.Println("Just like a squirrel animal.")
+	fmt.Println(welcomeMessage)
 	
 	repl.Repl()
 }

@@ -459,7 +459,22 @@ func eval(e, a *types.Cell) *types.Cell {
 
 	// TODO: Use hash-Table for SPEEEED
 	
-	if e.IsAtom() { return assoc(e, a) } // Take it from environment
+	if e.IsAtom() { 
+	
+		// > 1 -> 1
+		// > "2" -> "2"
+		// > a -> error: undefined identifier
+		// > t -> t
+		// > nil -> ''
+		
+		x := assoc(e, a)
+		if x.Equal(builtin.NIL) {
+			return e
+		} else {
+			return x
+		}
+	
+	} // Take it from environment
 	
 	c := car(e)
 	
@@ -475,6 +490,9 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(builtin.CDR  ): return cdr(eval(cadr(e), a))
 			case c.Equal(builtin.CONS ): return cons(eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.COND ): return evcon(cdr(e), a)
+			
+			// MISSING: FN or FUNC here
+			// (fn (x) (1 x)) -> fn
 			
 			// Extra core from Arc
 			case c.Equal(builtin.TAG)  : return tag(eval(cadr(e), a), eval(caddr(e), a))
