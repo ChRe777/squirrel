@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>accessDate</key>
+		<date>2010-01-23T20:45:17Z</date>
+		<key>actualSize</key>
+		<integer>936</integer>
+		<key>attributeModDate</key>
+		<date>2010-01-23T20:45:17Z</date>
+		<key>createDate</key>
+		<date>2010-01-23T20:45:17Z</date>
+		<key>creationDate</key>
+		<date>2010-08-11T21:16:13Z</date>
+		<key>encrypted</key>
+		<false/>
+		<key>id</key>
+		<string>A660BE69-A2E6-4B80-84F1-B52404D7CAFA</string>
+		<key>lastModifiedDate</key>
+		<date>2010-01-23T20:45:17Z</date>
+		<key>originalPath</key>
+		<string>/Users/Chris/workdir_oberon/Swarm.Lib</string>
+		<key>originalSize</key>
+		<integer>936</integer>
+		<key>versionMetadataList</key>
+		<array>
+			<dict>
+				<key>POSIXPermissions</key>
+				<integer>-32348</integer>
+				<key>creatorCode</key>
+				<integer>0</integer>
+				<key>fileType</key>
+				<integer>0</integer>
+				<key>id</key>
+				<string>83069AEE-0876-4E51-9CFF-1CAF72716BF8</string>
+				<key>macAttributes</key>
+				<integer>0</integer>
+				<key>ownerGID</key>
+				<integer>501</integer>
+				<key>ownerUID</key>
+				<integer>501</integer>
+			</dict>
+		</array>
+		<key>versionType</key>
+		<integer>0</integer>
+	</dict>
+</array>
+</plist>

@@ -1,0 +1,151 @@
+MODULE LSP;
+
+	IMPORT
+		LSS, LSG, LSO, Texts, Oberon, Out;
+	
+	TYPE
+		cell = LSG.cell; atomCell = LSG.atomCell; consCell = LSG.consCell;
+
+	VAR 
+		c: cell;
+		DEBUG: BOOLEAN; level : INTEGER;
+		
+	(*
+	
+	EBNF of Lisp:
+	
+		1 sexpr = atom | list | quoted-sexpr  (* | backquoted-sexpt | backquoted-slicing *)
+			
+			1.1 atom = symbol | string | number |
+			
+				1.1.1 symbol = letter { letter | digit }.
+			
+				1.1.2 string = """ {character} """.
+			
+				1.1.3 number = irrational | rational
+							rational = integer (* .. -2,-1,0,1,2 .. *) |  fraction (*  1/4 *)
+							fraction = integer "/" integer.
+							irrational =  digit {digit} "." digit {digit}  (* 3.1415..  *)
+							
+			1.2 list = "("{sexpr}")"
+			
+			1.3 quoted-sexpr = "'" sexpr.
+			
+			1.4 backquoted-sexpr = "," sexpr
+					
+		2.0 HELPERS
+		
+			integer = digit {digit}.
+			letter = "A" | .. | "Z".
+			digit = "0" | .. | "9".
+
+*)
+			
+	PROCEDURE error(errNo: INTEGER);
+		PROCEDURE msg(s: ARRAY OF CHAR); 
+		BEGIN Out.String("error("); Out.Int(errNo,1); Out.String(") - "); Out.String(s); Out.Ln;
+		END msg;
+	BEGIN 
+		CASE errNo OF
+			1: msg("Left paren is missing");  | (* could never happen *)
+			2: msg("Right paren is missing"); 
+		END;
+	END error;
+	
+	PROCEDURE sexpr(level: INTEGER): cell;
+		VAR e: cell;
+		
+		PROCEDURE atom(level: INTEGER): cell;
+			VAR a: cell;
+		
+			PROCEDURE symbol(level: INTEGER): cell; 
+			BEGIN incL(level); debug("symbol", level);
+				RETURN LSG.atom(LSS.id); (* TYPE = SYM *)
+			END symbol;
+
+			PROCEDURE string(level: INTEGER): cell; 
+			BEGIN incL(level); debug("string", level);
+				RETURN LSG.atom("STRING"); (* TYPE = STRING*)
+			END string;
+			
+			PROCEDURE number(level: INTEGER): cell; 
+			BEGIN  incL(level); debug("number", level);
+				RETURN LSG.atom("NUMBER"); (* TYPE = NUMBER SUBTYPE = INT|FRAC|REAL *)
+			END number;
+			
+		BEGIN (* atom *) incL(level); debug("atom", level);
+						
+			CASE LSS.sym OF
+				   LSS.symbol: RETURN symbol(level); |			
+				   LSS.string: RETURN string(level); |
+				   LSS.number : RETURN number(level);
+			END;
+			
+		END atom;
+		
+		PROCEDURE list(level: INTEGER): cell;
+			VAR list, e: cell;
+		BEGIN incL(level); list := LSG.list(); debug("list", level); 
+			
+			IF LSS.sym = LSS.lparen THEN LSS.GetSym; ELSE error(1); END;
+			
+			WHILE LSS.sym < LSS.rparen DO 
+					e := sexpr(level); list := LSG.add(list, e); 
+					LSS.GetSym;
+			END;	
+		
+			IF LSS.sym = LSS.rparen THEN (*LSS.GetSym;*) ELSE error(2); END;
+																																
+			RETURN list;
+		END list;
+		
+		PROCEDURE quote(level: INTEGER): cell;
+		BEGIN debug("quote", level);
+			LSS.GetSym; RETURN LSG.quote(sexpr(level));
+		END quote;
+
+	BEGIN (* sexpr *) level := level + 3; debug("sexpr", level);
+
+		CASE LSS.sym OF
+			(* atoms *) LSS.symbol: RETURN atom(level); | LSS.number: RETURN atom(level); | LSS.string: RETURN atom(level); | 
+			(* list *) LSS.lparen: RETURN list(level); | 
+			(* quotes *) LSS.quote: RETURN quote(level); 
+		END;
+			
+	END sexpr;
+					
+	PROCEDURE Parse*(T: Texts.Text): cell;
+	BEGIN debug("Parse",level); level := 0;
+		LSS.Init(T, 0); LSS.GetSym; RETURN sexpr(level);
+	END Parse;
+	
+	PROCEDURE debug(msg: ARRAY OF CHAR; level: INTEGER);
+		VAR sps: ARRAY 64 OF CHAR; i: INTEGER;
+	BEGIN i := 0;
+		IF (DEBUG) THEN
+			WHILE level > 0 DO sps [i] := " "; INC(i); DEC(level); END;
+			sps[i] := 0X; (* END *);
+			Out.String(sps); Out.String(msg); Out.Ln;
+		END;
+	END debug;
+	
+	PROCEDURE incL(VAR level: INTEGER); BEGIN level := level + 4; END incL;
+	
+BEGIN
+	DEBUG := FALSE;
+	
+END LSP.
+
+(*
+	
+	PROCEDURE ParseSelection*(): cell;
+		VAR beg, end, time: LONGINT; T: Texts.Text; c: cell;
+	BEGIN Oberon.GetSelection(T, beg, end, time);
+		IF time > 0 THEN 
+			LSS.Init(T, beg); c := sexpr();
+		END;
+		RETURN c;
+	END ParseSelection;
+	
+*)
+

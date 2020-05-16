@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>accessDate</key>
+		<date>2010-08-11T21:16:14Z</date>
+		<key>actualSize</key>
+		<integer>24</integer>
+		<key>attributeModDate</key>
+		<date>2010-01-23T20:46:47Z</date>
+		<key>createDate</key>
+		<date>2010-01-23T20:40:46Z</date>
+		<key>creationDate</key>
+		<date>2010-09-20T21:27:29Z</date>
+		<key>encrypted</key>
+		<false/>
+		<key>id</key>
+		<string>72312F08-245D-4DED-9D0D-0D5F2C1EDC0E</string>
+		<key>lastModifiedDate</key>
+		<date>2010-01-23T20:46:47Z</date>
+		<key>originalPath</key>
+		<string>/Users/Chris/workdir_oberon/Code/MailMessages.idx</string>
+		<key>originalSize</key>
+		<integer>24</integer>
+		<key>versionMetadataList</key>
+		<array>
+			<dict>
+				<key>POSIXPermissions</key>
+				<integer>-32348</integer>
+				<key>creatorCode</key>
+				<integer>0</integer>
+				<key>fileType</key>
+				<integer>0</integer>
+				<key>id</key>
+				<string>19B38F9E-22C9-478A-94AF-27FD204329DB</string>
+				<key>macAttributes</key>
+				<integer>0</integer>
+				<key>ownerGID</key>
+				<integer>501</integer>
+				<key>ownerUID</key>
+				<integer>501</integer>
+			</dict>
+		</array>
+		<key>versionType</key>
+		<integer>0</integer>
+	</dict>
+</array>
+</plist>

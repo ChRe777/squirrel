@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>accessDate</key>
+		<date>2010-09-16T22:27:23Z</date>
+		<key>actualSize</key>
+		<integer>930</integer>
+		<key>attributeModDate</key>
+		<date>2010-01-23T19:57:56Z</date>
+		<key>createDate</key>
+		<date>2010-01-23T19:57:56Z</date>
+		<key>creationDate</key>
+		<date>2010-09-20T21:27:29Z</date>
+		<key>encrypted</key>
+		<false/>
+		<key>id</key>
+		<string>22A1533D-6EE7-4C9E-AF0C-354A6CFC8B6C</string>
+		<key>lastModifiedDate</key>
+		<date>2010-01-23T19:57:56Z</date>
+		<key>originalPath</key>
+		<string>/Users/Chris/workdir_oberon/Code/Example7.mod</string>
+		<key>originalSize</key>
+		<integer>930</integer>
+		<key>versionMetadataList</key>
+		<array>
+			<dict>
+				<key>POSIXPermissions</key>
+				<integer>-32348</integer>
+				<key>creatorCode</key>
+				<integer>0</integer>
+				<key>fileType</key>
+				<integer>0</integer>
+				<key>id</key>
+				<string>B26F9381-CF9B-47F6-8A82-F2A2922F60DB</string>
+				<key>macAttributes</key>
+				<integer>0</integer>
+				<key>ownerGID</key>
+				<integer>501</integer>
+				<key>ownerUID</key>
+				<integer>501</integer>
+			</dict>
+		</array>
+		<key>versionType</key>
+		<integer>0</integer>
+	</dict>
+</array>
+</plist>
