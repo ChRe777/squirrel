@@ -131,3 +131,20 @@ func TestString(t *testing.T) {
 	}
 	
 }
+
+func TestIsSymbol(t *testing.T) {
+
+	e := &Cell{
+		Type: Type{Cell: ATOM, Atom: SYMBOL},
+		Val : "a",
+		Car : nil,
+		Cdr : nil,
+	}
+	
+	got := e.IsSymbol()
+	want := true
+	
+	if got != want {
+		t.Errorf("IsSymbol failed - got: %v, want: %v", got, want)
+	}
+}

@@ -9,14 +9,12 @@ import (
 )
 
 const (
-	welcomeMessage = "Hello World, My name is squirrel.\n" +
-					 "A fast, small and multi talented language.\n" +
-					 "Just like a squirrel animal."
+	welcome = "Hello World, my name is *squirrel*.       \n" +
+			  "A fast, small and multi talented language.\n" +
+			  "Just like a squirrel animal.                "
 )
 
 func main() {
-
-	fmt.Println(welcomeMessage)
-	
+	fmt.Println(welcome)
 	repl.Repl()
 }

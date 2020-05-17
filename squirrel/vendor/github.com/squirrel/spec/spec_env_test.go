@@ -52,37 +52,40 @@ END testEnv;
 
 func TestEnvironment(t *testing.T) {
 
-	nullEx   := "(null   (func (x)   (eq x '())))"
-	andEx    := "(and    (func (x y) (cond (x (cond (y 't) ('t '())))('t '()))))"
-	notEx    := "(not    (func (x)   (cond (x '()) ('t 't))))"
-	appendEx := "(append (func (x y) (cond ((null x) y) ('t (cons (car x) (append (cdr x)  y))))))"
-	pairEx   := "(pair   (func (x y) (cond ((and (null x) (null y)) '()) ((and (not (atom x)) (not (atom y))) (cons (list (car x) (car y))(pair (cdr x) (cdr y)))))) )"
-	listEx   := "(list   (func (x y) (cons x (cons y '()))))"
+	createEnv := func(fns []string) []byte {
+		var b bytes.Buffer
+		b.WriteRune('(')
+		for _, fn := range fns { 
+			b.WriteString(fn)
+		}
+		b.WriteRune(')')
+		return b.Bytes()
+	}
+
+	noFn     := "(no     (func (x)   (eq x '())))"
+	andFn    := "(and    (func (x y) (cond (x (cond (y 't) ('t '())))('t '()))))"
+	notFn    := "(not    (func (x)   (cond (x '()) ('t 't))))"
+	appendFn := "(append (func (x y) (cond ((no x) y) ('t (cons (car x) (append (cdr x)  y))))))"
+	pairFn   := "(pair   (func (x y) (cond ((and (no x) (no y)) '()) ((and (not (atom x)) (not (atom y))) (cons (list (car x) (car y))(pair (cdr x) (cdr y)))))) )"
+	listFn   := "(list   (func (x y) (cons x (cons y '()))))"
 
 	fns := []string{ 
-		nullEx	,
-	    andEx	,     
-		notEx	,    
-		appendEx, 
-		pairEx	,   
-		listEx	,   
+		noFn	,
+	    andFn	,     
+		notFn	,    
+		appendFn, 
+		pairFn	,   
+		listFn	,  
 	}
 	
-	var b bytes.Buffer
-	b.WriteRune('(')
-	for _, fn := range fns {
-		b.WriteString(fn)
-	}
-	b.WriteRune(')')
-	
-	env := parser.Parse(b.Bytes())
+	env := parser.Parse(createEnv(fns))
 	
 	// End create environment
 	
 	specs := []spec {
-		{ "(null '())				"	, "t"			},
-		{ "(and 't 't)				"	, "t"			}, 
-		{ "(not 't)				 	"	, "nil"			},
+		{ "(no '())					"	, "t"			},
+		{ "(and  't 't)				"	, "t"			}, 
+		{ "(not  't)				"	, "nil"			},
 		{ "(append '(a b) '(c d))	"	, "(a b c d)"	},
 		//
 		// uses not, null, and, list

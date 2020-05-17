@@ -12,6 +12,8 @@ An lisp interpreter exists of following components:
 	
 ## ToRefactor
 
+	* [ ] Symbols (sym "a") produces symbol from string
+	* [ ] Full decimal number support e.g. "-123.45e-12"
 	* [ ] Fix >(type 12) -> sym // because nil
 	* [ ] TODO: Error Type - nested error
 		- arc> (type (car 'a))

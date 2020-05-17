@@ -52,14 +52,19 @@ type Cell struct {
 	Cdr 	*Cell
 }
 
-// IsCons checks, if cell is a cons cell
+// IsCons checks, if cell is a cons
 func (c *Cell) IsCons() bool {
 	return c.Type.Cell == CONS
 }
 
-// IsAtom checks, of a cell is an atom
+// IsAtom checks, if cell is an atom
 func (c *Cell) IsAtom() bool {
 	return c.Type.Cell == ATOM
+}
+
+// IsSymbol checks, if cell is a atom of type symbol
+func (c *Cell) IsSymbol() bool {
+	return c.IsAtom() && (c.Type.Atom == SYMBOL)
 }
 
 
