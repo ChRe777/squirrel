@@ -50,11 +50,7 @@ func sexpr(level *int) *types.Cell {
 		*/
 		number := func(level *int) *types.Cell {
 			incLevel(level); debug("number", level)
-			n, err := generator.NumberFromString(scanner.IdStr())
-			if err != nil {
-				return generator.Atom(err.Error(), types.STRING) 
-			}
-			return generator.Atom(n, types.NUMBER)
+			return generator.Num(scanner.IdStr())
 		}
 
 		/*		

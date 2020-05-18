@@ -90,3 +90,13 @@ func Car (c *types.Cell) *types.Cell {
 func Sym(s string) *types.Cell {
 	return generator.Sym(s)
 }
+
+// Num create a number from string
+func Num(s string) *types.Cell {
+	return generator.Num(s)
+}
+
+// Str create a string from string
+func Str(s string) *types.Cell {
+	return generator.Str(s)
+}

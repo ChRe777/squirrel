@@ -14,17 +14,19 @@ const (
 	ID_CDR	  = "cdr"
 	ID_CONS	  = "cons"
 	ID_COND   = "cond"
-	// Ext
-	ID_LABEL  = "label"
-	ID_FUNC   = "func"		// was LAMBDA
-	ID_T	  = "t"
-	ID_NIL	  = "nil"
-	// New Operator from Arc
+
+	// New core axioms
 	ID_TAG 	  = "tag"
 	ID_TAGGED = "tagged"
 	ID_SYM	  = "sym"
 	ID_TYPE0  = "type"
 	ID_REP    = "rep"
+	
+	// Ext
+	ID_LABEL  = "label"
+	ID_FUNC   = "func"		// was LAMBDA
+	ID_T	  = "t"
+	ID_NIL	  = "nil"
 )
 
 // Core symbols of language
@@ -50,38 +52,5 @@ var (
 	TYPE0 	= Sym(ID_TYPE0)		// TODO: Better name
 	REP 	= Sym(ID_REP)	
 )
-
-
-
-/*		
-BEGIN
-
-	QUOTE := A("QUOTE"); 
-	ATOM := A("ATOM");
-	EQ := A("EQ"); 
-	CAR := A("CAR");
-	CDR := A("CDR"); 
-	CONS := A("CONS");
-	COND := A("COND"); 
-	
-	TAGGED := A("TAGGED");
-	SYM := A("SYM");
-	TYPE0 := A("TYPE");
-	TAG := A("TAG");
-	REP := A("REP");
-	
-	LABEL := A("LABEL");
-	LAMBDA := A("LAMBDA"); 
-	T := A("T"); (*TRUE*)
-	
-	EMPTY := LSG.EMPTY; (*EMPTY LIST, FALSE*)
-	ENV := LSG.cons(NIL,NIL); (*ENVIROMENT*)	
-	
-END LSE.
-*/
-
-func init() {
-	
-}
 
 

@@ -4,13 +4,14 @@ import (
 	"os"
 	"fmt"
 	"bufio"
+	"bytes"
 )
 
 import(
 	"github.com/squirrel/types"
 	"github.com/squirrel/parser"
 	"github.com/squirrel/builtin"
-	"github.com/squirrel/generator"
+//	"github.com/squirrel/generator"
 	"github.com/squirrel/evaluator"
 )
 
@@ -27,7 +28,7 @@ func readLine(reader *bufio.Reader) []byte {
 }
 
 func printRes(e *types.Cell) {
-	fmt.Printf("%v\n", e)
+	fmt.Printf("%v\n", types.SprintCell(e))
 }
 
 func printBye() {
@@ -46,12 +47,47 @@ func isQuit(e *types.Cell) bool {
 	return e.Equal(QUIT_)
 }
 
+func createEnv() *types.Cell {
+
+	createList := func(fns []string) []byte {
+		var b bytes.Buffer
+		b.WriteRune('(')
+		for _, fn := range fns { 
+			b.WriteString(fn)
+		}
+		b.WriteRune(')')
+		return b.Bytes()
+	}
+	
+	t		 := "(t t)"
+	noFn     := "(no     (func (x)   (eq x '())))"
+	andFn    := "(and    (func (x y) (cond (x (cond (y 't) ('t '())))('t '()))))"
+	notFn    := "(not    (func (x)   (cond (x '()) ('t 't))))"
+	appendFn := "(append (func (x y) (cond ((no x) y) ('t (cons (car x) (append (cdr x)  y))))))"
+	pairFn   := "(pair   (func (x y) (cond ((and (no x) (no y)) '()) ((and (not (atom x)) (not (atom y))) (cons (list (car x) (car y))(pair (cdr x) (cdr y)))))) )"
+	listFn   := "(list   (func (x y) (cons x (cons y '()))))"
+
+	xs := []string{ 
+		t,
+		noFn	,
+	    andFn	,     
+		notFn	,    
+		appendFn, 
+		pairFn	,   
+		listFn	,  
+	}
+	
+	env := parser.Parse(createList(xs))
+	return env
+}
+	
+
 func Repl() {
 
 	reader := bufio.NewReader(os.Stdin)
 	
 	// TODO: PreLoaded
-	env := generator.Nil()
+	env := createEnv()
 	
 	printHelp()
 	

@@ -4,7 +4,24 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func NumberFromString(s string) (decimal.Decimal, error) {
-	n, err := decimal.NewFromString(s)
-	return n, err
+import (
+	"github.com/squirrel/types"
+)
+
+func Num(s string) *types.Cell {
+	
+	d, err := decimal.NewFromString(s)
+	
+	if err == nil {
+		return num(d)
+	} else {
+		return Error(err.Error())
+	}
+}
+
+func num(d decimal.Decimal) *types.Cell {
+	return &types.Cell {
+		Type: types.Type{Cell: types.ATOM, Atom: types.NUMBER},
+		Val : d,
+	}
 }

@@ -13,7 +13,7 @@ func TestPrintCell(t *testing.T) {
 	}
 	
 	atomA := &Cell{
-		Type: Type{Cell: ATOM, Atom: STRING},
+		Type: Type{Cell: ATOM, Atom: SYMBOL},
 		Val : "a",
 	}
 	

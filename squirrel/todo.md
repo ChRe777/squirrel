@@ -10,6 +10,11 @@ An lisp interpreter exists of following components:
 	* Spec
 	* Repl
 	
+	
+## ToDo
+
+	* [ ] Macro support with tagging	
+	
 ## ToRefactor
 
 	* [ ] Symbols (sym "a") produces symbol from string
@@ -21,9 +26,11 @@ An lisp interpreter exists of following components:
 	* [ ] FIND - error(2) - Right paren is missing - go test in evaluator
     * [ ] Check evaluator "null"-func
 	* [v] Dotted pair (cons 1 2) -> (1 . 2)
-    * [ ] EMPTY := cons(NIL,NIL); -> NIL = NICHTS
-	* [ ] types.go - Equal method
+	* [ ] types.go - Equal method with cmp or manual
 	* [v] tests run parallel - go test -parallel 2
+
+## ToOptimize
+
 	* [ ] evaluator.go - eval - map[string]func instead of switch -> SPEED
 	* [ ] evaluator.go - environment - should be hash table
 	

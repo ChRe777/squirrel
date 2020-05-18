@@ -6,6 +6,7 @@ import (
 )
 
 import (
+	"github.com/squirrel/types"
 	"github.com/squirrel/parser"
 )
 
@@ -52,35 +53,7 @@ END testEnv;
 
 func TestEnvironment(t *testing.T) {
 
-	createEnv := func(fns []string) []byte {
-		var b bytes.Buffer
-		b.WriteRune('(')
-		for _, fn := range fns { 
-			b.WriteString(fn)
-		}
-		b.WriteRune(')')
-		return b.Bytes()
-	}
-
-	noFn     := "(no     (func (x)   (eq x '())))"
-	andFn    := "(and    (func (x y) (cond (x (cond (y 't) ('t '())))('t '()))))"
-	notFn    := "(not    (func (x)   (cond (x '()) ('t 't))))"
-	appendFn := "(append (func (x y) (cond ((no x) y) ('t (cons (car x) (append (cdr x)  y))))))"
-	pairFn   := "(pair   (func (x y) (cond ((and (no x) (no y)) '()) ((and (not (atom x)) (not (atom y))) (cons (list (car x) (car y))(pair (cdr x) (cdr y)))))) )"
-	listFn   := "(list   (func (x y) (cons x (cons y '()))))"
-
-	fns := []string{ 
-		noFn	,
-	    andFn	,     
-		notFn	,    
-		appendFn, 
-		pairFn	,   
-		listFn	,  
-	}
-	
-	env := parser.Parse(createEnv(fns))
-	
-	// End create environment
+	env := createEnvironment()
 	
 	specs := []spec {
 		{ "(no '())					"	, "t"			},
@@ -95,4 +68,36 @@ func TestEnvironment(t *testing.T) {
 		
 	testWithEnv(specs, t, env)
 	
+}
+
+func createEnvironment() *types.Cell {
+	
+	createList := func(fns []string) []byte {
+		var b bytes.Buffer
+		b.WriteRune('('); 
+			for _, fn := range fns { b.WriteString(fn) }
+		b.WriteRune(')')
+		return b.Bytes()
+	}
+
+	// Some builtin fns already build inside
+	// the language itself - self booting
+	noFn     := "(no     (func (x)   (eq x '())))"
+	andFn    := "(and    (func (x y) (cond (x (cond (y 't) ('t '())))('t '()))))"
+	notFn    := "(not    (func (x)   (cond (x '()) ('t 't))))"
+	appendFn := "(append (func (x y) (cond ((no x) y) ('t (cons (car x) (append (cdr x)  y))))))"
+	pairFn   := "(pair   (func (x y) (cond ((and (no x) (no y)) '()) ((and (not (atom x)) (not (atom y))) (cons (list (car x) (car y))(pair (cdr x) (cdr y)))))) )"
+	listFn   := "(list   (func (x y) (cons x (cons y '()))))"
+
+	xs := []string{ 
+		noFn	,
+	    andFn	,     
+		notFn	,    
+		appendFn, 
+		pairFn	,   
+		listFn	,  
+	}
+	
+	env := parser.Parse(createList(xs))
+	return env
 }

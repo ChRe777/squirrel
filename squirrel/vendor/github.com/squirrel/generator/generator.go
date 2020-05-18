@@ -1,10 +1,6 @@
 package generator
 
 import (
-	"fmt"
-)
-
-import (
 	"github.com/squirrel/types"
 )
 
@@ -38,31 +34,3 @@ func Cons(car, cdr *types.Cell) *types.Cell {
 		Cdr : cdr,
 	}
 }
-
-
-
-// Sym creates a symbol from string
-func Sym(s string) *types.Cell {
-	return &types.Cell {
-		Type: types.Type{Cell: types.ATOM, Atom: types.SYMBOL},
-		Val : s,
-	}
-}
-
-// Error creates an error from error string
-func Error(s string) *types.Cell {
-	val := fmt.Sprintf("Error: \"%s\"", s)
-	return &types.Cell {
-		Type: types.Type{Cell: types.ATOM, Atom: types.ERROR},
-		Val : val,
-	}
-}
-
-// Nil return THE ONLY one nil cell
-func Nil() *types.Cell{
-	return NIL
-}
-
-var (
-	NIL = Atom("nil", types.SYMBOL)
-)

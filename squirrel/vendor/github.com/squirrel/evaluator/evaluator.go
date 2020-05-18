@@ -50,68 +50,62 @@ END eval;
 */
 func eval(e, a *types.Cell) *types.Cell {
 
-	// > 1 -> 1
-	// > "2" -> "2"
-	// > a -> error: undefined identifier
-	// > t -> t
-	// > nil -> ''
+	// a) Atom e.g. "foo" -> "foo"
 	if e.IsAtom() {
-		if e.IsSymbol() {	
-			return assoc(e, a)			// TODO: Use hash-Table for SPEEEED
-		}
-		return e
+		//if e.IsSymbol() {	
+			fmt.Printf("e:%v, a:%v \n", e, a)
+			return assoc(e, a)
+		//}
+		//return e
 	} 
 	
-	c := car(e)	
-	if c.IsAtom() {
+	// b) Functions e.g. (car '(1 2)) -> 1	
+	c := car(e)
+	if  c.IsAtom() {
 		switch {	
-			//
-			// TODO: map[string]func instead of switch -> SPEED
-			//
+		
+			// 7 core axioms - root of lisp (McCarthy)
 			case c.Equal(builtin.QUOTE): return quote(e) 
-			case c.Equal(builtin.ATOM ): return atom(eval(cadr(e), a))
-			case c.Equal(builtin.EQ   ): return eq(eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.CAR  ): return car(eval(cadr(e), a))
-			case c.Equal(builtin.CDR  ): return cdr(eval(cadr(e), a))
-			case c.Equal(builtin.CONS ): return cons(eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.ATOM ): return atom (eval(cadr(e), a))
+			case c.Equal(builtin.EQ   ): return eq   (eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.CAR  ): return car  (eval(cadr(e), a))
+			case c.Equal(builtin.CDR  ): return cdr  (eval(cadr(e), a))
+			case c.Equal(builtin.CONS ): return cons (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.COND ): return evcon(cdr(e), a)
 						
-			// Extra core from Arc
-			case c.Equal(builtin.TAG)  : return tag(eval(cadr(e), a), eval(caddr(e), a))
+			// 3 extra core axioms from Arc (Paul Graham)
+			case c.Equal(builtin.TAG  ): return tag  (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.TYPE0): return type0(eval(cadr(e), a))
-			case c.Equal(builtin.REP)  : return rep(eval(cadr(e), a))
+			case c.Equal(builtin.REP  ): return rep  (eval(cadr(e), a))
 			
-			// Function calls by environment
-			default: {
+			// Extra axioms in environment e.g. (no '()) -> t
+			default: { // ToSimplify
 				label := assoc(car(e), a)
-				if label.Equal(builtin.NIL) {
+				if notFound(label) {
 					return generator.Error(fmt.Sprintf("reference to undefined identifier: %v", car(e)))
 				}
 				return eval(cons(label, cdr(e)), a)
 			}
 		}
 	}
-	/*
-		IF eq(caar(e), LABEL) = T THEN 
-				RETURN eval( 
-					cons(caddar(e), cdr(e)),
-					cons(list(cadar(e), car(e)), a)
-				);
-		END;
-	*/
+				
+	// c) Labels calls e.g. ( (label a 1) )
 	if caar(e).Equal(builtin.LABEL) {
-		return eval(cons(caddar(e), cdr(e)),
-			        cons(list(cadar(e), car(e)), a))
-	}
-	/*
-		IF eq(caar(e), LAMBDA) = T THEN  
-			RETURN eval(
-					caddar(e),
-					append(pair(cadar(e), evlis(cdr(e), a)), a)
-				);
-		END;
-	*/
 	
+		// > ((label foo 'a) foo)
+		// label - exp:((quote a) foo), env:((foo (label foo (quote a)))
+		
+		ee   := cons(caddar(e), cdr(e))
+		name := cadar(e)
+		fnn  := caddar(e)		
+		aa   := cons(list(name, fnn), a)
+
+		res  := eval(ee, aa)
+		
+		fmt.Printf("\n\n label - exp:%v, env:%v \n name:%v, fnn: %v \n\n", ee, aa, name, fnn)
+		return res
+	}
+	// d) Function calls e.g. ( (func (x) (car x)) '(1 2)) -> 1
 	if caar(e).Equal(builtin.FUNC) {
 		return eval(caddar(e),
 					append(pair(cadar(e), evlis(cdr(e), a)), a))
@@ -120,7 +114,27 @@ func eval(e, a *types.Cell) *types.Cell {
 	return generator.Error("Something got wrong in eval")
 }
 
+func notFound(a *types.Cell) bool {
+ 	return a.Equal(builtin.NIL)
+}
 
+func evcon(c, a *types.Cell) *types.Cell {
+	if eval(caar(c), a).Equal(builtin.T) { 
+		return eval(cadar(c), a) 
+	} else { 
+		return evcon(cdr(c), a)
+	}
+}
+
+func evlis(m, a *types.Cell) *types.Cell {
+	if m.Equal(builtin.NIL) {
+		return builtin.NIL
+	} else {
+		return cons(eval(car(m), a), evlis(cdr(m), a))
+	}
+}
+
+/*
 type cell 	*types.Cell
 type coreFn func(e, a cell) cell
 
@@ -181,39 +195,10 @@ func eval2(e, a *types.Cell) *types.Cell {
 	return generator.Error("Something got wrong in eval")
 }
 
-
-/*		
-PROCEDURE evcon(c: cell; a: cell): cell;
-BEGIN	
-	IF eq(eval(caar(c), a), T) = T THEN RETURN eval(cadar(c), a);
-	ELSE RETURN evcon(cdr(c), a) END;
-END evcon;
 */
-func evcon(c, a *types.Cell) *types.Cell {
-	
-	if eval(caar(c), a).Equal(builtin.T) { 
-		return eval(cadar(c), a) 
-	} else { 
-		return evcon(cdr(c), a)
-	}
-}
 
-/*	
-PROCEDURE evlis(m: cell; a: cell): cell;
-BEGIN
-	 IF m = EMPTY THEN RETURN EMPTY;
-	 ELSE
-	 	 RETURN cons(eval(car(m), a), evlis(cdr(m), a))
-	 END;
-END evlis;
-*/
-func evlis(m, a *types.Cell) *types.Cell {
-	if m.Equal(builtin.NIL) {
-		return builtin.NIL
-	} else {
-		return cons(eval(car(m), a), evlis(cdr(m), a))
-	}
-}
+
+
 
 
 
