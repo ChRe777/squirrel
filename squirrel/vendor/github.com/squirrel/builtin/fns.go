@@ -1,10 +1,6 @@
 package builtin
 
 import (
-	"fmt"
-)
-
-import (
 	"github.com/squirrel/types"
 	"github.com/squirrel/generator"
 )
@@ -77,6 +73,5 @@ func Str(s string) *types.Cell {
 
 // Error create an error from string
 func Err(s string, a ...interface{}) *types.Cell {
-	s = fmt.Sprintf(s, a...)
-	return generator.Error(s)
+	return generator.Error(s, a...)
 }

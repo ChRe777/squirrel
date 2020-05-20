@@ -12,12 +12,11 @@ func Sym(s string) *types.Cell {
 	}
 }
 
-// Nil return THE ONLY one nil cell
+// Nil return THE-ONLY-ONE nil symbol
 func Nil() *types.Cell{
 	return NIL
 }
 
-// ToRefactor
 var (
 	NIL = Atom("nil", types.SYMBOL)
 )

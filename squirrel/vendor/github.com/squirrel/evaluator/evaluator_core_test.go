@@ -39,8 +39,8 @@ func TestAtom(t *testing.T) {
 		expr *types.Cell
 		want *types.Cell
 	} {
-		{ builtin.Sym("a")	, builtin.T     },
-		{ builtin.NIL 		, builtin.T 	},
+		{ builtin.Sym("a")	, builtin.T },
+		{ builtin.NIL 		, builtin.T },
 	}
 	
 	for _, spec := range specs {
