@@ -28,17 +28,7 @@ func sprintAtom(c *Cell) string {
 	if c == nil || c.Val == nil {
 		return ""
 	}
-	switch c.Type.Atom {
-		case STRING:
-			return fmt.Sprintf("\"%v\"", c.Val)
-		// NUM
-		// STRING
-		// ERROR 
-		default: 
-			return fmt.Sprintf("%v", c.Val)
-		
-	}
-	
+	return fmt.Sprintf("%v", c.Val)
 }
 
 func sprintCons(c *Cell) string {

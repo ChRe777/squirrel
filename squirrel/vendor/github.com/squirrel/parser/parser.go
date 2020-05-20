@@ -38,7 +38,7 @@ func sexpr(level *int) *types.Cell {
 		*/
 		string := func(level *int) *types.Cell {
 			incLevel(level); debug("string", level)
-			return generator.Atom(scanner.IdStr(), types.STRING)
+			return generator.Atom("\""+scanner.IdStr()+"\"", types.STRING)
 		}
 
 
