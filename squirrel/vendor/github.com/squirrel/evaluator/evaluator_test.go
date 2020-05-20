@@ -19,9 +19,10 @@ func TestEvalAtom(t *testing.T) {
 		e 	 *types.Cell
 		want *types.Cell
 	}{
-		{ builtin.Sym("t")	,  builtin.Sym("t") },
-		{ builtin.Num("1")	,  builtin.Num("1") },
-//		{ builtin.Str("a")	,  builtin.Str("a") },
+		{ builtin.Sym("t")		, builtin.Sym("t") },
+		{ builtin.Num("1")		, builtin.Num("1") },
+		{ builtin.Str("a")		, builtin.Str("a") },
+		{ builtin.Sym("b")		, builtin.Err("reference to undefined identifier: b") },
 	}
 
 	for _, spec := range specs {

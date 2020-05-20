@@ -60,6 +60,7 @@ func createEnv() *types.Cell {
 	}
 	
 	t		 := "(t t)"
+	n		 := "(nil nil)"
 	noFn     := "(no     (func (x)   (eq x '())))"
 	andFn    := "(and    (func (x y) (cond (x (cond (y 't) ('t '())))('t '()))))"
 	notFn    := "(not    (func (x)   (cond (x '()) ('t 't))))"
@@ -68,7 +69,8 @@ func createEnv() *types.Cell {
 	listFn   := "(list   (func (x y) (cons x (cons y '()))))"
 
 	xs := []string{ 
-		t,
+		t		,
+		n		,
 		noFn	,
 	    andFn	,     
 		notFn	,    

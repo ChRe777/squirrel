@@ -7,7 +7,7 @@ import (
 import (
 	"github.com/squirrel/types"
 	"github.com/squirrel/builtin"
-	"github.com/squirrel/generator"
+	//"github.com/squirrel/generator"
 )
 
 // Eval evals expression e with environment env and returns result
@@ -50,13 +50,14 @@ END eval;
 */
 func eval(e, a *types.Cell) *types.Cell {
 
+ 	// Lisp dialects like Arc have a data type most languages don't:
+	// symbols.  We've already seen one: + is a symbol.  Symbols don't
+	// evaluate to themselves the way numbers and strings do.  They return
+	// whatever value they've been assigned.
+
 	// a) Atom e.g. "foo" -> "foo"
 	if e.IsAtom() {
-		//if e.IsSymbol() {	
-			fmt.Printf("e:%v, a:%v \n", e, a)
-			return assoc(e, a)
-		//}
-		//return e
+		return evatom(e, a)
 	} 
 	
 	// b) Functions e.g. (car '(1 2)) -> 1	
@@ -82,19 +83,32 @@ func eval(e, a *types.Cell) *types.Cell {
 			default: { // ToSimplify
 				label := assoc(car(e), a)
 				if notFound(label) {
-					return generator.Error(fmt.Sprintf("reference to undefined identifier: %v", car(e)))
+					return builtin.Err("reference to undefined identifier: %v", car(e))
 				}
-				return eval(cons(label, cdr(e)), a)
+				ee := cons(label, cdr(e))
+				fmt.Printf("ee: %v \n",ee)
+				return eval(ee, a)
 			}
 		}
 	}
 				
-	// c) Labels calls e.g. ( (label a 1) )
-	if caar(e).Equal(builtin.LABEL) {
+	// c) Labels calls 
+	//		e.g. 
+	//			( (label cadr (func (x) (car (cdr x))) ) (cadr '(1 2 3)) ) -> 2
+	//			
+	//			( (func (x) (car (cdr x))) )
+	//			(
+	//				(x '(1 2 3))
+	//			)         
+	//
+	// A "label" expression is evaluated by pushing a list of the function name
+	// and the function itself, onto the environment, and then calling eval on an
+	// expression with the inner lambda expression substituted for the label
+	// expression.
 	
-		// > ((label foo 'a) foo)
-		// label - exp:((quote a) foo), env:((foo (label foo (quote a)))
-		
+	
+	if caar(e).Equal(builtin.LABEL) {
+			
 		ee   := cons(caddar(e), cdr(e))
 		name := cadar(e)
 		fnn  := caddar(e)		
@@ -105,17 +119,39 @@ func eval(e, a *types.Cell) *types.Cell {
 		fmt.Printf("\n\n label - exp:%v, env:%v \n name:%v, fnn: %v \n\n", ee, aa, name, fnn)
 		return res
 	}
-	// d) Function calls e.g. ( (func (x) (car x)) '(1 2)) -> 1
+	
+	// d) Function calls 
+	//           (         f          params ) -> ?
+	//		e.g. ( (func (x) (car x)) '(1 2) ) -> 1
 	if caar(e).Equal(builtin.FUNC) {
-		return eval(caddar(e),
-					append(pair(cadar(e), evlis(cdr(e), a)), a))
+		ee := caddar(e)
+		aa := append(pair(cadar(e), evlis(cdr(e), a)), a)
+		fmt.Printf("func call ee:%v, aa:%v \n", ee, aa)
+		return eval(ee,aa)
 	}
 		
-	return generator.Error("Something got wrong in eval")
+	return builtin.Err("Something got wrong in eval")
 }
 
 func notFound(a *types.Cell) bool {
  	return a.Equal(builtin.NIL)
+}
+
+func evatom(e, a *types.Cell) *types.Cell {
+	if e.IsSymbol() {
+		// ToDO: not found in assoc and nil evals to nil are the same
+		if e.Equal(builtin.NIL) {
+			return builtin.NIL
+		}
+		// Todo: Hash-table
+		x := assoc(e, a) // nil means also not found
+		if x.Equal(builtin.NIL) {
+			// TODO: Rename error message
+			return builtin.Err("reference to undefined identifier: %v", e)
+		}
+		return x
+	}
+	return e
 }
 
 func evcon(c, a *types.Cell) *types.Cell {
