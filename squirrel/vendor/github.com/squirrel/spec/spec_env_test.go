@@ -56,14 +56,11 @@ func TestEnvironment(t *testing.T) {
 	env := createEnvironment()
 	
 	specs := []spec {
-		{ "(no '())					"	, "t"			},
-		{ "(and  't 't)				"	, "t"			}, 
-		{ "(not  't)				"	, "nil"			},
-		{ "(append '(a b) '(c d))	"	, "(a b c d)"	},
-		//
-		// uses not, null, and, list
-		//
-		{ "(pair '(a b c) '(x y z))	"	, "((a x) (b y) (c z))"},
+		{ "(no '())					   "	, "t"			},
+		{ "(and  't 't)				    "	, "t"			}, 
+		{ "(not  't)				    "	, "nil"			},
+		{ "(append '(a b)   '(c d)  )	"	, "(a b c d)"	},
+		{ "(pair   '(a b c) '(x y z))	"	, "((a x) (b y) (c z))"},
 	}
 		
 	testWithEnv(specs, t, env)
@@ -86,16 +83,18 @@ func createEnvironment() *types.Cell {
 	andFn    := "(and    (func (x y) (cond (x (cond (y 't) ('t '())))('t '()))))"
 	notFn    := "(not    (func (x)   (cond (x '()) ('t 't))))"
 	appendFn := "(append (func (x y) (cond ((no x) y) ('t (cons (car x) (append (cdr x)  y))))))"
-	pairFn   := "(pair   (func (x y) (cond ((and (no x) (no y)) '()) ((and (not (atom x)) (not (atom y))) (cons (list (car x) (car y))(pair (cdr x) (cdr y)))))) )"
+	pairFn   := "(pair   (func (x y) (cond ((and (no x) (no y)) '()) ((and (not (atom x)) (not (atom y))) (cons (list (car x) (car y))(pair (cdr x) (cdr y)))))))"
 	listFn   := "(list   (func (x y) (cons x (cons y '()))))"
-
+	assocFn  := "(assoc  (func (x y) (cond ((eq (caar y) x) (cadar y)) ('t (assoc. x (cdr y))))))"
+        
 	xs := []string{ 
 		noFn	,
 	    andFn	,     
 		notFn	,    
 		appendFn, 
 		pairFn	,   
-		listFn	,  
+		listFn	, 
+		assocFn , 
 	}
 	
 	env := parser.Parse(createList(xs))

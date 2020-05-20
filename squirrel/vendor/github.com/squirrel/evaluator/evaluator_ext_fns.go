@@ -6,7 +6,21 @@ import (
 	"github.com/squirrel/generator"
 )
 
-// TODO: below should be implemented in LISP itself
+// * pair
+// * no
+// * not
+// * and
+// * append
+// * list
+// * assoc
+//
+// * caar
+// * cadr
+// * cadar
+// * caddr
+// * caddar
+
+// TODO: below should/can be implemented in LISP itself
 
 /*
 PROCEDURE pair(x: cell; y: cell): cell;
@@ -122,10 +136,9 @@ BEGIN
 	END;
 END assoc;
 */
-
 func assoc(x, y *types.Cell) *types.Cell {
 	if y.Equal(builtin.NIL) {
-		return builtin.NIL
+		return builtin.Err("Not found")
 	} else {
 		if eq(caar(y), x).Equal(builtin.T) {
 			return cadar(y)
@@ -142,8 +155,8 @@ PROCEDURE cadar (e: cell): cell; BEGIN RETURN car(cdr(car(e))) END cadar;
 PROCEDURE caddr (e: cell): cell; BEGIN RETURN car(cdr(cdr(e))) END caddr;
 PROCEDURE caddar(e: cell): cell; BEGIN RETURN car(cdr(cdr(car(e)))) END caddar;
 */
-func caar  (e *types.Cell) *types.Cell { return car(car(e)) }
-func cadr  (e *types.Cell) *types.Cell { return car(cdr(e)) }
-func cadar (e *types.Cell) *types.Cell { return car(cdr(car(e))) }
-func caddr (e *types.Cell) *types.Cell { return car(cdr(cdr(e))) }
+func caar  (e *types.Cell) *types.Cell { return car(car(e))           }
+func cadr  (e *types.Cell) *types.Cell { return car(cdr(e))           }
+func cadar (e *types.Cell) *types.Cell { return car(cdr(car(e)))      } 
+func caddr (e *types.Cell) *types.Cell { return car(cdr(cdr(e)))      }
 func caddar(e *types.Cell) *types.Cell { return car(cdr(cdr(car(e)))) }

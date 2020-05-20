@@ -62,9 +62,13 @@ func (c *Cell) IsAtom() bool {
 	return c.Type.Cell == ATOM
 }
 
-// IsSymbol checks, if cell is a atom of type symbol
+// IsSymbol checks, if cell is an atom of type symbol
 func (c *Cell) IsSymbol() bool {
 	return c.IsAtom() && (c.Type.Atom == SYMBOL)
 }
 
+// IsErr checks, if cell is an atom of type error
+func (c *Cell) IsErr() bool {
+	return c.IsAtom() && (c.Type.Atom == ERROR)
+}
 

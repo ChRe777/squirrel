@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	"fmt"
+	//"fmt"
 )
 
 import (
@@ -79,16 +79,17 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(builtin.TYPE0): return type0(eval(cadr(e), a))
 			case c.Equal(builtin.REP  ): return rep  (eval(cadr(e), a))
 			
+			// more builtin extension functions
+			case c.Equal(builtin.Sym("no"   )) : return no    (eval(cadr(e), a))
+			case c.Equal(builtin.Sym("not"   )): return not   (eval(cadr(e), a))
+			case c.Equal(builtin.Sym("and"   )): return and   (eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.Sym("pair"  )): return pair  (eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.Sym("list"  )): return list  (eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.Sym("assoc" )): return assoc (eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.Sym("append")): return append(eval(cadr(e), a), eval(caddr(e), a))
+			
 			// Extra axioms in environment e.g. (no '()) -> t
-			default: { // ToSimplify
-				label := assoc(car(e), a)
-				if notFound(label) {
-					return builtin.Err("reference to undefined identifier: %v", car(e))
-				}
-				ee := cons(label, cdr(e))
-				fmt.Printf("ee: %v \n",ee)
-				return eval(ee, a)
-			}
+			default: return evfunc(e, a)
 		}
 	}
 				
@@ -108,17 +109,12 @@ func eval(e, a *types.Cell) *types.Cell {
 	
 	
 	if caar(e).Equal(builtin.LABEL) {
-			
-		ee   := cons(caddar(e), cdr(e))
-		name := cadar(e)
-		fnn  := caddar(e)		
-		aa   := cons(list(name, fnn), a)
-
-		res  := eval(ee, aa)
-		
-		fmt.Printf("\n\n label - exp:%v, env:%v \n name:%v, fnn: %v \n\n", ee, aa, name, fnn)
-		return res
-	}
+		ee    := cons(caddar(e), cdr(e))
+		label := cadar(e)
+		fn    := caddar(e)		
+		aa    := cons(list(label, fn), a)  // ( (no (func (x) (eq x nil)) (a 1) (b 2) )
+		return eval(ee, aa)
+	} 
 	
 	// d) Function calls 
 	//           (         f          params ) -> ?
@@ -126,16 +122,22 @@ func eval(e, a *types.Cell) *types.Cell {
 	if caar(e).Equal(builtin.FUNC) {
 		ee := caddar(e)
 		aa := append(pair(cadar(e), evlis(cdr(e), a)), a)
-		fmt.Printf("func call ee:%v, aa:%v \n", ee, aa)
 		return eval(ee,aa)
 	}
 		
 	return builtin.Err("Something got wrong in eval")
 }
 
-func notFound(a *types.Cell) bool {
- 	return a.Equal(builtin.NIL)
+
+func evfunc(e, a *types.Cell) *types.Cell {
+	label := assoc(car(e), a)
+	if label.IsErr() {
+		return builtin.Err("reference to undefined identifier: %v", car(e))
+	}
+	ee := cons(label, cdr(e))
+	return eval(ee, a)
 }
+
 
 func evatom(e, a *types.Cell) *types.Cell {
 	if e.IsSymbol() {
@@ -143,12 +145,15 @@ func evatom(e, a *types.Cell) *types.Cell {
 		if e.Equal(builtin.NIL) {
 			return builtin.NIL
 		}
+		
 		// Todo: Hash-table
-		x := assoc(e, a) // nil means also not found
-		if x.Equal(builtin.NIL) {
+		x := assoc(e, a) // nil means also not found !!!
+		
+		if x.IsErr() {
 			// TODO: Rename error message
 			return builtin.Err("reference to undefined identifier: %v", e)
 		}
+		
 		return x
 	}
 	return e
