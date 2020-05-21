@@ -56,11 +56,14 @@ func TestEnvironment(t *testing.T) {
 	env := createEnvironment()
 	
 	specs := []spec {
-		{ "(no '())					   "	, "t"			},
-		{ "(and  't 't)				    "	, "t"			}, 
-		{ "(not  't)				    "	, "nil"			},
-		{ "(append '(a b)   '(c d)  )	"	, "(a b c d)"	},
-		{ "(pair   '(a b c) '(x y z))	"	, "((a x) (b y) (c z))"},
+		{ "(no '())					   	  "	, "t"					},
+		{ "(and 't 't)				      "	, "t"					}, 
+		{ "(not 't)				      	  "	, "nil"					},
+		{ "(append '(a b)   '(c d)  )	  "	, "(a b c d)"			},
+		{ "(list 'a 'b)  				  "	, "(a b)"	    		},
+		{ "(pair '(a b c) '(x y z))	      " , "((a x) (b y) (c z))"	},
+		{ "(assoc 'b '((a 1) (b 2) (c 3)))"	, "2"					},
+
 	}
 		
 	testWithEnv(specs, t, env)

@@ -13,7 +13,7 @@ import (
 // * append
 // * list
 // * assoc
-//
+
 // * caar
 // * cadr
 // * cadar
@@ -49,17 +49,15 @@ func pair(x, y *types.Cell) *types.Cell {
 /*	
 PROCEDURE null(x: cell): cell;
 BEGIN
-	IF (x IS consCell) THEN
+	IF (x IS consCell) THEN  <<--- WRONG
 		IF x = EMPTY THEN RETURN T; END;
 	END;
 	RETURN EMPTY;
 END null;
 */
 func no(x *types.Cell) *types.Cell { // call "no" instead of "null"
-	if x.IsCons() {
-		if x.Equal(builtin.NIL) {
-			return builtin.T
-		}
+	if x.Equal(builtin.NIL) {
+		return builtin.T
 	}
 	return builtin.NIL
 }
@@ -160,3 +158,13 @@ func cadr  (e *types.Cell) *types.Cell { return car(cdr(e))           }
 func cadar (e *types.Cell) *types.Cell { return car(cdr(car(e)))      } 
 func caddr (e *types.Cell) *types.Cell { return car(cdr(cdr(e)))      }
 func caddar(e *types.Cell) *types.Cell { return car(cdr(cdr(car(e)))) }
+
+
+// > (set a 1) -> 1
+// > a -> 1
+func set(k, v *types.Cell, a *types.Cell) *types.Cell {
+	// Add key-value-pair (k v) to environment
+	a = cons(list(k, v), a)
+	return v
+}
+

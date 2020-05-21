@@ -17,6 +17,7 @@ func Nil() *types.Cell{
 	return NIL
 }
 
+// The only won nil atom in system
 var (
 	NIL = Atom("nil", types.SYMBOL)
 )

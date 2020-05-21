@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	//"fmt"
+	"fmt"
 )
 
 import (
@@ -65,7 +65,8 @@ func eval(e, a *types.Cell) *types.Cell {
 	if  c.IsAtom() {
 		switch {	
 		
-			// 7 core axioms - root of lisp (McCarthy)
+			// 7 core axioms - "The Roots of lisp" (McCarthy, Paul Graham)
+			//
 			case c.Equal(builtin.QUOTE): return quote(e) 
 			case c.Equal(builtin.ATOM ): return atom (eval(cadr(e), a))
 			case c.Equal(builtin.EQ   ): return eq   (eval(cadr(e), a), eval(caddr(e), a))
@@ -73,20 +74,27 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(builtin.CDR  ): return cdr  (eval(cadr(e), a))
 			case c.Equal(builtin.CONS ): return cons (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.COND ): return evcon(cdr(e), a)
-						
-			// 3 extra core axioms from Arc (Paul Graham)
-			case c.Equal(builtin.TAG  ): return tag  (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.TYPE0): return type0(eval(cadr(e), a))
-			case c.Equal(builtin.REP  ): return rep  (eval(cadr(e), a))
-			
-			// more builtin extension functions
-			case c.Equal(builtin.Sym("no"   )) : return no    (eval(cadr(e), a))
+									
+			// 7 extension functions from "The Roots of Lisp" (McCarthy, Paul Graham)
+			//
+			case c.Equal(builtin.Sym("no"    )): return no    (eval(cadr(e), a))
 			case c.Equal(builtin.Sym("not"   )): return not   (eval(cadr(e), a))
 			case c.Equal(builtin.Sym("and"   )): return and   (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.Sym("pair"  )): return pair  (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.Sym("list"  )): return list  (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.Sym("assoc" )): return assoc (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.Sym("append")): return append(eval(cadr(e), a), eval(caddr(e), a))
+
+			// TEST
+			case c.Equal(builtin.Sym("set"   )): return evset(e, a)
+			case c.Equal(builtin.Sym("env"   )): return evenv(e, a)
+
+
+			// 3 extra core axioms from Arc (Paul Graham)
+			//
+			case c.Equal(builtin.TAG  ): return tag  (eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.TYPE0): return type0(eval(cadr(e), a))
+			case c.Equal(builtin.REP  ): return rep  (eval(cadr(e), a))
 			
 			// Extra axioms in environment e.g. (no '()) -> t
 			default: return evfunc(e, a)
@@ -104,10 +112,7 @@ func eval(e, a *types.Cell) *types.Cell {
 	//
 	// A "label" expression is evaluated by pushing a list of the function name
 	// and the function itself, onto the environment, and then calling eval on an
-	// expression with the inner lambda expression substituted for the label
-	// expression.
-	
-	
+	// expression with the inner lambda expression substituted for the label expression.
 	if caar(e).Equal(builtin.LABEL) {
 		ee    := cons(caddar(e), cdr(e))
 		label := cadar(e)
@@ -129,16 +134,20 @@ func eval(e, a *types.Cell) *types.Cell {
 }
 
 
-func evfunc(e, a *types.Cell) *types.Cell {
-	label := assoc(car(e), a)
-	if label.IsErr() {
-		return builtin.Err("reference to undefined identifier: %v", car(e))
-	}
-	ee := cons(label, cdr(e))
-	return eval(ee, a)
+func evenv(e, a *types.Cell) *types.Cell {
+	fmt.Printf("evenv - a: %v \n\n", a)
+	return builtin.NIL
+}
+
+func evset(e, a *types.Cell) *types.Cell {
+	k := cadr(e)
+	v := caddr(e)
+	a  = cons(list(k, v), a)	
+	return eval(key, a)
 }
 
 
+// evatom evals atom from environment
 func evatom(e, a *types.Cell) *types.Cell {
 	if e.IsSymbol() {
 		// ToDO: not found in assoc and nil evals to nil are the same
@@ -157,6 +166,17 @@ func evatom(e, a *types.Cell) *types.Cell {
 		return x
 	}
 	return e
+}
+
+// evfunc eval function in environment
+func evfunc(e, a *types.Cell) *types.Cell {
+	label := assoc(car(e), a)
+	if label.IsErr() {
+		// TODO: Rename error message
+		return builtin.Err("reference to undefined identifier: %v", car(e))
+	}
+	ee := cons(label, cdr(e))
+	return eval(ee, a)
 }
 
 func evcon(c, a *types.Cell) *types.Cell {

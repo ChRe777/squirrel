@@ -15,6 +15,10 @@ func Quote(c *types.Cell) *types.Cell {
 	return generator.Cons(QUOTE, generator.Cons(c, NIL))
 }
 
+
+// l -->[]-->[]-->nil
+// l -->[]-->[]     -->nil
+// l -->[]-->[]-->[]-->nil
 // TODO: Rename - maybe JavaScript - push
 func Add(l, c *types.Cell)  *types.Cell {
 	li := l
@@ -34,6 +38,12 @@ func Add(l, c *types.Cell)  *types.Cell {
 	return li
 }
 
+// (list 1 2 3 4)
+// (cons 1 (cons 2 (cons 3 (cons 4 ()))))
+//
+// TODO: Make this more effective
+// because Add adds cells at the end
+// List create a list of a list of cells
 func List(xs ...*types.Cell) *types.Cell {
 	l := NIL
 	for _, x := range xs {
@@ -42,6 +52,16 @@ func List(xs ...*types.Cell) *types.Cell {
 	return l
 }
 
+
+// Car gets first cell of cons cell
+func Car(c *types.Cell) *types.Cell {
+	if c.IsCons() {
+		return c.Car
+	}
+	return NIL
+}
+
+// Cdr gets second cell of cons cell
 func Cdr(c *types.Cell) *types.Cell {
 	if c.IsCons() {
 		return c.Cdr
@@ -49,11 +69,9 @@ func Cdr(c *types.Cell) *types.Cell {
 	return NIL
 }
 
-func Car (c *types.Cell) *types.Cell {
-	if c.IsCons() {
-		return c.Car
-	}
-	return NIL
+// Cons create a cons from two cells
+func Cons(x, y *types.Cell) *types.Cell {
+	return generator.Cons(x, y)
 }
 
 // Sym create a symbol from string

@@ -1,13 +1,8 @@
 package evaluator
 
 import (
-	"fmt"
-)
-
-import (
 	"github.com/squirrel/types"
 	"github.com/squirrel/builtin"
-	"github.com/squirrel/generator"
 )
 
 // 7 primitive core operators
@@ -48,7 +43,6 @@ BEGIN
 END eq;
 */
 func eq(x, y *types.Cell) *types.Cell {	
-
 	if x.Equal(y) {
 	 	return builtin.T	
 	}
@@ -67,17 +61,15 @@ BEGIN
 END car;
 */
 func car(e *types.Cell) *types.Cell {
-
 	if e.Equal(builtin.NIL) {
 		return builtin.NIL
-	}
-	
-	if e.IsCons() {
-		return builtin.Car(e) 
 	} else {
-		return generator.Error(fmt.Sprintf("Can't take car of %v",e))
+		if e.IsCons() {
+			return builtin.Car(e) 
+		} else {
+			return builtin.Err("Can't take car of %v", e)
+		}
 	}
-	
 }
 
 
@@ -96,12 +88,12 @@ func cdr(e *types.Cell) *types.Cell {
 	
 	if e.Equal(builtin.NIL) {
 		return builtin.NIL
-	}
-	
-	if e.IsCons() {
-		return builtin.Cdr(e)
 	} else {
-		return generator.Error(fmt.Sprintf("Can't take cdr of %v", e))
+		if e.IsCons() {
+			return builtin.Cdr(e)
+		} else {
+			return builtin.Err("Can't take cdr of %v", e)
+		}
 	}
 	
 }
@@ -116,8 +108,8 @@ BEGIN
 	END;
 END cons;
 */
-func cons (x, y *types.Cell) *types.Cell {
-	return generator.Cons(x, y)
+func cons(x, y *types.Cell) *types.Cell {
+	return builtin.Cons(x, y)
 }
 
 /*	
@@ -140,7 +132,7 @@ func cond(x *types.Cell) *types.Cell {
 			return cond(cdr(x))
 		}
 	} else {
-		return generator.Error(fmt.Sprintf("x must be a list of form ((p1 e1) (p2 e2) .. (pn en))"))
+		return builtin.Err("x must be a list of form ((p1 e1) (p2 e2) .. (pn en))")
 	}
 	
 }
