@@ -86,7 +86,7 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(builtin.Sym("append")): return append(eval(cadr(e), a), eval(caddr(e), a))
 
 			// TEST
-			case c.Equal(builtin.Sym("set"   )): return evset(e, a)
+			case c.Equal(builtin.Sym("set"   )): return evset(e, a)		
 			case c.Equal(builtin.Sym("env"   )): return evenv(e, a)
 
 
@@ -135,15 +135,25 @@ func eval(e, a *types.Cell) *types.Cell {
 
 
 func evenv(e, a *types.Cell) *types.Cell {
-	fmt.Printf("evenv - a: %v \n\n", a)
+	fmt.Printf("evenv - a: %v ap:%p \n\n", a, a)
 	return builtin.NIL
 }
 
 func evset(e, a *types.Cell) *types.Cell {
-	k := cadr(e)
-	v := caddr(e)
-	a  = cons(list(k, v), a)	
-	return eval(key, a)
+
+	// (set k v)
+	k := cadr(e); v := caddr(e)
+	
+	// Hang in new
+	cdr := a.Cdr; new := cons(list(k, v), cdr); a.Cdr = new
+	
+	// Change Value
+	val := new.Val; new.Val = a.Val; a.Val = val
+	
+	// Change Car
+	car := new.Car; new.Car = a.Car; a.Car = car
+	
+	return eval(k, a)
 }
 
 
