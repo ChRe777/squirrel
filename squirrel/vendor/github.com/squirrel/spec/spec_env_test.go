@@ -89,6 +89,8 @@ func createEnvironment() *types.Cell {
 	pairFn   := "(pair   (func (x y) (cond ((and (no x) (no y)) '()) ((and (not (atom x)) (not (atom y))) (cons (list (car x) (car y))(pair (cdr x) (cdr y)))))))"
 	listFn   := "(list   (func (x y) (cons x (cons y '()))))"
 	assocFn  := "(assoc  (func (x y) (cond ((eq (caar y) x) (cadar y)) ('t (assoc. x (cdr y))))))"
+    mapCarFn := "(mapcar (func (x f) (cond 	((no x) nil) ('t (cons (f x) (mapcar (cdr x) f))))))"
+    
         
 	xs := []string{ 
 		noFn	,
@@ -98,6 +100,7 @@ func createEnvironment() *types.Cell {
 		pairFn	,   
 		listFn	, 
 		assocFn , 
+		mapCarFn,
 	}
 	
 	env := parser.Parse(createList(xs))

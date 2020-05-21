@@ -1,7 +1,7 @@
 # Squirrel
 
 Squirrel is a new language based on root of lisp and many
-other ideas connected together.
+other ideas connected together. Tagging. Connectable objects.
 
 ## Design
 

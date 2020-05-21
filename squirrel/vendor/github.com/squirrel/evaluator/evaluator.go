@@ -7,7 +7,6 @@ import (
 import (
 	"github.com/squirrel/types"
 	"github.com/squirrel/builtin"
-	//"github.com/squirrel/generator"
 )
 
 // Eval evals expression e with environment env and returns result
@@ -89,7 +88,6 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(builtin.Sym("set"   )): return evset(e, a)		
 			case c.Equal(builtin.Sym("env"   )): return evenv(e, a)
 
-
 			// 3 extra core axioms from Arc (Paul Graham)
 			//
 			case c.Equal(builtin.TAG  ): return tag  (eval(cadr(e), a), eval(caddr(e), a))
@@ -139,6 +137,16 @@ func evenv(e, a *types.Cell) *types.Cell {
 	return builtin.NIL
 }
 
+// evset evals expression like (set a 1)
+// add a key value pair to the environment
+// env = (
+//		(t t)
+// )
+// > (set a 1) ->
+// env = (
+//		(a 1)
+//		(t t)
+//)
 func evset(e, a *types.Cell) *types.Cell {
 
 	// (set k v)
@@ -158,12 +166,23 @@ func evset(e, a *types.Cell) *types.Cell {
 
 
 // evatom evals atom from environment
+//
+//  env =
+// 		(
+//			(a	1)
+//			(b  1)
+//		)
+//
+//  > a -> 1
+//  > b -> 2
+//
 func evatom(e, a *types.Cell) *types.Cell {
 	if e.IsSymbol() {
+	
 		// ToDO: not found in assoc and nil evals to nil are the same
-		if e.Equal(builtin.NIL) {
-			return builtin.NIL
-		}
+		//if e.Equal(builtin.NIL) {
+		//	return builtin.NIL
+		//}
 		
 		// Todo: Hash-table
 		x := assoc(e, a) // nil means also not found !!!
@@ -178,7 +197,16 @@ func evatom(e, a *types.Cell) *types.Cell {
 	return e
 }
 
-// evfunc eval function in environment
+// evfunc eval func from environment
+// 	env =
+//		( 
+//			key   	value
+//      	------- --------------------
+//			(add 	(func (x) (+ x 1))) 
+//		)
+//
+//  > (add 1) -> 2
+//
 func evfunc(e, a *types.Cell) *types.Cell {
 	label := assoc(car(e), a)
 	if label.IsErr() {
