@@ -31,11 +31,12 @@ An lisp interpreter exists of following components:
 
 ## ToOptimize
 
-	* [ ] evaluator.go - eval - map[string]func instead of switch -> SPEED
+	* [ ] evaluator.go - eval - HASHTABLE map[string]func instead of switch -> SPEED
 	* [ ] evaluator.go - environment - should be hash table
 	
 ## Nice ToHave
 	
+	* [ ] channels use ->  <- chars and use f for chars
 	* [ ] build in tagging into cell type "cell.Tag"
 	* [ ] use facebook buck for tests and build
 	* [ ] Double linked list

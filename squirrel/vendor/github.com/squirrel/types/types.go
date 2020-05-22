@@ -33,8 +33,9 @@ const (
 //  Cell
 //  ----
 //
-//  [ type | val | car | cdr ]
-//                  |     |
+//  +------+-----+-----+-----+
+//  | type | val | car | cdr |
+//  +---------------|-----|--+
 //					v     v
 //
 //  TODO: Double linked list

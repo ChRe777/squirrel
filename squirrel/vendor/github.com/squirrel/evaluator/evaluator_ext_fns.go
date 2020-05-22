@@ -168,3 +168,14 @@ func set(k, v *types.Cell, a *types.Cell) *types.Cell {
 	return v
 }
 
+// addEnv add a new cell at the front of the environment
+func addEnv (k, v *types.Cell, a *types.Cell ) *types.Cell {
+	// Hang in new as second
+	cdr := a.Cdr; new := cons(list(k, v), cdr); a.Cdr = new
+	// Change Val first and second to move new second to front
+	val := new.Val; new.Val = a.Val; a.Val = val
+	// Change Car first and second to move new seocen to front
+	car := new.Car; new.Car = a.Car; a.Car = car
+	// So the pointer to a stays the same // Side effects // ToReThink: ?
+	return a
+}

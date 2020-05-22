@@ -14,39 +14,6 @@ func Eval(e, env *types.Cell) *types.Cell {
 	return eval(e, env)
 }
 
-/*			
-PROCEDURE eval*(e: cell; a: cell): cell;
-	VAR c: cell;
-BEGIN
-	IF e IS atomCell THEN RETURN assoc(e, a) END; 
-	c := car(e);
-	IF c IS atomCell THEN
-		IF eq(car(e), QUOTE) = T THEN RETURN quote(e);
-		ELSIF eq(car(e), ATOM) = T THEN RETURN atom(eval(cadr(e), a));
-		ELSIF eq(car(e), EQ) = T THEN RETURN eq(eval(cadr(e), a), eval(caddr(e), a));
-		ELSIF eq(car(e), CAR) = T THEN RETURN car(eval(cadr(e), a));
-		ELSIF eq(car(e), CDR) = T THEN RETURN cdr(eval(cadr(e), a));
-		ELSIF eq(car(e), CONS) = T THEN RETURN cons(eval(cadr(e), a), eval(caddr(e), a));
-		ELSIF eq(car(e), COND) = T THEN RETURN evcon(cdr(e), a);
-		ELSIF eq(car(e), TAG) = T THEN RETURN tag(eval(cadr(e), a), eval(caddr(e), a));
-		ELSIF eq(car(e), TYPE0) = T THEN RETURN type0(eval(cadr(e), a));
-		ELSIF eq(car(e), REP) = T THEN RETURN rep(eval(cadr(e), a));
-		ELSE RETURN eval(cons(assoc(car(e), a), cdr(e)), a); END;
-	END;
-	IF eq(caar(e), LABEL) = T THEN 
-			RETURN eval( 
-				cons(caddar(e), cdr(e)),
-				cons(list(cadar(e), car(e)), a)
-			);
-	END;
-	IF eq(caar(e), LAMBDA) = T THEN  
-		RETURN eval(
-				caddar(e),
-				append(pair(cadar(e), evlis(cdr(e), a)), a)
-			);
-	END;
-END eval;
-*/
 func eval(e, a *types.Cell) *types.Cell {
 
  	// Lisp dialects like Arc have a data type most languages don't:
@@ -76,17 +43,13 @@ func eval(e, a *types.Cell) *types.Cell {
 									
 			// 7 extension functions from "The Roots of Lisp" (McCarthy, Paul Graham)
 			//
-			case c.Equal(builtin.Sym("no"    )): return no    (eval(cadr(e), a))
-			case c.Equal(builtin.Sym("not"   )): return not   (eval(cadr(e), a))
-			case c.Equal(builtin.Sym("and"   )): return and   (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.Sym("pair"  )): return pair  (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.Sym("list"  )): return list  (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.Sym("assoc" )): return assoc (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.Sym("append")): return append(eval(cadr(e), a), eval(caddr(e), a))
-
-			// TEST
-			case c.Equal(builtin.Sym("set"   )): return evset(e, a)		
-			case c.Equal(builtin.Sym("env"   )): return evenv(e, a)
+			case c.Equal(builtin.NO    ): return no    (eval(cadr(e), a))
+			case c.Equal(builtin.NOT   ): return not   (eval(cadr(e), a))
+			case c.Equal(builtin.AND   ): return and   (eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.PAIR  ): return pair  (eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.LIST  ): return list  (eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.ASSOC ): return assoc (eval(cadr(e), a), eval(caddr(e), a))
+			case c.Equal(builtin.APPEND): return append(eval(cadr(e), a), eval(caddr(e), a))
 
 			// 3 extra core axioms from Arc (Paul Graham)
 			//
@@ -94,10 +57,17 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(builtin.TYPE0): return type0(eval(cadr(e), a))
 			case c.Equal(builtin.REP  ): return rep  (eval(cadr(e), a))
 			
+			// TEST - REFACTOR
+			case c.Equal(builtin.Sym("var")): return evset(e, a)		
+			case c.Equal(builtin.Sym("env")): return evenv(e, a)
+			case c.Equal(builtin.Sym("let")): return evlet(e, a)
+			
 			// Extra axioms in environment e.g. (no '()) -> t
-			default: return evfunc(e, a)
+			default: return evfunc(e, a)(())
 		}
 	}
+	
+	// (var mapn (func (f ys) (cond (((no ys) nil)('t  (cons 	(f      (first ys)) (mapn f (rest  ys))))))))
 				
 	// c) Labels calls 
 	//		e.g. 
@@ -128,70 +98,74 @@ func eval(e, a *types.Cell) *types.Cell {
 		return eval(ee,aa)
 	}
 		
-	return builtin.Err("Something got wrong in eval")
+	return builtin.Err("Wrong expression")
 }
 
+// Named functions
+// ---------------
+// (func foo (x) (car x))
+// (func {name} {params} {body})
+//
+// Unnamed lambda functions
+// ------------------------
+// (func (x) (car x))
+// (func {params} {body})
 
+// evlet eval let see example below
+// 	e.g. 
+//		(let xs '(1 2 3) (car xs)) ->  1
+//		(let {key} {val} {body} )
+func evlet(e, a *types.Cell) *types.Cell {
+	k := cadr(e); v := caddr(e)	
+	ee := car(cdr(cdr(cdr(e))))	
+	aa := cons(list(k, v), a)	
+	return eval(ee, aa)
+}
+
+// envenv only print environment for debug purpose
 func evenv(e, a *types.Cell) *types.Cell {
 	fmt.Printf("evenv - a: %v ap:%p \n\n", a, a)
 	return builtin.NIL
 }
 
-// evset evals expression like (set a 1)
-// add a key value pair to the environment
-// env = (
+// evset evals expression e.g. (set a 1)
+// add a key value pair on top of environment
+// like push on a stack
+// 	env := (
 //		(t t)
-// )
-// > (set a 1) ->
-// env = (
+// 	)
+//
+// 	> (set a 1) ->
+//
+// 	env = (
 //		(a 1)
 //		(t t)
-//)
+//	)
 func evset(e, a *types.Cell) *types.Cell {
-
 	// (set k v)
 	k := cadr(e); v := caddr(e)
-	
-	// Hang in new
-	cdr := a.Cdr; new := cons(list(k, v), cdr); a.Cdr = new
-	
-	// Change Value
-	val := new.Val; new.Val = a.Val; a.Val = val
-	
-	// Change Car
-	car := new.Car; new.Car = a.Car; a.Car = car
-	
+	// Add front
+	a = addEnv(k,v, a)
+	// Eval key
 	return eval(k, a)
 }
 
 
 // evatom evals atom from environment
-//
-//  env =
-// 		(
-//			(a	1)
-//			(b  1)
-//		)
+// e.g. env := (
+//		(a	1)
+//		(b  1)
+//	)
 //
 //  > a -> 1
 //  > b -> 2
 //
 func evatom(e, a *types.Cell) *types.Cell {
-	if e.IsSymbol() {
-	
-		// ToDO: not found in assoc and nil evals to nil are the same
-		//if e.Equal(builtin.NIL) {
-		//	return builtin.NIL
-		//}
-		
-		// Todo: Hash-table
-		x := assoc(e, a) // nil means also not found !!!
-		
+	if e.IsSymbol() {	
+		x := assoc(e, a) // ToDo: Hash-table // nil means also not found !!!	
 		if x.IsErr() {
-			// TODO: Rename error message
-			return builtin.Err("reference to undefined identifier: %v", e)
+			return builtin.Err("reference to undefined identifier: %v", e) // TODO: Rename error message
 		}
-		
 		return x
 	}
 	return e
@@ -208,15 +182,20 @@ func evatom(e, a *types.Cell) *types.Cell {
 //  > (add 1) -> 2
 //
 func evfunc(e, a *types.Cell) *types.Cell {
-	label := assoc(car(e), a)
-	if label.IsErr() {
-		// TODO: Rename error message
-		return builtin.Err("reference to undefined identifier: %v", car(e))
+	name := assoc(car(e), a)
+	if name.IsErr() {
+		return builtin.Err("reference to undefined identifier: %v", car(e)) // TODO: Rename error message
 	}
-	ee := cons(label, cdr(e))
+	ee := cons(name, cdr(e))
 	return eval(ee, a)
 }
 
+// evcon evals cond (= conditions)
+// e.g. (cond ( 
+//				(nil b) 
+//				('t a)
+//			) 
+//		) -> a
 func evcon(c, a *types.Cell) *types.Cell {
 	if eval(caar(c), a).Equal(builtin.T) { 
 		return eval(cadar(c), a) 
@@ -225,6 +204,7 @@ func evcon(c, a *types.Cell) *types.Cell {
 	}
 }
 
+// evlis evals each item of a list
 func evlis(m, a *types.Cell) *types.Cell {
 	if m.Equal(builtin.NIL) {
 		return builtin.NIL
@@ -232,71 +212,6 @@ func evlis(m, a *types.Cell) *types.Cell {
 		return cons(eval(car(m), a), evlis(cdr(m), a))
 	}
 }
-
-/*
-type cell 	*types.Cell
-type coreFn func(e, a cell) cell
-
-var coreFnsMap = map[string]coreFn { 
-	// 7 core
- 	builtin.ID_QUOTE: func(e, a cell) cell { return quote(e)  									},
-	builtin.ID_ATOM : func(e, a cell) cell { return atom(eval(cadr(e), a)) 						},
-	builtin.ID_EQ   : func(e, a cell) cell { return eq(eval(cadr(e), a), eval(caddr(e), a)) 	},
-	builtin.ID_CAR  : func(e, a cell) cell { return car(eval(cadr(e), a)) 						},
-	builtin.ID_CDR  : func(e, a cell) cell { return cdr(eval(cadr(e), a)) 						},
-	builtin.ID_CONS : func(e, a cell) cell { return cons(eval(cadr(e), a), eval(caddr(e), a)) 	},
-	builtin.ID_COND : func(e, a cell) cell { return evcon(cdr(e), a) 							},
-	// 3 extra
-	builtin.ID_TAG  : func(e, a cell) cell { return tag(eval(cadr(e), a), eval(caddr(e), a)) 	},
-	builtin.ID_TYPE0: func(e, a cell) cell { return type0(eval(cadr(e), a)) 					},
-	builtin.ID_REP  : func(e, a cell) cell { return rep(eval(cadr(e), a)) 						},
-
-}
-
-func eval2(e, a *types.Cell) *types.Cell {
-
-	// a) Atom look up in environment
-	if e.IsAtom() {
-		if e.IsSymbol() {	
-			return assoc(e, a)			// TODO: Use hash-Table for SPEEEED
-		}
-		return e
-	} 
-	
-	// b) Cons take name and look in core e.g. (car '(1 2 3))
-	c := car(e)	
-	if c.IsAtom() {
-		identifier, ok1 := c.Val.(string)
-		fn, ok2 := coreFnsMap[identifier]
-		if ok1 && ok2 {
-			return fn(e, a)
-		} else {
-			fnName := assoc(car(e), a); 
-			if fnName.Equal(builtin.NIL) {
-				return generator.Error(fmt.Sprintf("reference to undefined identifier: %v", car(e)))
-			}
-			return eval(cons(fnName, cdr(e)), a)
-		}
-	}
-	
-	// c) ...
-	if caar(e).Equal(builtin.LABEL) {
-		return eval(cons(caddar(e), cdr(e)),
-			        cons(list(cadar(e), car(e)), a))
-	}
-	
-	// d) ...
-	if caar(e).Equal(builtin.FUNC) {
-		return eval(caddar(e),
-					append(pair(cadar(e), evlis(cdr(e), a)), a))
-	}
-		
-	return generator.Error("Something got wrong in eval")
-}
-
-*/
-
-
 
 
 
