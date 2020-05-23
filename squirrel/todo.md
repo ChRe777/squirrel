@@ -10,9 +10,10 @@ An lisp interpreter exists of following components:
 	* Spec
 	* Repl
 	
-	
 ## ToDo
 
+	* [ ] Implement "def" e.g. (def add (x y) (+ x y))
+    * [ ] Load Squirrel from file (load "code.sqr")
 	* [ ] Macro support with tagging	
 	
 ## ToRefactor

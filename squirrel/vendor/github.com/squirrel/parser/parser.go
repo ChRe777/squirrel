@@ -137,7 +137,12 @@ func sexpr(level *int) *types.Cell {
 		cell := builtin.Quote(sexpr(level))
 		return cell
 	}
-
+	
+	backquote := func(level *int) *types.Cell {
+		debug("backquote", level); scanner.GetSym();
+		cell := builtin.Backquote(sexpr(level))
+		return cell
+	}
 
 	/*
 	BEGIN (* sexpr *) level := level + 3; debug("sexpr", level);
@@ -168,6 +173,9 @@ func sexpr(level *int) *types.Cell {
 			
 		case scanner.Quote:
 			return quote(level)
+			
+		case scanner.Backquote:
+			return backquote(level)
 	}
 	
 	return generator.Nil()

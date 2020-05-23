@@ -62,8 +62,12 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(builtin.Sym("env")): return evenv(e, a)
 			case c.Equal(builtin.Sym("let")): return evlet(e, a)
 			
+			// TEST
+			// e.g. (load "code.sqr")
+			// case c.Equal(builtin.Sym("load")): return evload(e, a)
+			
 			// Extra axioms in environment e.g. (no '()) -> t
-			default: return evfunc(e, a)(())
+			default: return evfunc(e, a)
 		}
 	}
 	
@@ -116,7 +120,7 @@ func eval(e, a *types.Cell) *types.Cell {
 //		(let xs '(1 2 3) (car xs)) ->  1
 //		(let {key} {val} {body} )
 func evlet(e, a *types.Cell) *types.Cell {
-	k := cadr(e); v := caddr(e)	
+	k := cadr(e); v := eval(caddr(e), a)	
 	ee := car(cdr(cdr(cdr(e))))	
 	aa := cons(list(k, v), a)	
 	return eval(ee, aa)

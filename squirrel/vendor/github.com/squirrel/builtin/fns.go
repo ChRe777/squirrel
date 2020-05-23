@@ -15,6 +15,10 @@ func Quote(c *types.Cell) *types.Cell {
 	return generator.Cons(QUOTE, generator.Cons(c, NIL))
 }
 
+func Backquote(c *types.Cell) *types.Cell {
+	return generator.Cons(BACKQUOTE, generator.Cons(c, NIL))
+}
+
 
 // l -->[]-->[]-->nil
 // l -->[]-->[]     -->nil
