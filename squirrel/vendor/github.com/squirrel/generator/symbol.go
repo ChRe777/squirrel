@@ -7,8 +7,11 @@ import (
 // Sym creates a symbol from string
 func Sym(s string) *types.Cell {
 	return &types.Cell {
-		Type: types.Type{Cell: types.ATOM, Atom: types.SYMBOL},
-		Val : s,
+		Type: types.Type {
+			Cell: types.ATOM, 
+			Atom: types.SYMBOL,
+		},
+		Val: s,
 	}
 }
 

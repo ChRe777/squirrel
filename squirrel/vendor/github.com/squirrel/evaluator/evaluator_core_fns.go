@@ -13,8 +13,9 @@ BEGIN RETURN cadr(x);
 END quote;
 */
 func quote(x *types.Cell) *types.Cell {
-	return cadr(x)
+	return cadr(x)  // (quote a) -> cdr -> (a) -> car -> a
 }
+
 
 /*		
 PROCEDURE atom(x: cell): cell;

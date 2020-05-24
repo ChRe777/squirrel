@@ -66,6 +66,9 @@ func eval(e, a *types.Cell) *types.Cell {
 			// e.g. (load "code.sqr")
 			// case c.Equal(builtin.Sym("load")): return evload(e, a)
 			
+			// Test - MACRO SUPPORT
+			case c.Equal(builtin.BACKQUOTE): return backquote(e, a) 
+			
 			// Extra axioms in environment e.g. (no '()) -> t
 			default: return evfunc(e, a)
 		}

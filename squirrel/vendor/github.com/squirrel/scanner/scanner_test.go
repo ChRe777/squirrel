@@ -6,14 +6,16 @@ import (
 
 func TestGetSym(t *testing.T) {
 
-	s := []byte("(123.4 \"foo\" 'bar)")
+	s := []byte("(123.4 \"foo\" 'biz `foo ,bar)")
 	
 	specs := []spec {
 		{ "(", 		Lparen 		},
 		{ "123.4", 	Number 		},
 		{ "foo", 	String 		},
 		{ "'", 		Quote  		},
+		{ "biz", 	Symbol 		},
 		{ "`", 		Backquote  	},
+		{ "foo", 	Symbol 		},
 		{ ",", 		Unquote  	},
 		{ "bar", 	Symbol 		},
 		{ ")", 		Rparen 		},
@@ -23,9 +25,7 @@ func TestGetSym(t *testing.T) {
 	
 	for _, spec := range specs {
 	
-		GetSym()
-		id := asStr(Id)
-		sym := Sym
+		GetSym(); id := asStr(Id); sym := Sym
 		
 		if isNotEq(spec, id, sym) {
 			t.Errorf("got: Id %v Sym %v, want: Id %v, Sym %v", id, sym, spec.Id, spec.Sym)
