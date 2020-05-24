@@ -1,7 +1,11 @@
 package parser
 
 import (
+	"fmt"
 	"testing"
+)
+
+import (
 	"github.com/squirrel/generator"
 	"github.com/squirrel/types"
 )
@@ -9,9 +13,9 @@ import (
 func TestParseAtom(t *testing.T) {
 
 	specs := []spec {
-		{ "t"		, generator.Atom("t"	, types.SYM   ) },
+		{ "t"		, generator.Atom("t"	, types.SYMBOL) },
 		{ "foo"		, generator.Atom("foo"	, types.SYMBOL) },
-		{ "\"a\""	, generator.Atom("a"	, types.STRING) },
+		{ "\"a\""	, generator.Atom("\"a\"", types.STRING) },
 		{ "1.23"	, generator.Atom("1.23"	, types.NUMBER) },
 	} 
 
@@ -20,11 +24,40 @@ func TestParseAtom(t *testing.T) {
 
 func TestParseCons(t *testing.T) {
 
-	specs := []spec {1
-		{ "(1)"			, generator.Add(generator.List(), generator.Atom(1, types.NUMBER)) },
-		{ "(1 2)"		, generator.Add(generator.Add(generator.List(), generator.Atom(1, types.NUMBER)), generator.Atom(2, types.NUMBER)) },
-		{ "(1 (foo))"	, generator.Add(generator.Add(generator.List(), generator.Atom(1, types.NUMBER)), generator.Add(generator.List(), generator.Atom("foo", types.SYMBOL))) },
+	specs := []spec {
+		{ "(1)"			, generator.Cons(generator.Atom(1, types.NUMBER), generator.Nil()) },
+//		{ "(1 2)"		, generator.Add(generator.Add(generator.List(), generator.Atom(1, types.NUMBER)), generator.Atom(2, types.NUMBER)) },
+//		{ "(1 (foo))"	, generator.Add(generator.Add(generator.List(), generator.Atom(1, types.NUMBER)), generator.Add(generator.List(), generator.Atom("foo", types.SYMBOL))) },
 	} 
 
 	test(specs, t)
+}
+
+func TestParseBackQuote(t *testing.T) {
+	specs := []spec {
+		{ "`a" 	, generator.Cons( generator.Atom("backquote", types.SYMBOL) , generator.Cons(generator.Atom("a", types.SYMBOL), generator.Nil())) },
+	}
+
+	test(specs, t)
+}
+
+// ------------------ LIBRARY --------------------------------------------------
+
+type spec struct {
+	expression string
+	want	   *types.Cell
+}
+
+func test(specs []spec, t *testing.T) {
+	
+	for _, spec := range specs {
+	
+		e := []byte(spec.expression); got := Parse(e)
+		
+		fmt.Printf("test - got :%v", got)
+		
+		if got.NotEqual(spec.want) {
+			t.Errorf("Spec of expression \"%v\" was incorrect, got: \"%v\", want: \"%v\"", spec.expression, got, spec.want)
+		}
+	}		
 }

@@ -19,11 +19,16 @@ func Backquote(c *types.Cell) *types.Cell {
 	return generator.Cons(BACKQUOTE, generator.Cons(c, NIL))
 }
 
+func Unquote(c *types.Cell) *types.Cell {
+	return generator.Cons(UNQUOTE, generator.Cons(c, NIL))
+}
 
 // l -->[]-->[]-->nil
 // l -->[]-->[]     -->nil
 // l -->[]-->[]-->[]-->nil
+//
 // TODO: Rename - maybe JavaScript - push
+//
 func Add(l, c *types.Cell)  *types.Cell {
 	li := l
 	if l.IsCons() && l.NotEqual(NIL) { 

@@ -13,6 +13,7 @@ const (
 	
 	// For Macros
 	ID_BACKQUOTE = "backquote"	
+	ID_UNQUOTE   = "unquote"
 
 	// New core axioms
 	ID_TAG 	  = "tag"
@@ -31,28 +32,28 @@ const (
 // Core symbols of language
 var (
 	
-	QUOTE 	= Sym(ID_QUOTE)
-
-	ATOM 	= Sym(ID_ATOM)
-	EQ 		= Sym(ID_EQ)
-	CAR 	= Sym(ID_CAR)
-	CDR 	= Sym(ID_CDR) 
-	CONS 	= Sym(ID_CONS)
-	COND 	= Sym(ID_COND) 
+	QUOTE 		= Sym(ID_QUOTE)
+	ATOM 		= Sym(ID_ATOM)
+	EQ 			= Sym(ID_EQ)
+	CAR 		= Sym(ID_CAR)
+	CDR 		= Sym(ID_CDR) 
+	CONS 		= Sym(ID_CONS)
+	COND 		= Sym(ID_COND) 
 	
-	BACKQUOTE 	= Sym(ID_BACKQUOTE)
+	BACKQUOTE 	= Sym(ID_BACKQUOTE)	// For Macros
+	UNQUOTE   	= Sym(ID_UNQUOTE) 	// For Macros, 
 	
-	LABEL 	= Sym(ID_LABEL)
-	FUNC 	= Sym(ID_FUNC) 
+	LABEL 		= Sym(ID_LABEL)
+	FUNC 		= Sym(ID_FUNC) 
 	
-	T 		= Sym(ID_T) 		// TRUE
-	NIL 	= Sym(ID_NIL) 		// NIL or FALSE
+	T 			= Sym(ID_T) 		// TRUE
+	NIL 		= Sym(ID_NIL) 		// NIL or FALSE
 	
-	TAG 	= Sym(ID_TAG)
-	TAGGED 	= Sym(ID_TAGGED)
-	SYM 	= Sym(ID_SYM)
-	TYPE0 	= Sym(ID_TYPE0)		// TODO: Better name
-	REP 	= Sym(ID_REP)	
+	TAG 		= Sym(ID_TAG)
+	TAGGED 		= Sym(ID_TAGGED)
+	SYM 		= Sym(ID_SYM)
+	TYPE0 		= Sym(ID_TYPE0)		// TODO: Better name
+	REP 		= Sym(ID_REP)	
 )
 
 

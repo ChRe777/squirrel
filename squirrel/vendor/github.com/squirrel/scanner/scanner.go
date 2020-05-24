@@ -13,6 +13,7 @@ const (
 	Number 		= 12 	// 	-1234.567e-10 (DEC64 - Douglas Crockford)
 	Quote 		= 20 	// 	'
 	Backquote 	= 21	// 	`
+	Unquote		= 22    //  ,
 	Rparen 		= 100  	//	)
 	Other 		= 255	// 	EOF 
 )
@@ -140,6 +141,14 @@ func GetSym() {
 		
 		case '\'' == Ch:
 			Sym = Quote
+			NextCh()
+			
+		case '`' == Ch:
+			Sym = Backquote
+			NextCh()
+						
+		case ',' == Ch:
+			Sym = Unquote
 			NextCh()
 		
 		case '"' == Ch:
