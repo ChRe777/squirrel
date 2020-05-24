@@ -7,19 +7,21 @@ import (
 )
 
 const (
-	Lparen 		= 0		// 	(
-	Symbol 		= 10	// 	'foo
-	String 		= 11 	// 	"bar"
-	Number 		= 12 	// 	-1234.567e-10 (DEC64 - Douglas Crockford)
-	Quote 		= 20 	// 	'
-	Backquote 	= 21	// 	`
-	Unquote		= 22    //  ,
-	Rparen 		= 100  	//	)
-	Other 		= 255	// 	EOF 
+	Lparen 			= 0		// 	(
+	Symbol 			= 10	// 	'foo
+	String 			= 11 	// 	"bar"
+	Number 			= 12 	// 	-1234.567e-10 (DEC64 - Douglas Crockford)
+	Quote 			= 20 	// 	'
+	Backquote 		= 21	// 	`
+	Unquote			= 22    //  ,
+	UnquoteSplicing = 23	//  ,@
+	Rparen 			= 100  	//	)
+	Other 			= 255	// 	EOF 
 )
 	
 var (
 	Ch 		rune
+	Ch2     rune
 	Size	int
 	Err		error
 	Sym 	int
@@ -40,6 +42,15 @@ func NextCh() {
 	Ch, Size, Err = R.ReadRune()
 }
 
+// PeekCh peek next rune
+func PeekCh() {
+	Ch2, Size, Err = R.ReadRune()	// TODO: CHECK ????
+	err := R.UnreadRune()
+	if err != nil {
+		panic(err)
+	}
+}
+
 func printSym() {
 	fmt.Printf("sym: %3d  ", Sym)
 	switch {
@@ -55,6 +66,10 @@ func printSym() {
 			fmt.Printf("quote: '")
 		case Sym == Backquote:
 			fmt.Printf("backquote: `")
+		case Sym == Unquote:
+			fmt.Printf("unquote: ,")
+		case Sym == UnquoteSplicing:
+			fmt.Printf("unquote-splicing: ,@")
 		case Sym == Other:
 			fmt.Printf("other")
 	}
@@ -148,8 +163,17 @@ func GetSym() {
 			NextCh()
 						
 		case ',' == Ch:
-			Sym = Unquote
+			PeekCh()
+			if '@' == Ch2 {
+				Sym = UnquoteSplicing
+				NextCh()
+			} else {
+				Sym = Unquote
+			}
 			NextCh()
+			
+		// TODO: UnquoteSplicing
+		// ,@
 		
 		case '"' == Ch:
 			Sym = String

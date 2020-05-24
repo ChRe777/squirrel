@@ -28,6 +28,9 @@ func backquote(e *types.Cell, a *types.Cell) *types.Cell {
     return y
 }
 
+// mapEx - maps through a element in list and expand each element
+// if the element is wrapped with (unquote) the element will be
+// evaluated
 func mapEx(e *types.Cell, a *types.Cell) *types.Cell {
 	if no(e).Equal(builtin.T) {
 		return builtin.NIL
@@ -47,7 +50,11 @@ func expand(e *types.Cell, a *types.Cell) *types.Cell {
 		c := car(e)
 		if c.IsAtom() {
 			switch {	
-				case c.Equal(builtin.UNQUOTE): return unquote(e, a) 
+				case c.Equal(builtin.UNQUOTE): return unquote(e, a) 	
+				// unquote-splicing shorcut: ,@
+				//`((+ 1 2) ,(+ 3 4) ,@(list 5 6))
+				// ((+ 1 2) 7 5 6)
+				case c.Equal(builtin.UNQUOTE_SPLICING): return unquoteSplicing(e, a)				
 			}
 		}
 		return e
@@ -60,6 +67,16 @@ func expand(e *types.Cell, a *types.Cell) *types.Cell {
 //		-> 1
 
 func unquote(e *types.Cell, a *types.Cell) *types.Cell {
+	x := cadr(e); y := eval(x, a)
+	return y
+}
+
+// unquoteSplicing
+//	e.g.
+//		`((+ 1 2) ,(+ 3 4) ,@(list 5 6))
+// 		((+ 1 2) 7 5 6)
+func unquoteSplicing(e *types.Cell, a *types.Cell) *types.Cell {
+	// TODO
 	x := cadr(e); y := eval(x, a)
 	return y
 }

@@ -6,19 +6,21 @@ import (
 
 func TestGetSym(t *testing.T) {
 
-	s := []byte("(123.4 \"foo\" 'biz `foo ,bar)")
+	s := []byte("(123.4 \"foo\" 'biz `foo ,bar ,@foo)")
 	
 	specs := []spec {
-		{ "(", 		Lparen 		},
-		{ "123.4", 	Number 		},
-		{ "foo", 	String 		},
-		{ "'", 		Quote  		},
-		{ "biz", 	Symbol 		},
-		{ "`", 		Backquote  	},
-		{ "foo", 	Symbol 		},
-		{ ",", 		Unquote  	},
-		{ "bar", 	Symbol 		},
-		{ ")", 		Rparen 		},
+		{ "(", 		Lparen 			},
+		{ "123.4", 	Number 			},
+		{ "foo", 	String 			},
+		{ "'", 		Quote  			},
+		{ "biz", 	Symbol 			},
+		{ "`", 		Backquote  		},
+		{ "foo", 	Symbol 			},
+		{ ",", 		Unquote  		},
+		{ "bar", 	Symbol 			},
+		{ ",@", 	UnquoteSplicing },
+		{ "foo", 	Symbol 			},
+		{ ")", 		Rparen 			},
 	}
 	
 	Init(s)

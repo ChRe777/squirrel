@@ -12,8 +12,9 @@ const (
 	ID_COND   = "cond"	
 	
 	// For Macros
-	ID_BACKQUOTE = "backquote"	
-	ID_UNQUOTE   = "unquote"
+	ID_BACKQUOTE 		= "backquote"	
+	ID_UNQUOTE   		= "unquote"
+	ID_UNQUOTESPLICING  = "unquotesplicing"
 
 	// New core axioms
 	ID_TAG 	  = "tag"
@@ -40,9 +41,10 @@ var (
 	CONS 		= Sym(ID_CONS)
 	COND 		= Sym(ID_COND) 
 	
-	BACKQUOTE 	= Sym(ID_BACKQUOTE)	// For Macros
-	UNQUOTE   	= Sym(ID_UNQUOTE) 	// For Macros, 
-	
+	BACKQUOTE 			= Sym(ID_BACKQUOTE)			// For Macros
+	UNQUOTE   			= Sym(ID_UNQUOTE) 			// For Macros, 
+	UNQUOTE_SPLICING   	= Sym(ID_UNQUOTESPLICING) 	// For Macros, 
+		
 	LABEL 		= Sym(ID_LABEL)
 	FUNC 		= Sym(ID_FUNC) 
 	
