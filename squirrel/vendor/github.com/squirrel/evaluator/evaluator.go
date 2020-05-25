@@ -101,8 +101,15 @@ func eval(e, a *types.Cell) *types.Cell {
 	//		e.g. ( (func (x) (car x)) '(1 2) ) -> 1
 	if caar(e).Equal(builtin.FUNC) {
 		ee := caddar(e)
-		aa := append(pair(cadar(e), evlis(cdr(e), a)), a)
-		return eval(ee,aa)
+		
+		xs := cadar(e)			// (x)
+		ys := evlis(cdr(e), a)	// ((1 2))
+		aa := pair(xs, ys)		// ((x (1 2)))
+		
+		aa = append(aa, a)
+		fmt.Printf("evaluator - func calls - xs: %v ys: %v aa:%v \n", xs, ys, aa)
+		
+		return eval(ee, aa)
 	}
 		
 	return builtin.Err("Wrong expression")
@@ -149,11 +156,8 @@ func evenv(e, a *types.Cell) *types.Cell {
 //		(t t)
 //	)
 func evset(e, a *types.Cell) *types.Cell {
-	// (set k v)
-	k := cadr(e); v := caddr(e)
-	// Add front
-	a = addEnv(k,v, a)
-	// Eval key
+	k := cadr(e); v := eval(caddr(e), a)
+	a = addEnv(k, v, a)
 	return eval(k, a)
 }
 
@@ -198,9 +202,10 @@ func evfunc(e, a *types.Cell) *types.Cell {
 }
 
 // evcon evals cond (= conditions)
-// e.g. (cond ( 
+// e.g. (cond 
+//			( 
 //				(nil b) 
-//				('t a)
+//				( 't a)
 //			) 
 //		) -> a
 func evcon(c, a *types.Cell) *types.Cell {

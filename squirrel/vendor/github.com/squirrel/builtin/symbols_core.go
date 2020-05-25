@@ -14,7 +14,7 @@ const (
 	// For Macros
 	ID_BACKQUOTE 		= "backquote"	
 	ID_UNQUOTE   		= "unquote"
-	ID_UNQUOTESPLICING  = "unquotesplicing"
+	ID_UNQUOTESPLICING  = "unquote_splicing"
 
 	// New core axioms
 	ID_TAG 	  = "tag"
@@ -54,7 +54,7 @@ var (
 	TAG 		= Sym(ID_TAG)
 	TAGGED 		= Sym(ID_TAGGED)
 	SYM 		= Sym(ID_SYM)
-	TYPE0 		= Sym(ID_TYPE0)		// TODO: Better name
+	TYPE0 		= Sym(ID_TYPE0)		// TODO: Better name - type is reserved word in GO
 	REP 		= Sym(ID_REP)	
 )
 
