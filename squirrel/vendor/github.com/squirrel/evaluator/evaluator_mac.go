@@ -9,6 +9,8 @@ import (
 	"github.com/squirrel/builtin"
 )
 
+type fnCell func(e *types.Cell, a *types.Cell) *types.Cell
+
 // backquote
 // unquote
 
@@ -24,19 +26,19 @@ func backquote(e *types.Cell, a *types.Cell) *types.Cell {
   //	fmt.Printf("backquote - e: %v \n", e)
     x := cadr(e)
   //  fmt.Printf("backquote - x: %v \n", x)
-    y := mapEx(x, a)
+    y := map_(expand, x, a)
     return y
 }
 
 // mapEx - maps through a element in list and expand each element
 // if the element is wrapped with (unquote) the element will be
 // evaluated
-func mapEx(e *types.Cell, a *types.Cell) *types.Cell {
+func map_(fn fnCell, e *types.Cell, a *types.Cell) *types.Cell {
 	if no(e).Equal(builtin.T) {
 		return builtin.NIL
 	} else {
 		x := builtin.Car(e); xs := builtin.Cdr(e)			
-		return builtin.Cons(expand(x, a), mapEx(xs, a))
+		return builtin.Cons(fn(x, a), map_(fn, xs, a))
 	}
 }
 
@@ -65,7 +67,6 @@ func expand(e *types.Cell, a *types.Cell) *types.Cell {
 // e.g. 
 //		(unquote a) 	a = 1
 //		-> 1
-
 func unquote(e *types.Cell, a *types.Cell) *types.Cell {
 	x := cadr(e); y := eval(x, a)
 	return y
