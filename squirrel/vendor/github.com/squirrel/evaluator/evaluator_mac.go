@@ -11,6 +11,21 @@ import (
 
 type fnCell func(e *types.Cell, a *types.Cell) *types.Cell
 
+
+// arc> (mac when (test . body)
+//       (list 'if test (cons 'do body)))
+// *** redefining when
+// #3(tagged mac #<procedure>)
+
+//	(mac  {name} {params} {body})
+//	(func {name} {params} {body}) -- tagged as 'mac
+
+// if func is tagged as 'mac
+// then macExpand 
+
+// evfunc
+
+
 // backquote
 // unquote
 
@@ -63,7 +78,8 @@ func expand(e *types.Cell, a *types.Cell) *types.Cell {
 	}
 }
 
-// unquote
+// unquote are used in backquote to fill in the variable
+// by enabling quotes of unquoted symbol
 // e.g. 
 //		(unquote a) 	a = 1
 //		-> 1

@@ -11,14 +11,18 @@ BEGIN
 	RETURN cons(atom("QUOTE"), cons(c, EMPTY));
 END quote;
 */
+// Quote evaluates to himself
 func Quote(c *types.Cell) *types.Cell {
 	return generator.Cons(QUOTE, generator.Cons(c, NIL))
 }
 
+// Backquote is like quote for macros but in combination
+// with unquote
 func Backquote(c *types.Cell) *types.Cell {
 	return generator.Cons(BACKQUOTE, generator.Cons(c, NIL))
 }
 
+// Unquote is used in macros to enable evaluation
 func Unquote(c *types.Cell) *types.Cell {
 	return generator.Cons(UNQUOTE, generator.Cons(c, NIL))
 }
@@ -86,6 +90,11 @@ func Cons(x, y *types.Cell) *types.Cell {
 // Sym create a symbol from string
 func Sym(s string) *types.Cell {
 	return generator.Sym(s)
+}
+
+// Tag tags a cell with string t
+func Tag(c *types.Cell, t string) *types.Cell {
+	return generator.Tag(c, t)
 }
 
 // Num create a number from string

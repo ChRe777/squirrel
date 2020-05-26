@@ -20,6 +20,12 @@ func Nil() *types.Cell{
 	return NIL
 }
 
+// Tag tags a cell with string t
+func Tag(c *types.Cell, t string) *types.Cell {
+	c.Tag = t
+	return c
+}
+
 // The only won nil atom in system
 var (
 	NIL = Atom("nil", types.SYMBOL)

@@ -26,6 +26,7 @@ const (
 	// Ext
 	ID_LABEL  = "label"		// name
 	ID_FUNC   = "func"		// was LAMBDA
+	ID_MAC    = "mac"
 	ID_T	  = "t"
 	ID_NIL	  = "nil"
 )
@@ -47,7 +48,7 @@ var (
 		
 	LABEL 		= Sym(ID_LABEL)
 	FUNC 		= Sym(ID_FUNC) 
-	
+	MAC			= Tag(Sym(ID_FUNC), ID_MAC)
 	T 			= Sym(ID_T) 		// TRUE
 	NIL 		= Sym(ID_NIL) 		// NIL or FALSE
 	

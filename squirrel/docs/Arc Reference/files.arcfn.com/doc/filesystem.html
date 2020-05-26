@@ -1,0 +1,97 @@
+<html dir="ltr">
+
+<!-- Mirrored from files.arcfn.com/doc/filesystem.html by HTTrack Website Copier/3.x [XR&CO'2010], Wed, 18 Jul 2012 22:35:59 GMT -->
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+<title>Arc: File system operations</title>
+<link rel="stylesheet" type="text/css" href="code.css">
+<link rel="canonical" href="filesystem.html" />
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-3782444-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+</head>
+<body>
+<a href="http://arcfn.com/"><img src="arc.gif" style="position:absolute; right:0px; top:0px; width:135px; height:125; border-style: none" title="Arc de Triomphe under construction.  From English
+Illustrated Magazine."/></a>
+<div class="links">Previous: <a href="io.html">I/O in the Arc language</a>
+Up: <a href="index-2.html">Contents</a>
+Next: <a href="threading.html">Threads</a>
+</div>
+<h1 class="links">Arc: File system operations</h1>
+Arc has operations to manipulate files and directories.  These operations do not all work on non-Unix systems.  The I/O operations are closely related to MzScheme's <a
+href='http://download.plt-scheme.org/doc/mzscheme/mzscheme-Z-H-11.html#node_chap_11'>I/O
+operations</a>.
+<p>See <a href='io.html'>I/O in Arc</a> for information on reading and writing files.
+<h2></h2>
+<p><table class='arc'>
+  <tr>
+    <td class='arc'><a name='ensure-dir'></a>
+<a target='CODE' href='http://files.arcfn.com/src/ensure-dir.html'><img src='code.gif' title='code'/></a>
+<img src='proc.gif' title='Procedure'/>
+<a class='op' href='http://practical-scheme.net/wiliki/arcxref?ensure-dir'>ensure-dir</a> <span class='args'>path</span>
+    <div class='desc'>Creates the specified directory, if it doesn't exist.</div>
+    </td>
+    <td class='arc'><pre>
+&gt;(ensure-dir "newdir")
+nil</pre>
+  </td></tr>
+  <tr>
+    <td class='arc'><a name='dir'></a>
+<a target='CODE' href='http://files.arcfn.com/src/dir.html'><img src='code.gif' title='code'/></a>
+<img src='foundation.gif' title='Foundation'/>
+<a class='op' href='http://practical-scheme.net/wiliki/arcxref?dir'>dir</a> <span class='args'>path</span>
+    <div class='desc'>Returns the directory contents as a list.</div>
+    </td>
+    <td class='arc'><pre>
+&gt;(dir "mydir")
+("foo" "bar")</pre>
+  </td></tr>
+  <tr>
+    <td class='arc'><a name='dir-exists'></a>
+<a target='CODE' href='http://files.arcfn.com/src/dir-exists.html'><img src='code.gif' title='code'/></a>
+<img src='foundation.gif' title='Foundation'/>
+<img src='predicate.gif' title='Predicate'/>
+<a class='op' href='http://practical-scheme.net/wiliki/arcxref?dir-exists'>dir-exists</a> <span class='args'>path</span>
+    <div class='desc'>Tests if a directory exists.</div>
+    </td>
+    <td class='arc'><pre>
+&gt;(dir-exists "mydir")
+"mydir"</pre>
+  </td></tr>
+  <tr>
+    <td class='arc'><a name='file-exists'></a>
+<a target='CODE' href='http://files.arcfn.com/src/file-exists.html'><img src='code.gif' title='code'/></a>
+<img src='foundation.gif' title='Foundation'/>
+<img src='predicate.gif' title='Predicate'/>
+<a class='op' href='http://practical-scheme.net/wiliki/arcxref?file-exists'>file-exists</a> <span class='args'>path</span>
+    <div class='desc'>Tests if a file exists.</div>
+    </td>
+    <td class='arc'><pre>
+&gt;(file-exists "mydir")
+nil</pre>
+  </td></tr>
+  <tr>
+    <td class='arc'><a name='rmfile'></a>
+<a target='CODE' href='http://files.arcfn.com/src/rmfile.html'><img src='code.gif' title='code'/></a>
+<img src='foundation.gif' title='Foundation'/>
+<a class='op' href='http://practical-scheme.net/wiliki/arcxref?rmfile'>rmfile</a> <span class='args'>path</span>
+    <div class='desc'>Removes the specified file.</div>
+    </td>
+    <td class='arc'><pre>
+&gt;(rmfile "oldfile")
+nil
+</pre>
+  </td></tr>
+</table>
+<p>
+Copyright 2008 Ken Shirriff.
+</body>
+
+<!-- Mirrored from files.arcfn.com/doc/filesystem.html by HTTrack Website Copier/3.x [XR&CO'2010], Wed, 18 Jul 2012 22:35:59 GMT -->
+</html>

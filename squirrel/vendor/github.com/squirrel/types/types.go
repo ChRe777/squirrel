@@ -73,3 +73,7 @@ func (c *Cell) IsErr() bool {
 	return c.IsAtom() && (c.Type.Atom == ERROR)
 }
 
+// IsTagged checks, if cell is tagged with string t			// TODO: Check tag with SYMBOL
+func (c *Cell) IsTagged(t string) bool {
+	return c.Tag != nil && c.Tag == t
+}
