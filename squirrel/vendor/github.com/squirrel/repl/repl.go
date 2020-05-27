@@ -11,7 +11,6 @@ import(
 	"github.com/squirrel/types"
 	"github.com/squirrel/parser"
 	"github.com/squirrel/builtin"
-//	"github.com/squirrel/generator"
 	"github.com/squirrel/evaluator"
 )
 

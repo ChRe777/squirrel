@@ -106,9 +106,10 @@ func eval(e, a *types.Cell) *types.Cell {
 	//		e.g. ( (func (x) (car x)) '(1 2) ) -> 1
 	if caar(e).Equal(builtin.FUNC) {
 	
+		isMacro := false
 		f := caar(e)
 		if f.IsTagged(builtin.ID_MAC) {
-			fmt.Printf("\n\n !!evaluator - func calls - I AM A MACROS !! \n\n ")
+			isMacro = true
 		}
 	
 		ee := caddar(e)			// (no x)
@@ -116,11 +117,14 @@ func eval(e, a *types.Cell) *types.Cell {
 		ys := evlis(cdr(e), a)	// ((1 2))	= value
 		aa := pair(xs, ys)		// env = ((x (1 2)))
 		aa = append(aa, a)		// add to env
+				
+		r := eval(ee, aa)
+				
+		if isMacro {
+			return eval(r, aa)
+		}
 		
-		fmt.Printf("evaluator - func calls - xs: %v ys: %v aa:%v \n", xs, ys, aa)
-		fmt.Printf("evaluator - func calls - e:% v, ee: %v \n", e, ee)
-		
-		return eval(ee, aa)
+		return r
 	}
 		
 	return builtin.Err("Wrong expression")
@@ -132,15 +136,17 @@ func eval(e, a *types.Cell) *types.Cell {
 func evdef(e, a *types.Cell) *types.Cell {
 	name := cadr(e); params_body := cdr(cdr(e))
 	k := name
-	v := cons(builtin.FUNC, params_body)
+	v := cons(builtin.FUNC, params_body); builtin.Tag(v, builtin.ID_FUNC)
 	a = addEnv(k, v, a)
 	return eval(k, a)
 }
 
+//  (def {name} {params} {body})
+//  (var {name} (func {params} {body}) )
 func evmac(e, a *types.Cell) *types.Cell {
 	name := cadr(e); params_body := cdr(cdr(e))
 	k := name
-	v := cons(builtin.MAC, params_body)
+	v := cons(builtin.MAC, params_body); builtin.Tag(v, builtin.ID_MAC)
 	a = addEnv(k, v, a)
 	return eval(k, a)
 }
@@ -222,9 +228,7 @@ func evfunc(e, a *types.Cell) *types.Cell {
 		return builtin.Err("reference to undefined identifier: %v", car(e)) // TODO: Rename error message
 	}
 	ee := cons(name, cdr(e))
-	
-	fmt.Printf("evfunc - ee: %v", ee)
-	
+	//fmt.Printf("evfunc - ee: %v", ee)
 	return eval(ee, a)
 }
 

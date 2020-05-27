@@ -5,12 +5,6 @@ import (
 	"github.com/squirrel/generator"
 )
 
-/*
-PROCEDURE quote*(c: cell): cell;
-BEGIN
-	RETURN cons(atom("QUOTE"), cons(c, EMPTY));
-END quote;
-*/
 // Quote evaluates to himself
 func Quote(c *types.Cell) *types.Cell {
 	return generator.Cons(QUOTE, generator.Cons(c, NIL))

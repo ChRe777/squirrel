@@ -33,71 +33,60 @@ func sprintAtom(c *Cell) string {
 
 func sprintCons(c *Cell) string {
 
-	// Print dotted pair e.g. (a . b)
-	sprintDottedPair := func(c *Cell) string {
-		
-		var buffer bytes.Buffer
-		buffer.WriteRune(LPAREN)
-		
-		buffer.WriteString(SprintCell(c.Car))
-		if c.Cdr.Val != NIL {
-			buffer.WriteRune(SPACE)
-			buffer.WriteRune(DOT)
-			buffer.WriteRune(SPACE)
-			buffer.WriteString(SprintCell(c.Cdr))
-		}
-		
-		buffer.WriteRune(RPAREN)
-		return buffer.String()
-	}
-	
-	// Print list e.g. (1 2 3)
-	//
-	// 	[ ]-->[ ]-->[ ]-->nil
-	// ( 1     2     3 )
-	//
-	sprintList := func(c *Cell) string {
-	
-		var buffer bytes.Buffer
-	
-		printCell := func(cc *Cell) *Cell {
-			buffer.WriteString(SprintCell(cc.Car))
-			cc = cc.Cdr
-			if cc.Cdr != nil {
-				buffer.WriteRune(SPACE)
-			}
-			return cc
-		}
-	
-		buffer.WriteRune(LPAREN)
-		cc := c
-		for ;cc.Cdr != nil; {
-			cc = printCell(cc)
-		}
-		buffer.WriteRune(RPAREN)
-		
-		return buffer.String()
+	if c.Tag != nil {
+		return fmt.Sprintf("%v", c.Tag)		// mac or func
 	}
 
-
-	
-	// Dotted Pair
-	// -------------------------
-	// (cons a b)   -> (a . b)
-	// (cons (1) b) -> ((1) .b)
-	
 	if c.Cdr.IsAtom() {
 		return sprintDottedPair(c)
 	}
 	
-	//  List e.g. (1 2 3)
-	//
-	//	CONS	ATOM  
-	//  [o|o]-->[nil] Symbol
-	//   |
-	//   v
-	//   1 ATOM
-	
 	return sprintList(c)
 }
 
+// Print list e.g. (1 2 3)
+//
+// 	[ ]-->[ ]-->[ ]-->nil
+// ( 1     2     3 )
+//
+func sprintList(c *Cell) string {
+
+	var buffer bytes.Buffer
+
+	printCell := func(cc *Cell) *Cell {
+		buffer.WriteString(SprintCell(cc.Car))
+		cc = cc.Cdr
+		if cc.Cdr != nil {
+			buffer.WriteRune(SPACE)
+		}
+		return cc
+	}
+
+	buffer.WriteRune(LPAREN)
+	cc := c
+	for ;cc.Cdr != nil; {
+		cc = printCell(cc)
+	}
+	buffer.WriteRune(RPAREN)
+	
+	return buffer.String()
+}
+
+// Print dotted pair e.g. (a . b)
+// e.g.
+//		(cons a b)   -> (a . b)
+// 		(cons (1) b) -> ((1) .b)
+func sprintDottedPair(c *Cell) string {
+	
+	var buffer bytes.Buffer
+	buffer.WriteRune(LPAREN)
+	
+	buffer.WriteString(SprintCell(c.Car))
+	if c.Cdr.Val != NIL {
+		buffer.WriteRune(SPACE); buffer.WriteRune(DOT); buffer.WriteRune(SPACE)
+		buffer.WriteString(SprintCell(c.Cdr))
+	}
+	
+	buffer.WriteRune(RPAREN)
+	return buffer.String()
+}
