@@ -91,13 +91,12 @@ func eval(e, a *types.Cell) *types.Cell {
 	// and the function itself, onto the environment, and then calling eval on an
 	// expression with the inner lambda expression substituted for the label expression.
 	if caar(e).Equal(builtin.LABEL) {
-		ee    := cons(caddar(e), cdr(e))
-		label := cadar(e)
-		fn    := caddar(e)		
-		aa    := cons(list(label, fn), a)  // ( (no (func (x) (eq x nil)) (a 1) (b 2) )
 		
-		fmt.Printf("evlabel - ee: %v \n ")
+		label := cadar(e); fn := caddar(e)
 		
+		ee := cons(caddar(e), cdr(e))		
+		aa := cons(list(label, fn), a)  // ( (no (func (x) (eq x nil)) (a 1) (b 2) )
+				
 		return eval(ee, aa)
 	} 
 	
@@ -106,21 +105,13 @@ func eval(e, a *types.Cell) *types.Cell {
 	//		e.g. ( (func (x) (car x)) '(1 2) ) -> 1
 	if caar(e).Equal(builtin.FUNC) {
 	
-		isMacro := false
-		f := caar(e)
-		if f.IsTagged(builtin.ID_MAC) {
-			isMacro = true
-		}
-	
-		ee := caddar(e)			// (no x)
-		xs := cadar(e)			// (x)		= key
-		ys := evlis(cdr(e), a)	// ((1 2))	= value
-		aa := pair(xs, ys)		// env = ((x (1 2)))
-		aa = append(aa, a)		// add to env
+		k := cadar(e); v := evlis(cdr(e), a)	
+		
+		ee := caddar(e)
+		aa := append(pair(k, v), a)		
 				
-		r := eval(ee, aa)
-				
-		if isMacro {
+		r := eval(ee, aa)		// will expand backquotes and unquotes
+		if isMac(e) {
 			return eval(r, aa)
 		}
 		
@@ -130,24 +121,31 @@ func eval(e, a *types.Cell) *types.Cell {
 	return builtin.Err("Wrong expression")
 }
 
+// isMac checks if caar(e) is tagged as macro
+// e.g.
+//		e = ((func (x) (no x))
+//		caar(e) -> func 
+func isMac(e *types.Cell) bool {
+	return caar(e).IsTagged(builtin.ID_MAC)
+}
+
 //  (def {name} {params} {body})
 //  (var {name} (func {params} {body}) )
-
 func evdef(e, a *types.Cell) *types.Cell {
-	name := cadr(e); params_body := cdr(cdr(e))
-	k := name
-	v := cons(builtin.FUNC, params_body); builtin.Tag(v, builtin.ID_FUNC)
-	a = addEnv(k, v, a)
+	name := cadr(e); params_body := cddr(e)
+	k := name; v := cons(builtin.FUNC, params_body)
+	builtin.Tag(v, builtin.ID_FUNC)
+	a = addEnv(list(k, v), a)
 	return eval(k, a)
 }
 
 //  (def {name} {params} {body})
 //  (var {name} (func {params} {body}) )
 func evmac(e, a *types.Cell) *types.Cell {
-	name := cadr(e); params_body := cdr(cdr(e))
-	k := name
-	v := cons(builtin.MAC, params_body); builtin.Tag(v, builtin.ID_MAC)
-	a = addEnv(k, v, a)
+	name := cadr(e); params_body := cddr(e)
+	k := name; v := cons(builtin.MAC, params_body)
+	builtin.Tag(v, builtin.ID_MAC)
+	a = addEnv(list(k, v), a)
 	return eval(k, a)
 }
 
@@ -166,9 +164,8 @@ func evmac(e, a *types.Cell) *types.Cell {
 //		(let xs '(1 2 3) (car xs)) ->  1
 //		(let {key} {val} {body} )
 func evlet(e, a *types.Cell) *types.Cell {
-	k := cadr(e); v := eval(caddr(e), a)	
-	ee := car(cdr(cdr(cdr(e))))	
-	aa := cons(list(k, v), a)	
+	k  := cadr(e) ;  v := eval(caddr(e), a)	
+	ee := cdddr(e); aa := cons(list(k, v), a)	
 	return eval(ee, aa)
 }
 
@@ -193,7 +190,7 @@ func evenv(e, a *types.Cell) *types.Cell {
 //	)
 func evset(e, a *types.Cell) *types.Cell {
 	k := cadr(e); v := eval(caddr(e), a)
-	a = addEnv(k, v, a)
+	a = addEnv(list(k, v), a)
 	return eval(k, a)
 }
 
