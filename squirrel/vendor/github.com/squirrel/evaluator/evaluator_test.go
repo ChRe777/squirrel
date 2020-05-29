@@ -114,7 +114,7 @@ func TestEvalDef(t *testing.T) {
 		got := eval(spec.e2, envBuiltin)
 		
 		if got.NotEqual(spec.want) {
-			t.Errorf("eval var e: %v - got: %v, want: %v", spec.e2, got, spec.want)
+			t.Errorf("eval def e: %v - got: %v, want: %v", spec.e2, got, spec.want)
 		}
 	}
 	
@@ -143,7 +143,35 @@ func TestEvalMac(t *testing.T) {
 		got := eval(spec.e2, envBuiltin)
 		
 		if got.NotEqual(spec.want) {
-			t.Errorf("eval var e: %v - got: %v, want: %v", spec.e2, got, spec.want)
+			t.Errorf("eval mac e: %v - got: %v, want: %v", spec.e2, got, spec.want)
+		}
+	}
+	
+}
+
+func TestEvalLet(t *testing.T) {
+
+	p := func(s string) *types.Cell {
+		return parser.Parse([]byte(s))
+	}
+	
+	s := "((t t) (nil nil))"
+	envBuiltin := p(s)
+
+	specs := []struct {
+		e		*types.Cell
+		want 	*types.Cell
+	} {
+		{ p("(let xs '(1 2) (no  xs))" ), builtin.NIL  		},
+		{ p("(let ys '(1 2) (car ys))" ), builtin.Num("1")  },
+
+	}
+	
+	for _, spec := range specs {
+		got := eval(spec.e, envBuiltin)
+		
+		if got.NotEqual(spec.want) {
+			t.Errorf("eval let e: %v - got: %v, want: %v", spec.e, got, spec.want)
 		}
 	}
 	

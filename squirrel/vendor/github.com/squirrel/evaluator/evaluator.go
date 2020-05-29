@@ -169,7 +169,10 @@ func evmac(e, a *types.Cell) *types.Cell {
 //		(let {key} {val} {body} )
 func evlet(e, a *types.Cell) *types.Cell {
 	k  := cadr(e) ;  v := eval(caddr(e), a)	
-	ee := cdddr(e); aa := cons(list(k, v), a)	
+	ee := car(cdddr(e)); aa := cons(list(k, v), a)	
+	
+	fmt.Printf("evlet e: %v ee:%v, aa: %v \n", e, ee, aa)
+	
 	return eval(ee, aa)
 }
 
