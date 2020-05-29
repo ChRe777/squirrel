@@ -58,7 +58,7 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(builtin.REP  ): return rep  (eval(cadr(e), a))
 			
 			// TEST - REFACTOR
-			case c.Equal(builtin.Sym("var")): return evset(e, a)		
+			case c.Equal(builtin.Sym("var")): return evvar(e, a)		
 			case c.Equal(builtin.Sym("env")): return evenv(e, a)
 			case c.Equal(builtin.Sym("let")): return evlet(e, a)
 			case c.Equal(builtin.Sym("def")): return evdef(e, a)
@@ -129,8 +129,10 @@ func isMac(e *types.Cell) bool {
 	return caar(e).IsTagged(builtin.ID_MAC)
 }
 
-//  (def {name} {params} {body})
-//  (var {name} (func {params} {body}) )
+// evdef eval 'def and creates a function in environment
+// e.g.
+//  	(def {name} {params} {body})
+//  	(var {name} (func {params} {body}) )
 func evdef(e, a *types.Cell) *types.Cell {
 	name := cadr(e); params_body := cddr(e)
 	k := name; v := cons(builtin.FUNC, params_body)
@@ -139,8 +141,10 @@ func evdef(e, a *types.Cell) *types.Cell {
 	return eval(k, a)
 }
 
-//  (def {name} {params} {body})
-//  (var {name} (func {params} {body}) )
+// evmac eval 'mac and create a macros in environment
+// 	e.g.
+//	 	(mac {name} {params} {body})
+//  	(var {name} (mac {params} {body}) )
 func evmac(e, a *types.Cell) *types.Cell {
 	name := cadr(e); params_body := cddr(e)
 	k := name; v := cons(builtin.MAC, params_body)
@@ -159,7 +163,7 @@ func evmac(e, a *types.Cell) *types.Cell {
 // (func (x) (car x))
 // (func {params} {body})
 
-// evlet eval let see example below
+// evlet eval 'let, see example below
 // 	e.g. 
 //		(let xs '(1 2 3) (car xs)) ->  1
 //		(let {key} {val} {body} )
@@ -182,13 +186,13 @@ func evenv(e, a *types.Cell) *types.Cell {
 //		(t t)
 // 	)
 //
-// 	> (set a 1) ->
+// 	> (var a 1) ->
 //
 // 	env = (
 //		(a 1)
 //		(t t)
 //	)
-func evset(e, a *types.Cell) *types.Cell {
+func evvar(e, a *types.Cell) *types.Cell {
 	k := cadr(e); v := eval(caddr(e), a)
 	a = addEnv(list(k, v), a)
 	return eval(k, a)

@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	//"fmt"
+	"fmt"
 )
 
 import (
@@ -38,22 +38,19 @@ type fnCell func(e *types.Cell, a *types.Cell) *types.Cell
 //		) 
 //		-> (list 1 2)
 func backquote(e *types.Cell, a *types.Cell) *types.Cell {
-  //	fmt.Printf("backquote - e: %v \n", e)
     x := cadr(e)
-  //  fmt.Printf("backquote - x: %v \n", x)
-    y := map_(expand, x, a)
+    y := mapEx(expand, x, a)
     return y
 }
 
 // mapEx - maps through a element in list and expand each element
-// if the element is wrapped with (unquote) the element will be
-// evaluated
-func map_(fn fnCell, e *types.Cell, a *types.Cell) *types.Cell {
+// if the element is wrapped with (unquote) the element will be evaluated
+func mapEx(fn fnCell, e *types.Cell, a *types.Cell) *types.Cell {
 	if no(e).Equal(builtin.T) {
 		return builtin.NIL
 	} else {
 		x := builtin.Car(e); xs := builtin.Cdr(e)			
-		return builtin.Cons(fn(x, a), map_(fn, xs, a))
+		return builtin.Cons(fn(x, a), mapEx(fn, xs, a))
 	}
 }
 
@@ -93,7 +90,7 @@ func unquote(e *types.Cell, a *types.Cell) *types.Cell {
 //		`((+ 1 2) ,(+ 3 4) ,@(list 5 6))
 // 		((+ 1 2) 7 5 6)
 func unquoteSplicing(e *types.Cell, a *types.Cell) *types.Cell {
-	// TODO
+	fmt.Printf("unquoteSplicing - e:%v \n", e)
 	x := cadr(e); y := eval(x, a)
 	return y
 }

@@ -167,6 +167,7 @@ func GetSym() {
 			if '@' == Ch2 {
 				Sym = UnquoteSplicing
 				NextCh()
+				fmt.Println("Scanner - UnquoteSplicing")
 			} else {
 				Sym = Unquote
 			}
