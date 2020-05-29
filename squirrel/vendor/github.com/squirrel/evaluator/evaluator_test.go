@@ -19,11 +19,11 @@ func TestEvalAtom(t *testing.T) {
 		e 	 *types.Cell
 		want *types.Cell
 	}{
-		{ builtin.Sym("t")		, builtin.Sym("t") 	 },
-		{ builtin.Sym("nil")	, builtin.Sym("nil") },
-		{ builtin.Num("1")		, builtin.Num("1")   },
-		{ builtin.Str("a")		, builtin.Str("a")   },
-		{ builtin.Sym("b")		, builtin.Err("reference to undefined identifier: b") },
+		{ builtin.Sym("t"  ), builtin.Sym("t"  ) },
+		{ builtin.Sym("nil"), builtin.Sym("nil") },
+		{ builtin.Num("1"  ), builtin.Num("1"  ) },
+		{ builtin.Str("a"  ), builtin.Str("a"  ) },
+		{ builtin.Sym("b"  ), builtin.Err("reference to undefined identifier: b") },
 	}
 
 	for _, spec := range specs {
@@ -75,7 +75,7 @@ func TestEvalVar(t *testing.T) {
 		e		*types.Cell
 		want 	*types.Cell
 	} {
-		{ p("(var a 1)		"), p("(a 1)")  	},
+		{ p("(var a 1)		"), p("(a 1)"    )  },
 		{ p("(var b '(1 2))	"), p("(b (1 2))")  },
 	}
 	
@@ -106,7 +106,36 @@ func TestEvalDef(t *testing.T) {
 		want 	*types.Cell
 	} {
 		{ p("(def foo(x) (no x))")	, p("(foo '(1 2))")	, builtin.NIL  		},
-		{ p("(def bar(x) (no x))")	, p("(bar '())")	, builtin.Sym("t")  },
+		{ p("(def bar(x) (no x))")	, p("(bar '())"   )	, builtin.Sym("t")  },
+	}
+	
+	for _, spec := range specs {
+			   eval(spec.e1, envBuiltin)
+		got := eval(spec.e2, envBuiltin)
+		
+		if got.NotEqual(spec.want) {
+			t.Errorf("eval var e: %v - got: %v, want: %v", spec.e2, got, spec.want)
+		}
+	}
+	
+}
+
+func TestEvalMac(t *testing.T) {
+
+	p := func(s string) *types.Cell {
+		return parser.Parse([]byte(s))
+	}
+	
+	s := "((t t) (nil nil))"
+	envBuiltin := p(s)
+
+	specs := []struct {
+		e1		*types.Cell
+		e2		*types.Cell
+		want 	*types.Cell
+	} {
+		{ p("(mac foo(x)   `(no ,x))"     )	, p("(foo '(1 2))")	, builtin.NIL  	},
+		{ p("(mac bar(x y) `(list ,x ,y))")	, p("(bar 1 2)")	, p("(1 2)")  	},
 	}
 	
 	for _, spec := range specs {
