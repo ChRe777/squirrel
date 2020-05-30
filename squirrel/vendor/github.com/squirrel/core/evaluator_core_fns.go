@@ -1,8 +1,8 @@
-package evaluator
+package core
 
 import (
 	"github.com/squirrel/types"
-	"github.com/squirrel/builtin"
+	"github.com/squirrel/core"
 )
 
 // 7 primitive core operators
@@ -26,9 +26,9 @@ END atom;
 */
 func atom(x *types.Cell) *types.Cell {
 	if x.IsAtom() {
-		return builtin.T
+		return core.T
 	} else {
-		return builtin.NIL
+		return core.NIL
 	}
 }
 
@@ -45,9 +45,9 @@ END eq;
 */
 func eq(x, y *types.Cell) *types.Cell {	
 	if x.Equal(y) {
-	 	return builtin.T	
+	 	return core.T	
 	}
-	return builtin.NIL 	// FALSE
+	return core.NIL 	// FALSE
 }
 
 /*
@@ -62,13 +62,13 @@ BEGIN
 END car;
 */
 func car(e *types.Cell) *types.Cell {
-	if e.Equal(builtin.NIL) {
-		return builtin.NIL
+	if e.Equal(core.NIL) {
+		return core.NIL
 	} else {
 		if e.IsCons() {
-			return builtin.Car(e) 
+			return core.Car(e) 
 		} else {
-			return builtin.Err("Can't take car of %v", e)
+			return core.Err("Can't take car of %v", e)
 		}
 	}
 }
@@ -87,13 +87,13 @@ END cdr;
 */
 func cdr(e *types.Cell) *types.Cell {
 	
-	if e.Equal(builtin.NIL) {
-		return builtin.NIL
+	if e.Equal(core.NIL) {
+		return core.NIL
 	} else {
 		if e.IsCons() {
-			return builtin.Cdr(e)
+			return core.Cdr(e)
 		} else {
-			return builtin.Err("Can't take cdr of %v", e)
+			return core.Err("Can't take cdr of %v", e)
 		}
 	}
 	
@@ -110,7 +110,7 @@ BEGIN
 END cons;
 */
 func cons(x, y *types.Cell) *types.Cell {
-	return builtin.Cons(x, y)
+	return core.Cons(x, y)
 }
 
 /*	
@@ -127,13 +127,13 @@ END cond;
 func cond(x *types.Cell) *types.Cell {
 
 	if x.IsCons() {
-		if caar(x).Equal(builtin.T) {
+		if caar(x).Equal(core.T) {
 			return cadar(x)
 		} else {
 			return cond(cdr(x))
 		}
 	} else {
-		return builtin.Err("x must be a list of form ((p1 e1) (p2 e2) .. (pn en))")
+		return core.Err("x must be a list of form ((p1 e1) (p2 e2) .. (pn en))")
 	}
 	
 }

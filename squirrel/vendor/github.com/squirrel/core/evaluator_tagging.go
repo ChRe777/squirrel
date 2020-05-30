@@ -6,7 +6,7 @@ import (
 
 import (
 	"github.com/squirrel/types"
-	"github.com/squirrel/builtin"
+	"github.com/squirrel/core"
 )
 
 // Paul Graham add 2-3 new primitive core operators in Arc
@@ -39,14 +39,14 @@ func isTagged(e *types.Cell) *types.Cell {
 	if e.IsCons() {
 		x := car(e)
 		if x.IsCons() && 
-		    caar(e).Equal(builtin.QUOTE) && 
-		   cadar(e).Equal(builtin.TAGGED) {
-			return builtin.T
+		    caar(e).Equal(core.QUOTE) && 
+		   cadar(e).Equal(core.TAGGED) {
+			return core.T
 		} else {
-			return builtin.NIL
+			return core.NIL
 		}
 	} else {
-		return builtin.NIL
+		return core.NIL
 	}
 	
 }
@@ -62,8 +62,8 @@ BEGIN
 END tag;
 */
 func tag(t, r *types.Cell) *types.Cell {
-	tc := cons(builtin.QUOTE, cons(builtin.TAGGED, builtin.NIL))
-	return cons(tc, cons(t, cons(r, builtin.NIL)))
+	tc := cons(core.QUOTE, cons(core.TAGGED, core.NIL))
+	return cons(tc, cons(t, cons(r, core.NIL)))
 }
 
 /*
@@ -78,10 +78,10 @@ END type;
 */
 func type_(e *types.Cell) *types.Cell {
 	if e.IsCons() {
-		return builtin.CONS
+		return core.CONS
 	} else {
 		// TODO: ???
-		return builtin.Sym(fmt.Sprintf("%v", e.Type.Atom))
+		return core.Sym(fmt.Sprintf("%v", e.Type.Atom))
 	}
 }
 
@@ -107,7 +107,7 @@ func type0(e *types.Cell) *types.Cell {
 		return cadr(e)
 	}
 	
-	if isTagged(e).Equal(builtin.T) {
+	if isTagged(e).Equal(core.T) {
 		return tagType(e)
 	} else {
 		return type_(e)
@@ -126,7 +126,7 @@ BEGIN
 END rep;
 */
 func rep(e *types.Cell) *types.Cell {
-	if isTagged(e).Equal(builtin.T) {
+	if isTagged(e).Equal(core.T) {
 		return caddr(e)
 	} else {
 		return cadr(e)

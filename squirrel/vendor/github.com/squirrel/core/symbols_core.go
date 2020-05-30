@@ -23,12 +23,21 @@ const (
 	ID_TYPE0  = "type"
 	ID_REP    = "rep"
 	
-	// Ext
+	// Ext ??
 	ID_LABEL  = "label"		// name
-	ID_FUNC   = "func"		// was LAMBDA
-	ID_MAC    = "mac"
+	
+	// Bool
 	ID_T	  = "t"
 	ID_NIL	  = "nil"
+	
+	// 
+	ID_VAR	= "var"
+	ID_ENV	= "env"
+	ID_LET	= "let"
+	ID_DEF	= "def"
+	ID_FUNC = "func"		// was LAMBDA
+	ID_MAC  = "mac"
+
 )
 
 // Core symbols of language
@@ -52,11 +61,18 @@ var (
 	T 			= Sym(ID_T) 		// TRUE
 	NIL 		= Sym(ID_NIL) 		// NIL or FALSE
 	
-	TAG 		= Sym(ID_TAG)
-	TAGGED 		= Sym(ID_TAGGED)
-	SYM 		= Sym(ID_SYM)
-	TYPE0 		= Sym(ID_TYPE0)		// TODO: Better name - type is reserved word in GO
-	REP 		= Sym(ID_REP)	
+	TAG 	= Sym(ID_TAG)
+	TAGGED 	= Sym(ID_TAGGED)
+	SYM 	= Sym(ID_SYM)
+	TYPE0 	= Sym(ID_TYPE0)		// TODO: Better name - type is reserved word in GO
+	REP 	= Sym(ID_REP)	
+	
+	VAR = Sym(ID_VAR)
+	ENV = Sym(ID_ENV)
+	LET = Sym(ID_LET)
+	DEF = Sym(ID_DEF)
+	//MAC = Sym(ID_MAC)
+
 )
 
 

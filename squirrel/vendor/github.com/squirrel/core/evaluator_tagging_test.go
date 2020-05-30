@@ -6,16 +6,16 @@ import (
 )
 
 import (
-	"github.com/squirrel/builtin"
+	"github.com/squirrel/core"
 )
 
 func TestIsTagged(t *testing.T) {
 
-	e := tag(builtin.Sym("mac"), 
-	         builtin.Sym("foo"))
+	e := tag(core.Sym("mac"), 
+	         core.Sym("foo"))
 
 	got := isTagged(e)
-	want := builtin.T
+	want := core.T
 	
 	if got.NotEqual(want) {
 		t.Errorf("isTagged failed - got:%v, want:%v", got, want)
@@ -25,8 +25,8 @@ func TestIsTagged(t *testing.T) {
 
 func TestTag(t *testing.T) {
 
-	mac := builtin.Sym("mac")
-	exp := builtin.Sym("foo")
+	mac := core.Sym("mac")
+	exp := core.Sym("foo")
 
 	got := fmt.Sprintf("%v", tag(mac, exp))
 	want := "((quote tagged) mac foo)"
@@ -39,8 +39,8 @@ func TestTag(t *testing.T) {
 
 func TestType0(t *testing.T) {
 
-	mac := builtin.Sym("mac")
-	exp := builtin.Sym("foo")
+	mac := core.Sym("mac")
+	exp := core.Sym("foo")
 	
 	got := type0(tag(mac, exp))
 	want := mac
@@ -53,8 +53,8 @@ func TestType0(t *testing.T) {
 
 func TestRep(t *testing.T) {
 
-	mac := builtin.Sym("mac")
-	exp := builtin.Sym("foo")
+	mac := core.Sym("mac")
+	exp := core.Sym("foo")
 	
 	got := rep(tag(mac, exp))
 	want := exp

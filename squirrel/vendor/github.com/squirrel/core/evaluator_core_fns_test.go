@@ -3,7 +3,7 @@ package evaluator
 import (
 	"testing"
 	"github.com/squirrel/types"
-	"github.com/squirrel/builtin"
+	"github.com/squirrel/core"
 	"github.com/squirrel/generator"
 )
 
@@ -14,10 +14,10 @@ func quote(x *types.Cell) *types.Cell {
 */
 func TestQuote(t *testing.T) {
 	
-	e := builtin.Quote(builtin.Sym("a"))
+	e := core.Quote(core.Sym("a"))
 		
 	got  := quote(e)
-	want := builtin.Sym("a")	
+	want := core.Sym("a")	
 	
 	if got.NotEqual(want) {
 		t.Errorf("Quote failed, got: %v, want: %v", got, want)
@@ -39,8 +39,8 @@ func TestAtom(t *testing.T) {
 		expr *types.Cell
 		want *types.Cell
 	} {
-		{ builtin.Sym("a")	, builtin.T },
-		{ builtin.NIL 		, builtin.T },
+		{ core.Sym("a")	, core.T },
+		{ core.NIL 		, core.T },
 	}
 	
 	for _, spec := range specs {
@@ -69,8 +69,8 @@ func TestEq(t *testing.T) {
 		y		*types.Cell
 		want 	*types.Cell
 	}{
-		{builtin.Sym("a"), builtin.Sym("a"), builtin.T  },
-		{builtin.Sym("a"), builtin.Sym("b"), builtin.NIL},
+		{core.Sym("a"), core.Sym("a"), core.T  },
+		{core.Sym("a"), core.Sym("b"), core.NIL},
 		// ... TODO MANY TESTS ...
 	}
 
@@ -103,11 +103,11 @@ func TestCar(t *testing.T) {
 		x		*types.Cell
 		want 	*types.Cell
 	}{
-		{builtin.Sym("a")	, generator.Error("Can't take car of a")},
+		{core.Sym("a")	, generator.Error("Can't take car of a")},
 		// (car nil) -> nil
-		{builtin.NIL   		, builtin.NIL},
+		{core.NIL   		, core.NIL},
 		// (car (a b)) -> a
-		{builtin.List(builtin.Sym("a"), builtin.Sym("b")), builtin.Sym("a")},
+		{core.List(core.Sym("a"), core.Sym("b")), core.Sym("a")},
 	}
 	
 	for _, spec := range specs {
@@ -126,13 +126,13 @@ func TestCdr(t *testing.T) {
 		want 	*types.Cell
 	}{
 		// (car 'a)  -> error
-		{builtin.Sym("a")	, generator.Error("Can't take cdr of a")},
+		{core.Sym("a")	, generator.Error("Can't take cdr of a")},
 		
 		// (car nil) -> nil
-		{builtin.NIL   		, builtin.NIL},
+		{core.NIL   		, core.NIL},
 		
 		// (car (a b)) -> a
-		{builtin.List(builtin.Sym("a"), builtin.Sym("b")), builtin.List(builtin.Sym("b"))},
+		{core.List(core.Sym("a"), core.Sym("b")), core.List(core.Sym("b"))},
 	}
 	
 	for _, spec := range specs {
@@ -163,8 +163,8 @@ func TestCons(t *testing.T) {
 		y       *types.Cell
 		want 	*types.Cell
 	}{
-		{builtin.Sym("a"), builtin.NIL, 	 builtin.List(builtin.Sym("a"))},
-		{builtin.Sym("a"), builtin.Sym("b"), generator.Cons(builtin.Sym("a"), builtin.Sym("b"))},
+		{core.Sym("a"), core.NIL, 	 core.List(core.Sym("a"))},
+		{core.Sym("a"), core.Sym("b"), generator.Cons(core.Sym("a"), core.Sym("b"))},
 	}
 	
 	for _, spec := range specs {
@@ -206,11 +206,11 @@ func TestCond(t *testing.T) {
 	)
 
 */
-	e := builtin.List(
-		builtin.List(builtin.Sym("nil"), builtin.Sym("a")),
-		builtin.List(builtin.Sym("t")  , builtin.Sym("b")),
+	e := core.List(
+		core.List(core.Sym("nil"), core.Sym("a")),
+		core.List(core.Sym("t")  , core.Sym("b")),
 	)
-	want := builtin.Sym("b")
+	want := core.Sym("b")
 
 	specs := []struct{
 		x		*types.Cell

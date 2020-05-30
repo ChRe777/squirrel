@@ -6,6 +6,7 @@ import (
 
 import (
 	"github.com/squirrel/types"
+	"github.com/squirrel/core"
 	"github.com/squirrel/builtin"
 )
 
@@ -33,43 +34,41 @@ func eval(e, a *types.Cell) *types.Cell {
 		
 			// 7 core axioms - "The Roots of lisp" (McCarthy, Paul Graham)
 			//
-			case c.Equal(builtin.QUOTE): return quote(e) 
-			case c.Equal(builtin.ATOM ): return atom (eval(cadr(e), a))
-			case c.Equal(builtin.EQ   ): return eq   (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.CAR  ): return car  (eval(cadr(e), a))
-			case c.Equal(builtin.CDR  ): return cdr  (eval(cadr(e), a))
-			case c.Equal(builtin.CONS ): return cons (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.COND ): return evcon(cdr(e), a)
+			case c.Equal(core.QUOTE): return core.Quote(e) 
+			case c.Equal(core.ATOM ): return core.Atom(eval(builtin.Cadr(e), a))
+			case c.Equal(core.EQ   ): return core.Eq  (eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
+			case c.Equal(core.CAR  ): return core.Car (eval(builtin.Cadr(e), a))
+			case c.Equal(core.CDR  ): return core.Cdr (eval(builtin.Cadr(e), a))
+			case c.Equal(core.CONS ): return core.Cons(eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
+			case c.Equal(core.COND ): return evcon(core.Cdr(e), a)
 									
-			// 7 extension functions from "The Roots of Lisp" (McCarthy, Paul Graham)
-			//
-/*			case c.Equal(builtin.NO    ): return no    (eval(cadr(e), a))
-			case c.Equal(builtin.NOT   ): return not   (eval(cadr(e), a))
-			case c.Equal(builtin.AND   ): return and   (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.PAIR  ): return pair  (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.LIST  ): return list  (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.ASSOC ): return assoc (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.APPEND): return append(eval(cadr(e), a), eval(caddr(e), a))
-*/
+			// For macros
+			case c.Equal(core.BACKQUOTE): return core.Backquote(e, a) 
+
 			// 3 extra core axioms from Arc (Paul Graham)
 			//
-			case c.Equal(builtin.TAG  ): return tag  (eval(cadr(e), a), eval(caddr(e), a))
-			case c.Equal(builtin.TYPE0): return type0(eval(cadr(e), a))
-			case c.Equal(builtin.REP  ): return rep  (eval(cadr(e), a))
-			
+//			case c.Equal(core.TAG  ): return core.Tag  (eval(builtin.cadr(e), a), eval(builtin.caddr(e), a))
+//			case c.Equal(core.TYPE0): return core.Type0(eval(builtin.cadr(e), a))
+//			case c.Equal(core.REP  ): return core.Rep  (eval(builtin.cadr(e), a))		
+
 			// TEST - REFACTOR
-			case c.Equal(builtin.Sym("var")): return evvar(e, a)		
-			case c.Equal(builtin.Sym("env")): return evenv(e, a)
-			case c.Equal(builtin.Sym("let")): return evlet(e, a)
-			case c.Equal(builtin.Sym("def")): return evdef(e, a)
-			case c.Equal(builtin.Sym("mac")): return evmac(e, a)		
-				
-			// TEST
-			// e.g. (load "code.sqr")
-			// case c.Equal(builtin.Sym("load")): return evload(e, a)
+			case c.Equal(builtin.VAR): return evvar(e, a)		
+			case c.Equal(builtin.ENV): return evenv(e, a)
+			case c.Equal(builtin.LET): return evlet(e, a)
+			case c.Equal(builtin.DEF): return evdef(e, a)
+			case c.Equal(builtin.MAC): return evmac(e, a)
 			
-			// Test - MACRO SUPPORT
-			case c.Equal(builtin.BACKQUOTE): return backquote(e, a) 
+	
+			// 7 extension functions from "The Roots of Lisp" (McCarthy, Paul Graham)
+			//
+			case c.Equal(builtin.NO    ): return builtin.No    (eval(builtin.Cadr(e), a))
+			case c.Equal(builtin.NOT   ): return builtin.Not   (eval(builtin.Cadr(e), a))
+			case c.Equal(builtin.AND   ): return builtin.And   (eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
+			case c.Equal(builtin.PAIR  ): return builtin.Pair  (eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
+			case c.Equal(builtin.LIST  ): return builtin.List_ (eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
+			case c.Equal(builtin.ASSOC ): return builtin.Assoc (eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
+			case c.Equal(builtin.APPEND): return builtin.Append(eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
+
 			
 			// Extra axioms in environment e.g. (no '()) -> t
 			default: return evfunc(e, a)
@@ -90,7 +89,7 @@ func eval(e, a *types.Cell) *types.Cell {
 	// A "label" expression is evaluated by pushing a list of the function name
 	// and the function itself, onto the environment, and then calling eval on an
 	// expression with the inner lambda expression substituted for the label expression.
-	if caar(e).Equal(builtin.LABEL) {
+	if caar(e).Equal(core.LABEL) {
 		
 		label := cadar(e); fn := caddar(e)
 		
@@ -103,7 +102,7 @@ func eval(e, a *types.Cell) *types.Cell {
 	// d) Function calls 
 	//           (         f          params ) -> ?
 	//		e.g. ( (func (x) (car x)) '(1 2) ) -> 1
-	if caar(e).Equal(builtin.FUNC) {
+	if caar(e).Equal(core.FUNC) {
 	
 		k := cadar(e); v := evlis(cdr(e), a)	
 		
@@ -118,7 +117,7 @@ func eval(e, a *types.Cell) *types.Cell {
 		return r
 	}
 		
-	return builtin.Err("Wrong expression")
+	return core.Err("Wrong expression")
 }
 
 // isMac checks if caar(e) is tagged as macro
@@ -126,7 +125,7 @@ func eval(e, a *types.Cell) *types.Cell {
 //		e = ((func (x) (no x))
 //		caar(e) -> func 
 func isMac(e *types.Cell) bool {
-	return caar(e).IsTagged(builtin.ID_MAC)
+	return caar(e).IsTagged(core.ID_MAC)
 }
 
 // evdef eval 'def and creates a function in environment
@@ -135,8 +134,8 @@ func isMac(e *types.Cell) bool {
 //  	(var {name} (func {params} {body}) )
 func evdef(e, a *types.Cell) *types.Cell {
 	name := cadr(e); params_body := cddr(e)
-	k := name; v := cons(builtin.FUNC, params_body)
-	builtin.Tag(v, builtin.ID_FUNC)
+	k := name; v := cons(core.FUNC, params_body)
+	core.Tag(v, core.ID_FUNC)
 	a = addEnv(list(k, v), a)
 	return eval(k, a)
 }
@@ -147,8 +146,8 @@ func evdef(e, a *types.Cell) *types.Cell {
 //  	(var {name} (mac {params} {body}) )
 func evmac(e, a *types.Cell) *types.Cell {
 	name := cadr(e); params_body := cddr(e)
-	k := name; v := cons(builtin.MAC, params_body)
-	builtin.Tag(v, builtin.ID_MAC)
+	k := name; v := cons(core.MAC, params_body)
+	core.Tag(v, core.ID_MAC)
 	a = addEnv(list(k, v), a)
 	return eval(k, a)
 }
@@ -179,7 +178,7 @@ func evlet(e, a *types.Cell) *types.Cell {
 // envenv only print environment for debug purpose
 func evenv(e, a *types.Cell) *types.Cell {
 	fmt.Printf("evenv - a: %v ap:%p \n\n", a, a)
-	return builtin.NIL
+	return core.NIL
 }
 
 // evset evals expression e.g. (set a 1)
@@ -215,7 +214,7 @@ func evatom(e, a *types.Cell) *types.Cell {
 	if e.IsSymbol() {	
 		x := assoc(e, a) // ToDo: Hash-table // nil means also not found !!!	
 		if x.IsErr() {
-			return builtin.Err("reference to undefined identifier: %v", e) // TODO: Rename error message
+			return core.Err("reference to undefined identifier: %v", e) // TODO: Rename error message
 		}
 		return x
 	}
@@ -229,7 +228,7 @@ func evatom(e, a *types.Cell) *types.Cell {
 func evfunc(e, a *types.Cell) *types.Cell {
 	name := assoc(car(e), a)
 	if name.IsErr() {
-		return builtin.Err("reference to undefined identifier: %v", car(e)) // TODO: Rename error message
+		return core.Err("reference to undefined identifier: %v", car(e)) // TODO: Rename error message
 	}
 	ee := cons(name, cdr(e))
 	//fmt.Printf("evfunc - ee: %v", ee)
@@ -244,7 +243,7 @@ func evfunc(e, a *types.Cell) *types.Cell {
 //			) 
 //		) -> a
 func evcon(c, a *types.Cell) *types.Cell {
-	if eval(caar(c), a).Equal(builtin.T) { 
+	if eval(caar(c), a).Equal(core.T) { 
 		return eval(cadar(c), a) 
 	} else { 
 		return evcon(cdr(c), a)
@@ -253,8 +252,8 @@ func evcon(c, a *types.Cell) *types.Cell {
 
 // evlis evals each item of a list
 func evlis(m, a *types.Cell) *types.Cell {
-	if m.Equal(builtin.NIL) {
-		return builtin.NIL
+	if m.Equal(core.NIL) {
+		return core.NIL
 	} else {
 		return cons(eval(car(m), a), evlis(cdr(m), a))
 	}

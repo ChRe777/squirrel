@@ -7,7 +7,7 @@ import (
 import (
 	"github.com/squirrel/types"
 	"github.com/squirrel/parser"
-	"github.com/squirrel/builtin"
+	"github.com/squirrel/core"
 )
 
 func TestEvalAtom(t *testing.T) {
@@ -19,11 +19,11 @@ func TestEvalAtom(t *testing.T) {
 		e 	 *types.Cell
 		want *types.Cell
 	}{
-		{ builtin.Sym("t"  ), builtin.Sym("t"  ) },
-		{ builtin.Sym("nil"), builtin.Sym("nil") },
-		{ builtin.Num("1"  ), builtin.Num("1"  ) },
-		{ builtin.Str("a"  ), builtin.Str("a"  ) },
-		{ builtin.Sym("b"  ), builtin.Err("reference to undefined identifier: b") },
+		{ core.Sym("t"  ), core.Sym("t"  ) },
+		{ core.Sym("nil"), core.Sym("nil") },
+		{ core.Num("1"  ), core.Num("1"  ) },
+		{ core.Str("a"  ), core.Str("a"  ) },
+		{ core.Sym("b"  ), core.Err("reference to undefined identifier: b") },
 	}
 
 	for _, spec := range specs {
@@ -48,7 +48,7 @@ func TestEvalFunc(t *testing.T) {
 		e 	 *types.Cell
 		want *types.Cell
 	}{
-		{ p("((func (x)(car x)) '(a b c))")	, builtin.Sym("a") },
+		{ p("((func (x)(car x)) '(a b c))")	, core.Sym("a") },
 	}
 	
 	for _, spec := range specs {
@@ -105,8 +105,8 @@ func TestEvalDef(t *testing.T) {
 		e2		*types.Cell
 		want 	*types.Cell
 	} {
-		{ p("(def foo(x) (no x))")	, p("(foo '(1 2))")	, builtin.NIL  		},
-		{ p("(def bar(x) (no x))")	, p("(bar '())"   )	, builtin.Sym("t")  },
+		{ p("(def foo(x) (no x))")	, p("(foo '(1 2))")	, core.NIL  		},
+		{ p("(def bar(x) (no x))")	, p("(bar '())"   )	, core.Sym("t")  },
 	}
 	
 	for _, spec := range specs {
@@ -134,7 +134,7 @@ func TestEvalMac(t *testing.T) {
 		e2		*types.Cell
 		want 	*types.Cell
 	} {
-		{ p("(mac foo(x)   `(no ,x))"     )	, p("(foo '(1 2))")	, builtin.NIL  	},
+		{ p("(mac foo(x)   `(no ,x))"     )	, p("(foo '(1 2))")	, core.NIL  	},
 		{ p("(mac bar(x y) `(list ,x ,y))")	, p("(bar 1 2)")	, p("(1 2)")  	},
 	}
 	
@@ -162,8 +162,8 @@ func TestEvalLet(t *testing.T) {
 		e		*types.Cell
 		want 	*types.Cell
 	} {
-		{ p("(let xs '(1 2) (no  xs))" ), builtin.NIL  		},
-		{ p("(let ys '(1 2) (car ys))" ), builtin.Num("1")  },
+		{ p("(let xs '(1 2) (no  xs))" ), core.NIL  		},
+		{ p("(let ys '(1 2) (car ys))" ), core.Num("1")  },
 
 	}
 	
