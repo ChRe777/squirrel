@@ -7,7 +7,7 @@ import (
 
 import (
 	"github.com/squirrel/types"
-	"github.com/squirrel/generator"
+	"github.com/squirrel/builtin"
 	"github.com/squirrel/evaluator"
 	"github.com/squirrel/parser"	
 )
@@ -23,8 +23,17 @@ func test(specs []spec, t *testing.T) {
 
 func testWithEnv(specs []spec, t *testing.T, env *types.Cell) {
 
+	p := func(s string) *types.Cell {
+		return parser.Parse([]byte(s))
+	}
+	
+	s := "((t t) (nil nil))"
+	builtInEnv := p(s)
+		
 	if env == nil {
-		env = generator.Nil()
+		env = builtInEnv
+	} else {
+		env = builtin.Append(builtInEnv, env)
 	}
 	
 	for i, spec := range specs {

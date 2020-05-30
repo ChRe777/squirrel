@@ -4,12 +4,12 @@ import (
 	"testing"
 )
 	
-func TestEq(t *testing.T) {
+func TestIs(t *testing.T) {
 	
 	specs := []spec {
-		{ "(eq 'a 'a)"	, "t"	},
-		{ "(eq 'a 'b)"	, "nil"	},
-		{ "(eq '() '())", "t" 	},
+		{ "(is 'a 'a)"	, "t"	},
+		{ "(is 'a 'b)"	, "nil"	},
+		{ "(is '() '())", "t" 	},
 	}
 	
 	test(specs, t)
