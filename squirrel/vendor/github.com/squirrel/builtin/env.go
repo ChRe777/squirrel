@@ -1,13 +1,5 @@
 package builtin
 
-import (
-	"bytes"
-)
-
-import (
-	"github.com/squirrel/types"
-	"github.com/squirrel/parser"
-)
 
 var (
 	t		 = "(t t)"
@@ -23,15 +15,8 @@ var (
 
 )
 
-func createList (fns []string) []byte {
-	var b bytes.Buffer
-	
-	b.WriteRune('('); for _, fn := range fns { b.WriteString(fn) }; b.WriteRune(')')
-	
-	return b.Bytes()
-}
-	
-func CreateBuiltinEnv() *types.Cell {
+
+func Env() []string {
 
 	xs := []string{ 
 		t		,
@@ -46,6 +31,5 @@ func CreateBuiltinEnv() *types.Cell {
 		mapFn,
 	}
 	
-	env := parser.Parse(createList(xs))
-	return env
+	return xs
 }

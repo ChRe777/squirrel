@@ -124,7 +124,7 @@ func cadddr(e *types.Cell) *types.Cell { return car_(cdr_(cdr_(cdr_(e)))) }
 //
 // TODO: Make this more effective
 // because Add adds cells at the end
-// List create a list of a list of cells
+// List create a list of a list of cells				// TODO: SLOW?????
 func List(xs ...*types.Cell) *types.Cell {
 	l := NIL
 	for _, x := range xs {

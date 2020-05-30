@@ -4,11 +4,13 @@ import (
 	"os"
 	"fmt"
 	"bufio"
+	"bytes"
 )
 
 import(
 	"github.com/squirrel/types"
 	"github.com/squirrel/core"
+	"github.com/squirrel/builtin"
 	"github.com/squirrel/parser"
 	"github.com/squirrel/evaluator"
 )
@@ -45,10 +47,18 @@ func isQuit(e *types.Cell) bool {
 	return e.Equal(QUIT_)
 }
 
+func createList (fns []string) []byte {
+	var b bytes.Buffer
+	
+	b.WriteRune('('); for _, fn := range fns { b.WriteString(fn) }; b.WriteRune(')')
+	
+	return b.Bytes()
+}
 
 func Repl() {
 
 	reader := bufio.NewReader(os.Stdin)
+	env := parser.Parse(createList(builtin.Env()));
 		
 	printHelp()
 	

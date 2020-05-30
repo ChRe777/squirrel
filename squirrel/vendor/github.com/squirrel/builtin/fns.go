@@ -33,8 +33,8 @@ func Pair(x, y *types.Cell) *types.Cell {
 		return core.NIL
 	} else {
 		if x.IsCons() && y.IsCons() {
-			a := list(car(x), car(y))
-			b := pair(cdr(x), cdr(y))
+			a := List_(car(x), car(y))
+			b := Pair(cdr(x), cdr(y))
 			return cons(a,b)
 		}
 	}
@@ -68,7 +68,7 @@ func Append(x, y *types.Cell) *types.Cell {
 	if x.Equal(core.NIL) {
 		return y
 	} else {
-		return cons(car(x), append(cdr(x), y))
+		return cons(car(x), Append(cdr(x), y))
 	}
 }
 
@@ -80,10 +80,10 @@ func Assoc(x, y *types.Cell) *types.Cell {
 	if y.Equal(core.NIL) {
 		return core.Err("Not found")
 	} else {
-		if eq(caar(y), x).Equal(core.T) {
-			return cadar(y)
+		if eq(Caar(y), x).Equal(core.T) {
+			return Cadar(y)
 		} else {
-			return assoc(x, cdr(y))	
+			return Assoc(x, cdr(y))	
 		}
 	}
 }
@@ -110,31 +110,15 @@ func cdr(x *types.Cell) *types.Cell {
 	return core.Cdr(x)
 }
 
-// ---------------------------------
-// 
-// ---------------------------------
-
-
-// > (set a 1) -> 1
-// > a -> 1
-func set(k, v *types.Cell, a *types.Cell) *types.Cell {
-	// Add key-value-pair (k v) to environment
-	a = cons(list(k, v), a)
-	return v
+func cons(x, y *types.Cell) *types.Cell {
+	return core.Cons(x,y)
 }
 
-// addEnv is a special add that adds a new cell at the front of the environment
-// but LET the Pointer to first element the SAME !!!
-func addEnv(kv *types.Cell, a *types.Cell ) *types.Cell {
-	// Hang in new as second
-	cdr := a.Cdr; new := cons(kv, cdr); a.Cdr = new
-	// Change Val first and second to move new second to front
-	val := new.Val; new.Val = a.Val; a.Val = val
-	// Change Car first and second to move new seocen to front
-	car := new.Car; new.Car = a.Car; a.Car = car
-	// So the pointer to a stays the same // Side effects // ToReThink: ?
-	return a
+func eq(x, y *types.Cell) *types.Cell {
+	return core.Eq(x,y)
 }
+
+
 
 
 

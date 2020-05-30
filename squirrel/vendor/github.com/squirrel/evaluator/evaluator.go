@@ -28,7 +28,7 @@ func eval(e, a *types.Cell) *types.Cell {
 	} 
 	
 	// b) Functions e.g. (car '(1 2)) -> 1	
-	c := car(e)
+	c := core.Car(e)
 	if  c.IsAtom() {
 		switch {	
 		
@@ -50,11 +50,11 @@ func eval(e, a *types.Cell) *types.Cell {
 //			case c.Equal(core.REP  ): return core.Rep  (eval(builtin.cadr(e), a))		
 
 			// TEST - REFACTOR
-			case c.Equal(builtin.VAR): return evvar(e, a)		
-			case c.Equal(builtin.ENV): return evenv(e, a)
-			case c.Equal(builtin.LET): return evlet(e, a)
-			case c.Equal(builtin.DEF): return evdef(e, a)
-			case c.Equal(builtin.MAC): return evmac(e, a)
+			case c.Equal(core.VAR): return evvar(e, a)		
+			case c.Equal(core.ENV): return evenv(e, a)
+			case c.Equal(core.LET): return evlet(e, a)
+			case c.Equal(core.DEF): return evdef(e, a)
+			case c.Equal(core.MAC): return evmac(e, a)
 			
 			// For macros
 			case c.Equal(core.BACKQUOTE): return Backquote(e, a) 	// TODO: evBackQuote
@@ -90,12 +90,12 @@ func eval(e, a *types.Cell) *types.Cell {
 	// A "label" expression is evaluated by pushing a list of the function name
 	// and the function itself, onto the environment, and then calling eval on an
 	// expression with the inner lambda expression substituted for the label expression.
-	if caar(e).Equal(core.LABEL) {
+	if builtin.Caar(e).Equal(core.LABEL) {
 		
-		label := cadar(e); fn := caddar(e)
+		label := builtin.Cadar(e); fn := builtin.Caddar(e)
 		
-		ee := cons(caddar(e), cdr(e))		
-		aa := cons(list(label, fn), a)  // ( (no (func (x) (eq x nil)) (a 1) (b 2) )
+		ee := core.Cons(builtin.Caddar(e),core.Cdr(e))		
+		aa := core.Cons(builtin.List_(label, fn), a)  // ( (no (func (x) (eq x nil)) (a 1) (b 2) )
 				
 		return eval(ee, aa)
 	} 
@@ -103,12 +103,12 @@ func eval(e, a *types.Cell) *types.Cell {
 	// d) Function calls 
 	//           (         f          params ) -> ?
 	//		e.g. ( (func (x) (car x)) '(1 2) ) -> 1
-	if caar(e).Equal(core.FUNC) {
+	if builtin.Caar(e).Equal(core.FUNC) {
 	
-		k := cadar(e); v := evlis(cdr(e), a)	
+		k := builtin.Cadar(e); v := evlis(core.Cdr(e), a)	
 		
-		ee := caddar(e)
-		aa := append(pair(k, v), a)		
+		ee := builtin.Caddar(e)
+		aa := builtin.Append(builtin.Pair(k, v), a)		
 				
 		r := eval(ee, aa)		// will expand backquotes and unquotes
 		if isMac(e) {
@@ -126,7 +126,7 @@ func eval(e, a *types.Cell) *types.Cell {
 //		e = ((func (x) (no x))
 //		caar(e) -> func 
 func isMac(e *types.Cell) bool {
-	return caar(e).IsTagged(core.ID_MAC)
+	return builtin.Caar(e).IsTagged(core.ID_MAC)
 }
 
 // evdef eval 'def and creates a function in environment
@@ -134,10 +134,10 @@ func isMac(e *types.Cell) bool {
 //  	(def {name} {params} {body})
 //  	(var {name} (func {params} {body}) )
 func evdef(e, a *types.Cell) *types.Cell {
-	name := cadr(e); params_body := cddr(e)
-	k := name; v := cons(core.FUNC, params_body)
+	name := builtin.Cadr(e); params_body := builtin.Cddr(e)
+	k := name; v := core.Cons(core.FUNC, params_body)		// TODO: REFACTOR
 	core.Tag(v, core.ID_FUNC)
-	a = addEnv(list(k, v), a)
+	a = addEnv(builtin.List_(k, v), a)
 	return eval(k, a)
 }
 
@@ -158,8 +158,8 @@ func evdef(e, a *types.Cell) *types.Cell {
 //		(let xs '(1 2 3) (car xs)) ->  1
 //		(let {key} {val} {body} )
 func evlet(e, a *types.Cell) *types.Cell {
-	k := cadr(e);  v := eval(caddr(e), a)	
-	ee := car(cdddr(e)); aa := cons(list(k, v), a)	
+	k := builtin.Cadr(e);  v := eval(builtin.Caddr(e), a)	
+	ee := core.Car(builtin.Cdddr(e)); aa := core.Cons(builtin.List_(k, v), a)	
 	
 	fmt.Printf("evlet e: %v ee:%v, aa: %v \n", e, ee, aa)
 	
@@ -186,8 +186,8 @@ func evenv(e, a *types.Cell) *types.Cell {
 //		(t t)
 //	)
 func evvar(e, a *types.Cell) *types.Cell {
-	k := cadr(e); v := eval(caddr(e), a)
-	a = addEnv(list(k, v), a)
+	k := builtin.Cadr(e); v := eval(builtin.Caddr(e), a)
+	a = addEnv(builtin.List_(k, v), a)
 	return eval(k, a)
 }
 
@@ -203,7 +203,7 @@ func evvar(e, a *types.Cell) *types.Cell {
 //
 func evatom(e, a *types.Cell) *types.Cell {
 	if e.IsSymbol() {	
-		x := assoc(e, a) // ToDo: Hash-table // nil means also not found !!!	
+		x := builtin.Assoc(e, a) // ToDo: Hash-table // nil means also not found !!!	
 		if x.IsErr() {
 			return core.Err("reference to undefined identifier: %v", e) // TODO: Rename error message
 		}
@@ -217,11 +217,11 @@ func evatom(e, a *types.Cell) *types.Cell {
 //  > (foo nil)
 // 	ee = ((func (x) (no x)) nil)
 func evfunc(e, a *types.Cell) *types.Cell {
-	name := assoc(car(e), a)
+	name := builtin.Assoc(core.Car(e), a)
 	if name.IsErr() {
-		return core.Err("reference to undefined identifier: %v", car(e)) // TODO: Rename error message
+		return core.Err("reference to undefined identifier: %v", core.Car(e)) // TODO: Rename error message
 	}
-	ee := cons(name, cdr(e))
+	ee := core.Cons(name, core.Cdr(e))
 	//fmt.Printf("evfunc - ee: %v", ee)
 	return eval(ee, a)
 }
@@ -234,10 +234,10 @@ func evfunc(e, a *types.Cell) *types.Cell {
 //			) 
 //		) -> a
 func evcon(c, a *types.Cell) *types.Cell {
-	if eval(caar(c), a).Equal(core.T) { 
-		return eval(cadar(c), a) 
+	if eval(builtin.Caar(c), a).Equal(core.T) { 
+		return eval(builtin.Cadar(c), a) 
 	} else { 
-		return evcon(cdr(c), a)
+		return evcon(core.Cdr(c), a)
 	}
 }
 
@@ -246,12 +246,59 @@ func evlis(m, a *types.Cell) *types.Cell {
 	if m.Equal(core.NIL) {
 		return core.NIL
 	} else {
-		return cons(eval(car(m), a), evlis(cdr(m), a))
+		return core.Cons(eval(core.Car(m), a), evlis(core.Cdr(m), a))
 	}
 }
 
 
+// ---------------------------------
+// Just ALIAS for better readability
+// ---------------------------------
 
+/*
+func car(x *types.Cell) *types.Cell {
+	return core.Car(x)
+}
+
+func cdr(x *types.Cell) *types.Cell {
+	return core.Cdr(x)
+}
+
+func cons(x, y *types.Cell) *types.Cell {
+	return core.Cons(x,y)
+}
+
+func eq(x, y *types.Cell) *types.Cell {
+	return core.Eq(x,y)
+}
+*/
+
+
+// ---------------------------------
+// TODO: CHECK FOR SPEED
+// ---------------------------------
+
+
+// > (set a 1) -> 1
+// > a -> 1
+func set(k, v *types.Cell, a *types.Cell) *types.Cell {
+	// Add key-value-pair (k v) to environment
+	a = core.Cons(builtin.List_(k, v), a)
+	return v
+}
+
+// addEnv is a special add that adds a new cell at the front of the environment
+// but LET the Pointer to first element the SAME !!!
+func addEnv(kv *types.Cell, a *types.Cell ) *types.Cell {
+	// Hang in new as second
+	cdr := a.Cdr; new := core.Cons(kv, cdr); a.Cdr = new
+	// Change Val first and second to move new second to front
+	val := new.Val; new.Val = a.Val; a.Val = val
+	// Change Car first and second to move new seocen to front
+	car := new.Car; new.Car = a.Car; a.Car = car
+	// So the pointer to a stays the same // Side effects // ToReThink: ?
+	return a
+}
 
 
 
