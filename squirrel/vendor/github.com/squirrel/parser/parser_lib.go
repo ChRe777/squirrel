@@ -39,30 +39,3 @@ func incLevel(level *int) {
 	*level += IDENT
 }
 
-/*
-PROCEDURE error(errNo: INTEGER);
-	PROCEDURE msg(s: ARRAY OF CHAR); 
-	BEGIN Out.String("error("); Out.Int(errNo,1); Out.String(") - "); Out.String(s); Out.Ln;
-	END msg;
-BEGIN 
-	CASE errNo OF
-		1: msg("Left paren is missing");  | (* could never happen *)
-		2: msg("Right paren is missing"); 
-	END;
-END error;
-*/
-func printError(errNo int) {
-
-	msg := func(s string) {
-		fmt.Printf("error(%v) - %s\n", errNo, s)
-	}
-	
-	txt, found := errors[errNo]
-	if found {
-		msg(txt)
-	} else {
-		msg("Unknown error no:" + string(errNo))
-	}
-
-}
-

@@ -1,14 +1,11 @@
-package evaluator
+package core
 
 import (
-	"fmt"
-	"testing"
+//	"fmt"
+//	"testing"
 )
 
-import (
-	"github.com/squirrel/core"
-)
-
+/*
 func TestIsTagged(t *testing.T) {
 
 	e := tag(core.Sym("mac"), 
@@ -64,4 +61,4 @@ func TestRep(t *testing.T) {
 	}
 	
 }
-
+*/

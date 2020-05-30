@@ -1,4 +1,4 @@
-package evaluator
+package core
 
 import (
 	"fmt"
@@ -6,8 +6,19 @@ import (
 
 import (
 	"github.com/squirrel/types"
-	"github.com/squirrel/core"
 )
+
+// evmac eval 'mac and create a macros in environment
+// 	e.g.
+//	 	(mac {name} {params} {body})
+//  	(var {name} (mac {params} {body}) )
+func evmac(e, a *types.Cell) *types.Cell {
+	name := cadr(e); params_body := cddr(e)
+	k := name; v := cons(core.MAC, params_body)
+	core.Tag(v, core.ID_MAC)
+	a = addEnv(list(k, v), a)
+	return eval(k, a)
+}
 
 // backquote
 // e.g. 

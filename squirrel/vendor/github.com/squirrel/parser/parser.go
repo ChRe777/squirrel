@@ -140,13 +140,13 @@ func sexpr(level *int) *types.Cell {
 	
 	backquote := func(level *int) *types.Cell {
 		debug("backquote", level); scanner.GetSym();
-		cell := core.Backquote(sexpr(level))
+		cell := core.Backquote_(sexpr(level))
 		return cell
 	}
 	
 	unquote := func(level *int) *types.Cell {
 		debug("unquote", level); scanner.GetSym();
-		cell := core.Unquote(sexpr(level))
+		cell := core.Unquote_(sexpr(level))
 		return cell
 	}
 

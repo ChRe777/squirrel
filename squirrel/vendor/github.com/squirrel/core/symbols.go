@@ -43,36 +43,33 @@ const (
 // Core symbols of language
 var (
 	
-	QUOTE 		= Sym(ID_QUOTE)
-	ATOM 		= Sym(ID_ATOM)
-	EQ 			= Sym(ID_EQ)
-	CAR 		= Sym(ID_CAR)
-	CDR 		= Sym(ID_CDR) 
-	CONS 		= Sym(ID_CONS)
-	COND 		= Sym(ID_COND) 
+	QUOTE 	= Sym(ID_QUOTE)
+	ATOM 	= Sym(ID_ATOM)
+	EQ 		= Sym(ID_EQ)
+	CAR 	= Sym(ID_CAR)
+	CDR 	= Sym(ID_CDR) 
+	CONS 	= Sym(ID_CONS)
+	COND 	= Sym(ID_COND) 
 	
 	BACKQUOTE 			= Sym(ID_BACKQUOTE)			// For Macros
 	UNQUOTE   			= Sym(ID_UNQUOTE) 			// For Macros, 
 	UNQUOTE_SPLICING   	= Sym(ID_UNQUOTESPLICING) 	// For Macros, 
 		
-	LABEL 		= Sym(ID_LABEL)
-	FUNC 		= Sym(ID_FUNC) 
-	MAC			= Tag(Sym(ID_FUNC), ID_MAC)
-	T 			= Sym(ID_T) 		// TRUE
-	NIL 		= Sym(ID_NIL) 		// NIL or FALSE
+	LABEL 	= Sym(ID_LABEL)
+	FUNC 	= Sym(ID_FUNC) 
+	MAC		= Tag(Sym(ID_FUNC), ID_MAC)				// A macro is func tagged as "Macro"
+	T 		= Sym(ID_T) 							// TRUE
+	NIL 	= Sym(ID_NIL) 							// NIL or FALSE
 	
 	TAG 	= Sym(ID_TAG)
 	TAGGED 	= Sym(ID_TAGGED)
 	SYM 	= Sym(ID_SYM)
-	TYPE0 	= Sym(ID_TYPE0)		// TODO: Better name - type is reserved word in GO
+	TYPE0 	= Sym(ID_TYPE0)							// TODO: Better name - type is reserved word in GO
 	REP 	= Sym(ID_REP)	
 	
-	VAR = Sym(ID_VAR)
-	ENV = Sym(ID_ENV)
-	LET = Sym(ID_LET)
-	DEF = Sym(ID_DEF)
-	//MAC = Sym(ID_MAC)
+	VAR 	= Sym(ID_VAR)
+	ENV 	= Sym(ID_ENV)
+	LET 	= Sym(ID_LET)
+	DEF 	= Sym(ID_DEF)
 
 )
-
-

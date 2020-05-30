@@ -42,8 +42,6 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(core.CONS ): return core.Cons(eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
 			case c.Equal(core.COND ): return evcon(core.Cdr(e), a)
 									
-			// For macros
-			case c.Equal(core.BACKQUOTE): return core.Backquote(e, a) 
 
 			// 3 extra core axioms from Arc (Paul Graham)
 			//
@@ -58,7 +56,10 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(builtin.DEF): return evdef(e, a)
 			case c.Equal(builtin.MAC): return evmac(e, a)
 			
-	
+			// For macros
+			case c.Equal(core.BACKQUOTE): return Backquote(e, a) 	// TODO: evBackQuote
+
+			
 			// 7 extension functions from "The Roots of Lisp" (McCarthy, Paul Graham)
 			//
 			case c.Equal(builtin.NO    ): return builtin.No    (eval(builtin.Cadr(e), a))
@@ -140,17 +141,7 @@ func evdef(e, a *types.Cell) *types.Cell {
 	return eval(k, a)
 }
 
-// evmac eval 'mac and create a macros in environment
-// 	e.g.
-//	 	(mac {name} {params} {body})
-//  	(var {name} (mac {params} {body}) )
-func evmac(e, a *types.Cell) *types.Cell {
-	name := cadr(e); params_body := cddr(e)
-	k := name; v := cons(core.MAC, params_body)
-	core.Tag(v, core.ID_MAC)
-	a = addEnv(list(k, v), a)
-	return eval(k, a)
-}
+
 
 // Named functions
 // ---------------

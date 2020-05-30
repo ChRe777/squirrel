@@ -12,6 +12,7 @@ An lisp interpreter exists of following components:
 	
 ## ToDo
 
+	* [ ] PARSE Dotted Pairs { "(a . b)"	, generator.Cons(generator.Sym("a"), generator.Sym("b")) },
 	* [ ] Implement "def" e.g. (def add (x y) (+ x y))
     * [ ] Load Squirrel from file (load "code.sqr")
 	* [ ] Macro support with tagging	

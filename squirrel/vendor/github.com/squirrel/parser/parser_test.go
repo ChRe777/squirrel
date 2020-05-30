@@ -13,10 +13,10 @@ import (
 func TestParseAtom(t *testing.T) {
 
 	specs := []spec {
-		{ "t"		, generator.Atom("t"	, types.SYMBOL) },
-		{ "foo"		, generator.Atom("foo"	, types.SYMBOL) },
-		{ "\"a\""	, generator.Atom("\"a\"", types.STRING) },
-		{ "1.23"	, generator.Atom("1.23"	, types.NUMBER) },
+		{ "t"		, generator.Sym("t") 	},
+		{ "foo"		, generator.Sym("foo") 	},
+		{ "\"a\""	, generator.Str("\"a\"") 	},		// TODO: STRING are with " stored =???
+		{ "1.23"	, generator.Num("1.23") },
 	} 
 
 	test(specs, t)
@@ -25,9 +25,9 @@ func TestParseAtom(t *testing.T) {
 func TestParseCons(t *testing.T) {
 
 	specs := []spec {
-		{   "(1)"	, generator.Cons(generator.Atom( 1 , types.NUMBER), generator.Nil()) },
-		{  "(1 2)"	, generator.Cons(generator.Atom( 1 , types.NUMBER), generator.Cons(generator.Atom(2, types.NUMBER), generator.Nil())) },
-		{ "(a . b)"	, generator.Cons(generator.Atom("a", types.SYMBOL), generator.Atom("b", types.SYMBOL)) },
+		{   "(1)"	, generator.Cons(generator.Num("1"), generator.Nil())},
+		{  "(1 2)"	, generator.Cons(generator.Num("1"), generator.Cons(generator.Num("2"), generator.Nil())) },
+		{ "(a . b)"	, generator.Cons(generator.Sym("a"), generator.Sym("b")) },
 	} 
 
 	test(specs, t)
@@ -35,7 +35,7 @@ func TestParseCons(t *testing.T) {
 
 func TestParseBackQuote(t *testing.T) {
 	specs := []spec {
-		{ "`a" 	, generator.Cons( generator.Atom("backquote", types.SYMBOL) , generator.Cons(generator.Atom("a", types.SYMBOL), generator.Nil())) },
+		{ "`a" 	, generator.Cons( generator.Sym("backquote") , generator.Cons(generator.Sym("a"), generator.Nil())) },
 	}
 
 	test(specs, t)

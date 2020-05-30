@@ -1,9 +1,11 @@
-package evaluator
+package core
 
 import (
 	"testing"
+)
+
+import(	
 	"github.com/squirrel/types"
-	"github.com/squirrel/core"
 	"github.com/squirrel/generator"
 )
 
@@ -14,10 +16,10 @@ func quote(x *types.Cell) *types.Cell {
 */
 func TestQuote(t *testing.T) {
 	
-	e := core.Quote(core.Sym("a"))
+	e := Quote_(Sym("a"))
 		
-	got  := quote(e)
-	want := core.Sym("a")	
+	got  := Quote(e)
+	want := Sym("a")	
 	
 	if got.NotEqual(want) {
 		t.Errorf("Quote failed, got: %v, want: %v", got, want)
@@ -39,13 +41,13 @@ func TestAtom(t *testing.T) {
 		expr *types.Cell
 		want *types.Cell
 	} {
-		{ core.Sym("a")	, core.T },
-		{ core.NIL 		, core.T },
+		{ Sym("a")	, T },
+		{ NIL 		, T },
 	}
 	
 	for _, spec := range specs {
 	
-		got := atom(spec.expr)
+		got := Atom(spec.expr)
 		
 		if got != spec.want {
 			t.Errorf("Failed atom(a), got:%v, want:%v", got, spec.want)
@@ -69,14 +71,14 @@ func TestEq(t *testing.T) {
 		y		*types.Cell
 		want 	*types.Cell
 	}{
-		{core.Sym("a"), core.Sym("a"), core.T  },
-		{core.Sym("a"), core.Sym("b"), core.NIL},
+		{Sym("a"), Sym("a"), T  },
+		{Sym("a"), Sym("b"), NIL},
 		// ... TODO MANY TESTS ...
 	}
 
 	for _, spec := range specs {
 		
-		got := eq(spec.x, spec.y)
+		got := Eq(spec.x, spec.y)
 		
 		if got != spec.want {
 			t.Errorf("%v eq %v failed, got: %v, want: %v", spec.x, spec.y, got, spec.want)
@@ -103,16 +105,16 @@ func TestCar(t *testing.T) {
 		x		*types.Cell
 		want 	*types.Cell
 	}{
-		{core.Sym("a")	, generator.Error("Can't take car of a")},
+		{Sym("a")	, generator.Error("Can't take car of a")},
 		// (car nil) -> nil
-		{core.NIL   		, core.NIL},
+		{NIL   		, NIL},
 		// (car (a b)) -> a
-		{core.List(core.Sym("a"), core.Sym("b")), core.Sym("a")},
+		{List(Sym("a"), Sym("b")), Sym("a")},
 	}
 	
 	for _, spec := range specs {
 		
-		got := car(spec.x)
+		got := Car(spec.x)
 		
 		if got.NotEqual(spec.want) {
 			t.Errorf("car %v failed, got: %v, want: %v", spec.x, got, spec.want)
@@ -126,18 +128,18 @@ func TestCdr(t *testing.T) {
 		want 	*types.Cell
 	}{
 		// (car 'a)  -> error
-		{core.Sym("a")	, generator.Error("Can't take cdr of a")},
+		{Sym("a")	, generator.Error("Can't take cdr of a")},
 		
 		// (car nil) -> nil
-		{core.NIL   		, core.NIL},
+		{NIL   		, NIL},
 		
 		// (car (a b)) -> a
-		{core.List(core.Sym("a"), core.Sym("b")), core.List(core.Sym("b"))},
+		{List(Sym("a"), Sym("b")), List(Sym("b"))},
 	}
 	
 	for _, spec := range specs {
 		
-		got := cdr(spec.x)
+		got := Cdr(spec.x)
 		
 		if got.NotEqual(spec.want) {
 			t.Errorf("cdr %v failed, got: %v, want: %v", spec.x, got, spec.want)
@@ -163,13 +165,13 @@ func TestCons(t *testing.T) {
 		y       *types.Cell
 		want 	*types.Cell
 	}{
-		{core.Sym("a"), core.NIL, 	 core.List(core.Sym("a"))},
-		{core.Sym("a"), core.Sym("b"), generator.Cons(core.Sym("a"), core.Sym("b"))},
+		{Sym("a"), NIL, 	 List(Sym("a"))},
+		{Sym("a"), Sym("b"), generator.Cons(Sym("a"), Sym("b"))},
 	}
 	
 	for _, spec := range specs {
 		
-		got := cons(spec.x, spec.y)
+		got := Cons(spec.x, spec.y)
 		
 		if got.NotEqual(spec.want) {
 			t.Errorf("cons %v, %v failed, got: %v, want: %v", spec.x, spec.y, got, spec.want)
@@ -206,11 +208,11 @@ func TestCond(t *testing.T) {
 	)
 
 */
-	e := core.List(
-		core.List(core.Sym("nil"), core.Sym("a")),
-		core.List(core.Sym("t")  , core.Sym("b")),
+	e := List(
+		List(Sym("nil"), Sym("a")),
+		List(Sym("t")  , Sym("b")),
 	)
-	want := core.Sym("b")
+	want := Sym("b")
 
 	specs := []struct{
 		x		*types.Cell
@@ -221,7 +223,7 @@ func TestCond(t *testing.T) {
 	
 	for _, spec := range specs {
 		
-		got := cond(spec.x)
+		got := Cond(spec.x)
 		
 		if got.NotEqual(spec.want) {
 			t.Errorf("cond %v failed, got: %v, want: %v", spec.x, got, spec.want)
