@@ -22,6 +22,7 @@ import (
 
 // TODO: below should/can be implemented in LISP itself
 // TODO: Put it into autoload environment
+
 func pair(x, y *types.Cell) *types.Cell {
 	if x.Equal(builtin.NIL) && y.Equal(builtin.NIL) {
 		return builtin.NIL

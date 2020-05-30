@@ -1,4 +1,4 @@
-package builtin
+package core
 
 // Identifiers of built-in core symbols
 const (

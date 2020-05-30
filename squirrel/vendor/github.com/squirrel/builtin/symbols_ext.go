@@ -1,5 +1,9 @@
 package builtin
 
+import (
+	"github.com/squirrel/core"
+)
+
 const (
 	ID_NO     = "no"    
 	ID_NOT    = "not"   
@@ -11,11 +15,11 @@ const (
 )
 
 var (
-	NO     = Sym(ID_NO    )
-	NOT    = Sym(ID_NOT   )
-	AND    = Sym(ID_AND   )
-	PAIR   = Sym(ID_PAIR  )
-	LIST   = Sym(ID_LIST  )	// TODO: More then two params
-	ASSOC  = Sym(ID_ASSOC )
-	APPEND = Sym(ID_APPEND)
+	NO     = core.Sym(ID_NO    )
+	NOT    = core.Sym(ID_NOT   )
+	AND    = core.Sym(ID_AND   )
+	PAIR   = core.Sym(ID_PAIR  )
+	LIST   = core.Sym(ID_LIST  )	// TODO: More then two params
+	ASSOC  = core.Sym(ID_ASSOC )
+	APPEND = core.Sym(ID_APPEND)
 )

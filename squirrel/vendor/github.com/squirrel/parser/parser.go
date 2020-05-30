@@ -2,7 +2,7 @@ package parser
 
 import(
 	"github.com/squirrel/types"
-	"github.com/squirrel/builtin"
+	"github.com/squirrel/core"
 	"github.com/squirrel/generator"
 	"github.com/squirrel/scanner"
 )
@@ -112,7 +112,7 @@ func sexpr(level *int) *types.Cell {
 		}
 		
 		for ;scanner.Sym < scanner.Rparen; {
-			e := sexpr(level); list = builtin.Add(list, e)
+			e := sexpr(level); list = core.Add(list, e)			// TODO: PERFORMANCE
 			scanner.GetSym()
 		}
 		
@@ -134,19 +134,19 @@ func sexpr(level *int) *types.Cell {
 	*/
 	quote := func(level *int) *types.Cell {
 		debug("quote", level); scanner.GetSym();
-		cell := builtin.Quote(sexpr(level))
+		cell := core.Quote(sexpr(level))
 		return cell
 	}
 	
 	backquote := func(level *int) *types.Cell {
 		debug("backquote", level); scanner.GetSym();
-		cell := builtin.Backquote(sexpr(level))
+		cell := core.Backquote(sexpr(level))
 		return cell
 	}
 	
 	unquote := func(level *int) *types.Cell {
 		debug("unquote", level); scanner.GetSym();
-		cell := builtin.Unquote(sexpr(level))
+		cell := core.Unquote(sexpr(level))
 		return cell
 	}
 

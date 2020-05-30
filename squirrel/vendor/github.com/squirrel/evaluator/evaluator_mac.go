@@ -9,9 +9,6 @@ import (
 	"github.com/squirrel/builtin"
 )
 
-type fnCell func(e *types.Cell, a *types.Cell) *types.Cell
-
-
 // arc> (mac when (test . body)
 //       (list 'if test (cons 'do body)))
 // *** redefining when
@@ -42,6 +39,8 @@ func backquote(e *types.Cell, a *types.Cell) *types.Cell {
     y := mapEx(expand, x, a)
     return y
 }
+
+type fnCell func(e *types.Cell, a *types.Cell) *types.Cell
 
 // mapEx - maps through a element in list and expand each element
 // if the element is wrapped with (unquote) the element will be evaluated

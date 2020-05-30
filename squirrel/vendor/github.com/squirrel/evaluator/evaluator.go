@@ -43,14 +43,14 @@ func eval(e, a *types.Cell) *types.Cell {
 									
 			// 7 extension functions from "The Roots of Lisp" (McCarthy, Paul Graham)
 			//
-			case c.Equal(builtin.NO    ): return no    (eval(cadr(e), a))
+/*			case c.Equal(builtin.NO    ): return no    (eval(cadr(e), a))
 			case c.Equal(builtin.NOT   ): return not   (eval(cadr(e), a))
 			case c.Equal(builtin.AND   ): return and   (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.PAIR  ): return pair  (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.LIST  ): return list  (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.ASSOC ): return assoc (eval(cadr(e), a), eval(caddr(e), a))
 			case c.Equal(builtin.APPEND): return append(eval(cadr(e), a), eval(caddr(e), a))
-
+*/
 			// 3 extra core axioms from Arc (Paul Graham)
 			//
 			case c.Equal(builtin.TAG  ): return tag  (eval(cadr(e), a), eval(caddr(e), a))
@@ -168,7 +168,7 @@ func evmac(e, a *types.Cell) *types.Cell {
 //		(let xs '(1 2 3) (car xs)) ->  1
 //		(let {key} {val} {body} )
 func evlet(e, a *types.Cell) *types.Cell {
-	k  := cadr(e) ;  v := eval(caddr(e), a)	
+	k := cadr(e);  v := eval(caddr(e), a)	
 	ee := car(cdddr(e)); aa := cons(list(k, v), a)	
 	
 	fmt.Printf("evlet e: %v ee:%v, aa: %v \n", e, ee, aa)
