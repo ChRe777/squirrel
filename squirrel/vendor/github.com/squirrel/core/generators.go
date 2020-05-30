@@ -36,6 +36,11 @@ func Cons_(x, y *types.Cell) *types.Cell {
 }
 
 // Quote_ create a quoted cell
+func Nil_() *types.Cell {
+	return generator.Nil()
+}
+
+// Quote_ create a quoted cell
 func Quote_(c *types.Cell) *types.Cell {
 	return generator.Cons(QUOTE, generator.Cons(c, NIL))
 }

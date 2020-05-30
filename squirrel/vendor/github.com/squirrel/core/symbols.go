@@ -28,7 +28,7 @@ const (
 	
 	// Bool
 	ID_T	  = "t"
-	ID_NIL	  = "nil"
+//	ID_NIL	  = "nil"
 	
 	// 
 	ID_VAR	= "var"
@@ -59,7 +59,7 @@ var (
 	FUNC 	= Sym(ID_FUNC) 
 	MAC		= Tag(Sym(ID_FUNC), ID_MAC)				// A macro is func tagged as "Macro"
 	T 		= Sym(ID_T) 							// TRUE
-	NIL 	= Sym(ID_NIL) 							// NIL or FALSE
+	NIL 	= Nil_() 								// NIL or FALSE
 	
 	TAG 	= Sym(ID_TAG)
 	TAGGED 	= Sym(ID_TAGGED)
