@@ -33,6 +33,14 @@ func TestParseCons(t *testing.T) {
 	test(specs, t)
 }
 
+func TestParseQuote(t *testing.T) {
+	specs := []spec {
+		{ "'a" 	, generator.Cons( generator.Sym("quote") , generator.Cons(generator.Sym("a"), generator.Nil())) },
+	}
+
+	test(specs, t)
+}
+
 func TestParseBackQuote(t *testing.T) {
 	specs := []spec {
 		{ "`a" 	, generator.Cons( generator.Sym("backquote") , generator.Cons(generator.Sym("a"), generator.Nil())) },

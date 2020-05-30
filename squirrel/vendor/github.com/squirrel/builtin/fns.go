@@ -28,20 +28,20 @@ import (
 
 */
 
-func Pair(x, y *types.Cell) *types.Cell {
+func Pair (x, y *types.Cell) *types.Cell {
 	if x.Equal(core.NIL) && y.Equal(core.NIL) {
 		return core.NIL
 	} else {
 		if x.IsCons() && y.IsCons() {
 			a := List_(car(x), car(y))
 			b := Pair(cdr(x), cdr(y))
-			return cons(a,b)
+			return core.Cons(a,b)
 		}
 	}
 	return generator.Error("x and y must be a cons") // TODO: Check
 }
 
-func No(x *types.Cell) *types.Cell { // call "no" instead of "null"
+func No (x *types.Cell) *types.Cell { // call "no" instead of "null"
 	if x.Equal(core.NIL) {
 		return core.T
 	}
@@ -56,7 +56,7 @@ func Not (x *types.Cell) *types.Cell {
 	}
 }
 
-func And(x, y *types.Cell) *types.Cell {
+func And (x, y *types.Cell) *types.Cell {
 	if x.Equal(core.T) && y.Equal(core.T) {
 		return core.T
 	} else {
@@ -64,23 +64,23 @@ func And(x, y *types.Cell) *types.Cell {
 	}
 }
 
-func Append(x, y *types.Cell) *types.Cell {
+func Append (x, y *types.Cell) *types.Cell {
 	if x.Equal(core.NIL) {
 		return y
 	} else {
-		return cons(car(x), Append(cdr(x), y))
+		return core.Cons(car(x), Append(cdr(x), y))
 	}
 }
 
-func List_(x, y *types.Cell) *types.Cell {
-	return cons(x, cons (y, core.NIL))
+func List_ (x, y *types.Cell) *types.Cell {
+	return core.Cons(x, core.Cons (y, core.NIL))
 }
 
-func Assoc(x, y *types.Cell) *types.Cell {
+func Assoc (x, y *types.Cell) *types.Cell {
 	if y.Equal(core.NIL) {
 		return core.Err("Not found")
 	} else {
-		if eq(Caar(y), x).Equal(core.T) {
+		if x.Equal(Caar(y)) {
 			return Cadar(y)
 		} else {
 			return Assoc(x, cdr(y))	
@@ -102,20 +102,12 @@ func Cadddr(e *types.Cell) *types.Cell { return car(cdr(cdr(cdr(e)))) }
 // Just ALIAS for better readability
 // ---------------------------------
 
-func car(x *types.Cell) *types.Cell {
+func car (x *types.Cell) *types.Cell {
 	return core.Car(x)
 }
 
-func cdr(x *types.Cell) *types.Cell {
+func cdr (x *types.Cell) *types.Cell {
 	return core.Cdr(x)
-}
-
-func cons(x, y *types.Cell) *types.Cell {
-	return core.Cons(x,y)
-}
-
-func eq(x, y *types.Cell) *types.Cell {
-	return core.Eq(x,y)
 }
 
 

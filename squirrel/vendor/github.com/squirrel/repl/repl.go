@@ -49,9 +49,7 @@ func isQuit(e *types.Cell) bool {
 
 func createList (fns []string) []byte {
 	var b bytes.Buffer
-	
 	b.WriteRune('('); for _, fn := range fns { b.WriteString(fn) }; b.WriteRune(')')
-	
 	return b.Bytes()
 }
 

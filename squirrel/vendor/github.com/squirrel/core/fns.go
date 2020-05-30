@@ -32,7 +32,7 @@ func Atom(x *types.Cell) *types.Cell {
 	}
 }
 
-func Eq(x, y *types.Cell) *types.Cell {	
+func Is(x, y *types.Cell) *types.Cell {	
 	if x.Equal(y) {
 	 	return T	
 	}
@@ -107,12 +107,12 @@ func cdr_(c *types.Cell) *types.Cell {
 // Shortcuts
 // -------------------------------------------------------------------------------------------------
 
-func caar  (e *types.Cell) *types.Cell { return car_(car_(e))           }
-func cadr  (e *types.Cell) *types.Cell { return car_(cdr_(e))           }
-func cddr  (e *types.Cell) *types.Cell { return cdr_(cdr_(e))           }
-func cadar (e *types.Cell) *types.Cell { return car_(cdr_(car_(e)))      } 
-func cdddr (e *types.Cell) *types.Cell { return cdr_(cdr_(cdr_(e)))      } 
-func caddr (e *types.Cell) *types.Cell { return car_(cdr_(cdr_(e)))      }
+func caar  (e *types.Cell) *types.Cell { return car_(car_(e))             }
+func cadr  (e *types.Cell) *types.Cell { return car_(cdr_(e))             }
+func cddr  (e *types.Cell) *types.Cell { return cdr_(cdr_(e))             }
+func cadar (e *types.Cell) *types.Cell { return car_(cdr_(car_(e)))       } 
+func cdddr (e *types.Cell) *types.Cell { return cdr_(cdr_(cdr_(e)))       } 
+func caddr (e *types.Cell) *types.Cell { return car_(cdr_(cdr_(e)))       }
 func caddar(e *types.Cell) *types.Cell { return car_(cdr_(cdr_(car_(e)))) }
 func cadddr(e *types.Cell) *types.Cell { return car_(cdr_(cdr_(cdr_(e)))) } 	
 

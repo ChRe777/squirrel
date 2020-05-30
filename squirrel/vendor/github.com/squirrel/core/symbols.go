@@ -5,7 +5,7 @@ const (
 	// 7 Primitives
 	ID_QUOTE  = "quote"
 	ID_ATOM   = "atom"
-	ID_EQ	  = "is"		// was EQ
+	ID_IS	  = "is"		// was EQ
 	ID_CAR    = "car"		// can be first
 	ID_CDR	  = "cdr"		// can be rest
 	ID_CONS	  = "cons"	
@@ -45,7 +45,7 @@ var (
 	
 	QUOTE 	= Sym(ID_QUOTE)
 	ATOM 	= Sym(ID_ATOM)
-	EQ 		= Sym(ID_EQ)
+	IS 		= Sym(ID_IS)							// was EQ
 	CAR 	= Sym(ID_CAR)
 	CDR 	= Sym(ID_CDR) 
 	CONS 	= Sym(ID_CONS)

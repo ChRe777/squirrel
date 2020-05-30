@@ -29,14 +29,14 @@ func eval(e, a *types.Cell) *types.Cell {
 	
 	// b) Functions e.g. (car '(1 2)) -> 1	
 	c := core.Car(e)
-	if  c.IsAtom() {
+	if c.IsAtom() {
 		switch {	
 		
 			// 7 core axioms - "The Roots of lisp" (McCarthy, Paul Graham)
 			//
 			case c.Equal(core.QUOTE): return core.Quote(e) 
 			case c.Equal(core.ATOM ): return core.Atom(eval(builtin.Cadr(e), a))
-			case c.Equal(core.EQ   ): return core.Eq  (eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
+			case c.Equal(core.IS   ): return core.Is  (eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
 			case c.Equal(core.CAR  ): return core.Car (eval(builtin.Cadr(e), a))
 			case c.Equal(core.CDR  ): return core.Cdr (eval(builtin.Cadr(e), a))
 			case c.Equal(core.CONS ): return core.Cons(eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
@@ -76,50 +76,60 @@ func eval(e, a *types.Cell) *types.Cell {
 		}
 	}
 	
-	// (var mapn (func (f ys) (cond (((no ys) nil)('t  (cons 	(f      (first ys)) (mapn f (rest  ys))))))))
-				
-	// c) Labels calls 
-	//		e.g. 
-	//			( (label cadr (func (x) (car (cdr x))) ) (cadr '(1 2 3)) ) -> 2
-	//			
-	//			( (func (x) (car (cdr x))) )
-	//			(
-	//				(x '(1 2 3))
-	//			)         
-	//
-	// A "label" expression is evaluated by pushing a list of the function name
-	// and the function itself, onto the environment, and then calling eval on an
-	// expression with the inner lambda expression substituted for the label expression.
+	// c) Labels calls
 	if builtin.Caar(e).Equal(core.LABEL) {
-		
-		label := builtin.Cadar(e); fn := builtin.Caddar(e)
-		
-		ee := core.Cons(builtin.Caddar(e),core.Cdr(e))		
-		aa := core.Cons(builtin.List_(label, fn), a)  // ( (no (func (x) (eq x nil)) (a 1) (b 2) )
-				
-		return eval(ee, aa)
+		return evlabel(e, a)
 	} 
 	
 	// d) Function calls 
-	//           (         f          params ) -> ?
-	//		e.g. ( (func (x) (car x)) '(1 2) ) -> 1
 	if builtin.Caar(e).Equal(core.FUNC) {
-	
-		k := builtin.Cadar(e); v := evlis(core.Cdr(e), a)	
-		
-		ee := builtin.Caddar(e)
-		aa := builtin.Append(builtin.Pair(k, v), a)		
-				
-		r := eval(ee, aa)		// will expand backquotes and unquotes
-		if isMac(e) {
-			return eval(r, aa)
-		}
-		
-		return r
+		return evfuncCall(e, a)
 	}
 		
 	return core.Err("Wrong expression")
 }
+
+// (var mapn (func (f ys) (cond (((no ys) nil)('t  (cons 	(f      (first ys)) (mapn f (rest  ys))))))))
+			
+// c) Labels calls 
+//		e.g. 
+//			( (label cadr (func (x) (car (cdr x))) ) (cadr '(1 2 3)) ) -> 2
+//			
+//			( (func (x) (car (cdr x))) )
+//			(
+//				(x '(1 2 3))
+//			)         
+//
+// A "label" expression is evaluated by pushing a list of the function name
+// and the function itself, onto the environment, and then calling eval on an
+// expression with the inner lambda expression substituted for the label expression.
+func evlabel(e, a *types.Cell) *types.Cell {
+	label := builtin.Cadar(e); fn := builtin.Caddar(e)
+		
+	ee := core.Cons(builtin.Caddar(e),core.Cdr(e))		
+	aa := core.Cons(builtin.List_(label, fn), a)  // ( (no (func (x) (eq x nil)) (a 1) (b 2) )
+				
+	return eval(ee, aa)
+}
+
+
+// evfunc evals function calls with arguments
+//	e.g.
+//		( (func (x) (car x)) '(1 2) ) -> 1
+func evfuncCall(e, a *types.Cell) *types.Cell {
+	k := builtin.Cadar(e); v := evlis(core.Cdr(e), a)	
+		
+	ee := builtin.Caddar(e)
+	aa := builtin.Append(builtin.Pair(k, v), a)		
+			
+	r := eval(ee, aa)		// will expand backquotes and unquotes
+	if isMac(e) {
+		return eval(r, aa)
+	}
+	
+	return r
+}
+
 
 // isMac checks if caar(e) is tagged as macro
 // e.g.
@@ -187,6 +197,7 @@ func evenv(e, a *types.Cell) *types.Cell {
 //	)
 func evvar(e, a *types.Cell) *types.Cell {
 	k := builtin.Cadr(e); v := eval(builtin.Caddr(e), a)
+	fmt.Printf("evalcar k:%v v:%v e:%v \n",k,v, e)
 	a = addEnv(builtin.List_(k, v), a)
 	return eval(k, a)
 }

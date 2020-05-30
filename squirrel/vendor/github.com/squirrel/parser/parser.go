@@ -134,7 +134,7 @@ func sexpr(level *int) *types.Cell {
 	*/
 	quote := func(level *int) *types.Cell {
 		debug("quote", level); scanner.GetSym();
-		cell := core.Quote(sexpr(level))
+		cell := core.Quote_(sexpr(level))
 		return cell
 	}
 	

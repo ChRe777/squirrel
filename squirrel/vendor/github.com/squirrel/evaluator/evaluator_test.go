@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"testing"
+	"fmt"
 )
 
 import (
@@ -82,7 +83,10 @@ func TestEvalVar(t *testing.T) {
 	for _, spec := range specs {
 	
 		eval(spec.e, envBuiltin)
-		got := car(envBuiltin) 
+		
+		fmt.Printf("e: %v, envBuiltin: %v  \n", spec.e, envBuiltin)
+		
+		got := core.Car(envBuiltin) 
 		
 		if got.NotEqual(spec.want) {
 			t.Errorf("eval var e: %v - got: %v, want: %v", spec.e, got, spec.want)

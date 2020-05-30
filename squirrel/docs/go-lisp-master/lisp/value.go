@@ -10,9 +10,9 @@ type Value struct {
 	val interface{}
 }
 
-var Nil = Value{nilValue, nil}
+var Nil   = Value{nilValue   , nil}
 var False = Value{symbolValue, "false"}
-var True = Value{symbolValue, "true"}
+var True  = Value{symbolValue, "true"}
 
 type valueType uint8
 
@@ -20,7 +20,7 @@ const (
 	nilValue valueType = iota
 	symbolValue
 	numberValue
-	stringValue
+	stringValue 
 	vectorValue
 	procValue
 	consValue
