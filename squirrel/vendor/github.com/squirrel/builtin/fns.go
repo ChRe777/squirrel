@@ -76,14 +76,14 @@ func List_ (x, y *types.Cell) *types.Cell {
 	return core.Cons(x, core.Cons (y, core.NIL))
 }
 
-func Assoc (x, y *types.Cell) *types.Cell {
-	if y.Equal(core.NIL) {
+func Assoc (x, ys *types.Cell) *types.Cell {
+	if ys.Equal(core.NIL) {
 		return core.Err("Not found")
 	} else {
-		if x.Equal(Caar(y)) {
-			return Cadar(y)
+		if x.Equal(Caar(ys)) {
+			return Cadar(ys)
 		} else {
-			return Assoc(x, cdr(y))	
+			return Assoc(x, cdr(ys))	
 		}
 	}
 }

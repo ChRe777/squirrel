@@ -12,13 +12,18 @@ import (
 
 // evmac eval 'mac and create a macros in environment
 // 	e.g.
-//	 	(mac {name} {params} {body})
-//  	(var {name} (mac {params} {body}) )
+//	 	(mac {name} {params}_{body})
+//
 func evmac(e, a *types.Cell) *types.Cell {
 	name := builtin.Cadr(e); params_body := builtin.Cddr(e)
-	k := name; v := core.Cons(core.MAC, params_body)
+	
+	fmt.Printf("evmac - e: %v, a: %v \n", e, a)
+	fmt.Printf("evmac - name: %v, params_body: %v \n",name, params_body)
+	
+	k := name; v := core.Cons(core.FUNC, params_body)	// A macros is a func tagged as macro
 	core.Tag(v, core.ID_MAC)
 	a = addEnv(builtin.List_(k, v), a)
+	
 	return eval(k, a)
 }
 

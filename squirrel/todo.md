@@ -12,6 +12,12 @@ An lisp interpreter exists of following components:
 	
 ## ToDo
 
+	* [ ] num, err, sym, str ... support
+    * [ ] (cmd {params}) nativ - Side-Effects - All other functional
+	* [ ] Connectable support nativ  in--->[cellA]--->[cellB]-->out
+	* [ ] Attribute support nativ
+	* [ ] (apply '+ '(1 2 3)) -> 6
+	* [ ] (go (func (x) (car x))) - Go-Routines and Channels support
 	* [ ] PARSE Dotted Pairs { "(a . b)"	, generator.Cons(generator.Sym("a"), generator.Sym("b")) },
 	* [ ] Implement "def" e.g. (def add (x y) (+ x y))
     * [ ] Load Squirrel from file (load "code.sqr")

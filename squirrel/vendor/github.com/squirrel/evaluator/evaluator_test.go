@@ -62,7 +62,6 @@ func TestEvalFunc(t *testing.T) {
 		
 }
 
-
 func TestEvalVar(t *testing.T) {
 
 	p := func(s string) *types.Cell {
@@ -93,7 +92,6 @@ func TestEvalVar(t *testing.T) {
 		}
 	}
 }
-
 
 func TestEvalDef(t *testing.T) {
 
@@ -166,9 +164,9 @@ func TestEvalLet(t *testing.T) {
 		e		*types.Cell
 		want 	*types.Cell
 	} {
-		{ p("(let xs '(1 2) (no  xs))" ), core.NIL  		},
-		{ p("(let ys '(1 2) (car ys))" ), core.Num("1")  },
-
+		{ p("(let xs '(1 2) (no  xs))"), core.NIL  	   },
+		{ p("(let ys '(1 2) (car ys))"), core.Num("1") },
+		{ p("(let fn (func (x) (list x x)) (fn 1))"), p("(1 1)") },
 	}
 	
 	for _, spec := range specs {

@@ -57,7 +57,7 @@ var (
 		
 	LABEL 	= Sym(ID_LABEL)
 	FUNC 	= Sym(ID_FUNC) 
-	MAC		= Tag(Sym(ID_FUNC), ID_MAC)				// A macro is func tagged as "Macro"
+	MAC		= Sym(ID_MAC)
 	T 		= Sym(ID_T) 							// TRUE
 	NIL 	= Nil_() 								// NIL or FALSE
 	

@@ -30,11 +30,15 @@ func testWithEnv(specs []spec, t *testing.T, env *types.Cell) {
 	s := "((t t) (nil nil))"
 	builtInEnv := p(s)
 		
+	fmt.Printf("env: %v \n", env)
+		
 	if env == nil {
 		env = builtInEnv
 	} else {
 		env = builtin.Append(builtInEnv, env)
 	}
+	
+	fmt.Printf("env: %v \n", env)
 	
 	for i, spec := range specs {
 		
