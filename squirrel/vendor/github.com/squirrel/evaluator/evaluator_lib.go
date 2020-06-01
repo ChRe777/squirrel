@@ -1,0 +1,128 @@
+package evaluator
+
+import (
+	"fmt"
+)
+
+import (
+	"github.com/squirrel/types"
+	"github.com/squirrel/core"
+	"github.com/squirrel/builtin"
+)
+
+/*
+
+	- evalCond
+	
+	- evalVar
+	- evalDef
+	- evalLet
+	- evalFunc	
+	
+	- evalEnv
+
+*/
+
+// evalCond evals cond (= conditions)
+// e.g. 
+//		> (cond (
+//			(nil b) 
+//			( 't a))) 	-> a
+//
+func evalCond(c, a *types.Cell) *types.Cell {
+
+	if eval(builtin.Caar(c), a).Equal(core.T) { 
+		return eval(builtin.Cadar(c), a) 
+	} else { 
+		return evalCond(core.Cdr(c), a)
+	}
+
+}
+
+// evalList evals each item of a list
+func evalList(m, a *types.Cell) *types.Cell {
+
+	if m.Equal(core.NIL) {
+		return core.NIL
+	} else {
+		return core.Cons(eval(core.Car(m), a), evalList(core.Cdr(m), a))
+	}
+
+}
+
+// isMac checks if car(e) is tagged as macro
+// e.g.
+//		e = (func (x) (no x))
+//		car(e) -> func (Tagged with mac) 
+func isMac(e *types.Cell) bool {
+	return core.Car(e).IsTagged(core.ID_MAC)
+}
+
+// evalDef eval 'def and creates a function in environment
+// e.g.
+//  	(def {name} {params}_{body})
+//  	({name} (func {params}_{body})
+func evalDef(e, a *types.Cell) *types.Cell {
+	name := builtin.Cadr(e); params_body := builtin.Cddr(e)
+	key := name; val := core.Cons(core.FUNC, params_body)		// TODO: REFACTOR
+	
+	core.Tag(val, core.ID_FUNC)
+	a = addEnv(builtin.List_(key, val), a)
+	
+	return eval(key, a)
+}
+
+// evset evals expression e.g. (set a 1)
+// add a key value pair on top of environment like push on a stack
+// 	e.g.
+//		> (env) 		-> ((t t))
+// 		> (var a 1) 	-> 1
+// 		> (env) 		-> ((a 1) (t t))
+//
+func evalVar(e, a *types.Cell) *types.Cell {
+	key := builtin.Cadr(e)
+	val := eval(builtin.Caddr(e), a)
+	
+	a = addEnv(builtin.List_(key, val), a)
+	
+	return eval(key, a)
+}
+
+// evalLet eval 'let, see example below
+// 	e.g. 
+//		> (let {key} {val} {body} )
+//		> (let xs '(1 2 3) (car xs)) 	->  1
+//		
+func evalLet(e, a *types.Cell) *types.Cell {
+	key := builtin.Cadr(e)
+	val := eval(builtin.Caddr(e), a)	
+	
+	ee := core.Car(builtin.Cdddr(e))
+	aa := core.Cons(builtin.List_(key, val), a)	
+	
+	return eval(ee, aa)
+}
+
+// envenv only print environment for debug purpose
+// e.g.
+//		env = ((a 1) (b 1))
+//
+//		> (env) -> ((a 1) (b 1))
+//
+func evalEnv(e, a *types.Cell) *types.Cell {
+	fmt.Printf("evalEnv - a: %v ap:%p \n\n", a, a)
+	return core.NIL
+}
+
+
+// evalFunc
+// e.g.
+//		(func (x) (car x))  -> func
+func evalFunc(e, a *types.Cell) *types.Cell {
+	
+	v := e
+	core.Tag(v, core.ID_FUNC)
+	
+	return v
+}
+

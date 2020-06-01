@@ -37,6 +37,8 @@ const (
 	ID_DEF	= "def"
 	ID_FUNC = "func"		// was LAMBDA
 	ID_MAC  = "mac"
+	
+	ID_LIST	= "list"
 
 )
 
@@ -71,5 +73,7 @@ var (
 	ENV 	= Sym(ID_ENV)
 	LET 	= Sym(ID_LET)
 	DEF 	= Sym(ID_DEF)
+
+	LIST 	= Sym(ID_LIST)
 
 )

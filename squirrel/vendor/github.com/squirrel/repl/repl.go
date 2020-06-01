@@ -19,7 +19,7 @@ var (
 	PS1 = "> "
 	BYE = "good bye :-)"
 	QUIT = "quit"
-	QUIT_ = core.Cons(core.Sym(QUIT), core.NIL)			// TODO: ??	
+	QUIT_ = core.Cons(core.Sym(QUIT), core.NIL)
 )
 
 func readLine(reader *bufio.Reader) []byte {

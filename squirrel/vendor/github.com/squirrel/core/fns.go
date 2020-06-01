@@ -118,41 +118,41 @@ func cadddr(e *types.Cell) *types.Cell { return car_(cdr_(cdr_(cdr_(e)))) }
 
 
 // -------------------------------------------------------------------------------------------------
+//  e.g. 
+//		(1 2)
+//
+//      last
+//       v
+//	xs->NIL
 
-// (list 1 2 3 4)
-// (cons 1 (cons 2 (cons 3 (cons 4 ()))))
+//      last
+//       v
+//	xs->   ->NIL
 //
-// TODO: Make this more effective
-// because Add adds cells at the end
-// List create a list of a list of cells				// TODO: SLOW?????
-/*func List(xs ...*types.Cell) *types.Cell {
-	l := NIL
-	for _, x := range xs {
-		l = Add(l, x)
-	}
-	return l
-}
-*/
-// l -->[]-->[]-->nil
-// l -->[]-->[]     -->nil
-// l -->[]-->[]-->[]-->nil
+//      last
+//		 v
+//  xs->[1]->NIL
 //
-// TODO: Rename - maybe JavaScript - push
+//      last
+//		 v
+//  xs->[1]->	->NIL
 //
-func Add(l, c *types.Cell)  *types.Cell {
-	li := l
-	if l.IsCons() && l.NotEqual(NIL) { 
+//			 last
+//            v	
+//	xs->[1]->[2]->NIL
+//
+func Push(xs, x, last *types.Cell) (*types.Cell, *types.Cell) {
+
+	new_ := generator.Cons(x, NIL)
 	
-		// TODO: Speed Up With Pointer on LAST element
-	
-		for ;l.Cdr.NotEqual(NIL); {
-			l = l.Cdr
-		}
-	
-		l.Cdr = generator.Cons(c, NIL)
-	
+	if last.Equal(NIL) {
+		xs = new_
 	} else {
-		li = generator.Cons(c, NIL)
+		last.Cdr = new_
 	}
-	return li
+	
+	last = new_
+
+	return xs, last
+
 }

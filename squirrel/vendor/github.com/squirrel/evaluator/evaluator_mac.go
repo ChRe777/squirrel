@@ -14,17 +14,15 @@ import (
 // 	e.g.
 //	 	(mac {name} {params}_{body})
 //
-func evmac(e, a *types.Cell) *types.Cell {
-	name := builtin.Cadr(e); params_body := builtin.Cddr(e)
+func evalMac(e, a *types.Cell) *types.Cell {
+	name := builtin.Cadr(e); params_body := builtin.Cddr(e)	
+		
+	key := name; val := core.Cons(core.FUNC, params_body)	// A macros is a func tagged as macro
+	core.Tag(val, core.ID_MAC)
 	
-	fmt.Printf("evmac - e: %v, a: %v \n", e, a)
-	fmt.Printf("evmac - name: %v, params_body: %v \n",name, params_body)
+	a = addEnv(builtin.List_(key, val), a)
 	
-	k := name; v := core.Cons(core.FUNC, params_body)	// A macros is a func tagged as macro
-	core.Tag(v, core.ID_MAC)
-	a = addEnv(builtin.List_(k, v), a)
-	
-	return eval(k, a)
+	return eval(key, a)
 }
 
 // backquote
@@ -35,7 +33,7 @@ func evmac(e, a *types.Cell) *types.Cell {
 //			(list (unquote a) (unquote b))
 //		) 
 //		-> (list 1 2)
-func Backquote(e *types.Cell, a *types.Cell) *types.Cell {
+func evalBackquote(e *types.Cell, a *types.Cell) *types.Cell {
     x := builtin.Cadr(e)
     y := mapEx(expand, x, a)
     return y
@@ -60,7 +58,6 @@ func unquoteSplicing(e *types.Cell, a *types.Cell) *types.Cell {
 	x := builtin.Cadr(e); y := eval(x, a)
 	return y
 }
-
 
 //	--------------------------------
 //	Helpers for backquote and macros
@@ -98,4 +95,17 @@ func expand(e *types.Cell, a *types.Cell) *types.Cell {
 		}
 		return e
 	}
+}
+
+// addEnv is a special add that adds a new cell at the front of the environment
+// but LET the Pointer to first element the SAME !!!
+func addEnv(kv *types.Cell, a *types.Cell ) *types.Cell {
+	// Hang in new as second
+	cdr := a.Cdr; new := core.Cons(kv, cdr); a.Cdr = new
+	// Change Val first and second to move new second to front
+	val := new.Val; new.Val = a.Val; a.Val = val
+	// Change Car first and second to move new seocen to front
+	car := new.Car; new.Car = a.Car; a.Car = car
+	// So the pointer to a stays the same // Side effects // ToReThink: ?
+	return a
 }

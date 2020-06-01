@@ -101,25 +101,23 @@ func sexpr(level *int) *types.Cell {
 	*/
 	list := func(level *int) *types.Cell {
 	
-		incLevel(level); list := generator.Nil(); debug("list", level)
+		incLevel(level); list := generator.Nil(); last := generator.Nil(); debug("list", level)
 	
 		if scanner.Sym == scanner.Lparen {
 			debug("list lparen", level)
 			scanner.GetSym()
 		} else {
-			// TODO: return error tuple (nil, error)
 			return generator.Error("Left paren is missing")
 		}
 		
 		for ;scanner.Sym < scanner.Rparen; {
-			e := sexpr(level); list = core.Add(list, e)			// TODO: PERFORMANCE
+			e := sexpr(level); list, last = core.Push(list, e, last)
 			scanner.GetSym()
 		}
 		
 		if scanner.Sym == scanner.Rparen {
 			debug("list rparen", level)
 		} else {
-			// TODO: return error tuple (nil, error)
 			return generator.Error("Right paren is missing") 	// Right paren missing
 		}
 		
