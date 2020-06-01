@@ -29,6 +29,7 @@ func eval(e, a *types.Cell) *types.Cell {
 	
 	// b) Functions e.g. (car '(1 2)) -> 1	
 	if c := core.Car(e); c.IsAtom() {
+		
 		switch {	
 		
 			// 7 core axioms - "The Roots of lisp" (McCarthy, Paul Graham)
@@ -223,13 +224,26 @@ func evatom(e, a *types.Cell) *types.Cell {
 //		> (env) 	-> (foo (func (x) (no x)))
 //  	> (foo nil)
 //
-func evfuncEnv(e, a *types.Cell) *types.Cell {		// TODO: NAMING
+func evfuncEnv(e, a *types.Cell) *types.Cell {
 
-	name := builtin.Assoc(core.Car(e), a)
-	if name.IsErr() {
-		return core.Err("reference to undefined identifier: %v", core.Car(e)) // TODO: Rename error message
+	key := core.Car(e)							// foo, a = (foo  (func (x) (is x (quote nil))) )
+	
+	
+	// 1. First look in builtin hash table
+	keyStr := fmt.Sprintf("%v", key)
+	value, found := builtin.Fns[keyStr]
+	
+	// 2. Look in environment association list
+	if found == false {
+		value = builtin.Assoc(key, a)			// (func (x) (is x (quote nil)))
 	}
-	ee := core.Cons(name, core.Cdr(e))
+	
+	if value.IsErr() && found == false {
+		return core.Err("reference to undefined identifier: %v", key) // TODO: Rename error message
+	}
+	
+	ee := core.Cons(value, core.Cdr(e))		// ((func (x) (is x (quote nil))) x)
+		
 	return eval(ee, a)
 }
 
@@ -268,3 +282,5 @@ func addEnv(kv *types.Cell, a *types.Cell ) *types.Cell {
 	// So the pointer to a stays the same // Side effects // ToReThink: ?
 	return a
 }
+
+
