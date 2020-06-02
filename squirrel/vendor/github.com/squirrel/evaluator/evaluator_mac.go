@@ -20,7 +20,7 @@ func evalMac(e, a *types.Cell) *types.Cell {
 	key := name; val := core.Cons(core.FUNC, params_body)	// A macros is a func tagged as macro
 	core.Tag(val, core.ID_MAC)
 	
-	a = addEnv(builtin.List_(key, val), a)
+	a = core.Add(builtin.List_(key, val), a)
 	
 	return eval(key, a)
 }
@@ -97,15 +97,4 @@ func expand(e *types.Cell, a *types.Cell) *types.Cell {
 	}
 }
 
-// addEnv is a special add that adds a new cell at the front of the environment
-// but LET the Pointer to first element the SAME !!!
-func addEnv(kv *types.Cell, a *types.Cell ) *types.Cell {
-	// Hang in new as second
-	cdr := a.Cdr; new := core.Cons(kv, cdr); a.Cdr = new
-	// Change Val first and second to move new second to front
-	val := new.Val; new.Val = a.Val; a.Val = val
-	// Change Car first and second to move new seocen to front
-	car := new.Car; new.Car = a.Car; a.Car = car
-	// So the pointer to a stays the same // Side effects // ToReThink: ?
-	return a
-}
+

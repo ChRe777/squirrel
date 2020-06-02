@@ -67,7 +67,7 @@ func evalDef(e, a *types.Cell) *types.Cell {
 	key := name; val := core.Cons(core.FUNC, params_body)		// TODO: REFACTOR
 	
 	core.Tag(val, core.ID_FUNC)
-	a = addEnv(builtin.List_(key, val), a)
+	a = core.Add(builtin.List_(key, val), a)
 	
 	return eval(key, a)
 }
@@ -83,7 +83,7 @@ func evalVar(e, a *types.Cell) *types.Cell {
 	key := builtin.Cadr(e)
 	val := eval(builtin.Caddr(e), a)
 	
-	a = addEnv(builtin.List_(key, val), a)
+	a = core.Add(builtin.List_(key, val), a)
 	
 	return eval(key, a)
 }
