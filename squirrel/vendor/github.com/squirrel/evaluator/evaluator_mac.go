@@ -18,10 +18,14 @@ func evalMac(e, a *types.Cell) *types.Cell {
 	name := builtin.Cadr(e); params_body := builtin.Cddr(e)	
 		
 	key := name; val := core.Cons(core.FUNC, params_body)	// A macros is a func tagged as macro
+	
+	fmt.Printf("evalMac - key: %v, val: %v \n", key, val)
+	
 	core.Tag(val, core.ID_MAC)
 	
 	a = core.Add(builtin.List_(key, val), a)
 	
+
 	return eval(key, a)
 }
 
@@ -36,6 +40,9 @@ func evalMac(e, a *types.Cell) *types.Cell {
 func evalBackquote(e *types.Cell, a *types.Cell) *types.Cell {
     x := builtin.Cadr(e)
     y := mapEx(expand, x, a)
+    
+    fmt.Printf("evalBackquote - x: %v, e: %v, y: %v \n", x, e, y)		
+
     return y
 }
 
@@ -54,8 +61,12 @@ func unquote(e *types.Cell, a *types.Cell) *types.Cell {
 //		`((+ 1 2) ,(+ 3 4) ,@(list 5 6))
 // 		((+ 1 2) 7 5 6)
 func unquoteSplicing(e *types.Cell, a *types.Cell) *types.Cell {
-	fmt.Printf("unquoteSplicing - e:%v \n", e)
 	x := builtin.Cadr(e); y := eval(x, a)
+	
+	// e: (unquote_splicing xs), x: xs , y: (1 2 3)
+	
+	fmt.Printf("unquoteSplicing - e: %v, x: %v , y: %v\n", e, x, y)
+	
 	return y
 }
 
@@ -71,8 +82,15 @@ func mapEx(fn fnCell, e *types.Cell, a *types.Cell) *types.Cell {
 	if builtin.No(e).Equal(core.T) {
 		return core.NIL
 	} else {
-		x := core.Car(e); xs := core.Cdr(e)			
-		return core.Cons(fn(x, a), mapEx(fn, xs, a))
+		x := core.Car(e); xs := core.Cdr(e)
+		y := fn(x, a)
+		
+		if y.IsCons() { // ,@
+			fmt.Printf("mapEx - y.IsCons() = true, y: %v \n", y)
+			return builtin.Append(y, mapEx(fn, xs, a))
+		} else {		
+			return core.Cons(y, mapEx(fn, xs, a))
+		}
 	}
 }
 
@@ -80,13 +98,15 @@ func mapEx(fn fnCell, e *types.Cell, a *types.Cell) *types.Cell {
 // e.g.
 //		(list (unquote a) (unquote b))
 func expand(e *types.Cell, a *types.Cell) *types.Cell {	
+
 	if e.IsAtom() {
 		return e
 	} else {
 		c := core.Car(e)
+	
 		if c.IsAtom() {
 			switch {	
-				case c.Equal(core.UNQUOTE): return unquote(e, a) 	
+				case c.Equal(core.UNQUOTE): return unquote(e, a) 
 				// unquote-splicing shorcut: ,@
 				//`((+ 1 2) ,(+ 3 4) ,@(list 5 6))
 				// ((+ 1 2) 7 5 6)

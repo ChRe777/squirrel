@@ -55,3 +55,8 @@ func Backquote_(c *types.Cell) *types.Cell {
 func Unquote_(c *types.Cell) *types.Cell {
 	return generator.Cons(UNQUOTE, generator.Cons(c, NIL))
 }
+
+// UnquoteSplicing is used in macros to enable evaluation
+func UnquoteSplicing_(c *types.Cell) *types.Cell {
+	return generator.Cons(UNQUOTE_SPLICING, generator.Cons(c, NIL))
+}

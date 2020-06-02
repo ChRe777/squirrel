@@ -172,10 +172,7 @@ func GetSym() {
 				Sym = Unquote
 			}
 			NextCh()
-			
-		// TODO: UnquoteSplicing
-		// ,@
-		
+					
 		case '"' == Ch:
 			Sym = String
 			readString()

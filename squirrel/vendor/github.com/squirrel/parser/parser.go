@@ -147,6 +147,12 @@ func sexpr(level *int) *types.Cell {
 		cell := core.Unquote_(sexpr(level))
 		return cell
 	}
+	
+	unquoteSplicing := func(level *int) *types.Cell {
+		debug("unquoteSplicing", level); scanner.GetSym();
+		cell := core.UnquoteSplicing_(sexpr(level))
+		return cell
+	}
 
 	/*
 	BEGIN (* sexpr *) level := level + 3; debug("sexpr", level);
@@ -183,6 +189,9 @@ func sexpr(level *int) *types.Cell {
 			
 		case scanner.Unquote:
 			return unquote(level)
+			
+		case scanner.UnquoteSplicing:
+			return unquoteSplicing(level)
 	}
 	
 	return generator.Nil()
