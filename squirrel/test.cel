@@ -1,0 +1,3 @@
+(mac apply (fn xs) 
+	`(,fn ,@xs)
+)

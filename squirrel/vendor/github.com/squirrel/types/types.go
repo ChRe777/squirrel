@@ -1,5 +1,10 @@
 package types
 
+import(
+	"strings"
+	"errors"
+)
+
 type Identifier string
 
 type CellType 	byte
@@ -48,6 +53,8 @@ const (
 type Cell struct {
     Type 	Type
     Tag     interface{}
+//  Level	interface{}		// each function is in a level -> level 2 can access level 1
+//  Sec		interface{}		// security - more information later
     Val 	interface{}
     Car 	*Cell
 	Cdr 	*Cell
@@ -82,3 +89,15 @@ func (c *Cell) IsStr() bool {
 func (c *Cell) IsTagged(t string) bool {
 	return c.Tag != nil && c.Tag == t
 }
+
+// AsStr checks, if cell is an atom of type string and return string value
+func (c *Cell) AsStr() (string, error) {
+	if c.IsAtom() && c.IsStr() {
+		s, ok := c.Val.(string)
+		if ok {
+			return strings.Trim(s, "\""), nil
+		} 
+	}
+	return "", errors.New("No atom and/or string")
+}
+

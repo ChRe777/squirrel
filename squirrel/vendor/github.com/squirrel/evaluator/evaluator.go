@@ -186,7 +186,7 @@ func evalFuncCall(e, a *types.Cell) *types.Cell {
 //		(load "test.lqs")
 func evalLoad(e, a *types.Cell) *types.Cell {
 
-	name := builtin.Cadr(e); exp  := builtin.Load(name)
+	name := builtin.Cadr(e); exp := builtin.Load(name)
 	
 	return eval(exp, a)
 }
