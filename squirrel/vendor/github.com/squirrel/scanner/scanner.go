@@ -27,7 +27,6 @@ var (
 	Sym 	int
 	Id		[IdLen]rune
 	R		*bytes.Reader
-	//error	bool
 	errpos	int64
 	Debug	bool
 )
@@ -44,7 +43,7 @@ func NextCh() {
 
 // PeekCh peek next rune
 func PeekCh() {
-	Ch2, Size, Err = R.ReadRune()	// TODO: CHECK ????
+	Ch2, Size, Err = R.ReadRune()
 	err := R.UnreadRune()
 	if err != nil {
 		panic(err)
@@ -144,47 +143,55 @@ func GetSym() {
 	// Read next symbol
 	//
 	switch {
+
+// abc
 		case 'a' <= Ch && Ch <= 'z' || 
 		     'A' <= Ch && Ch <= 'Z':
 			Sym = Symbol
 			readSymbol()
-			
-		// TODO: -1234.45e-12
-		case '0' <= Ch && Ch <='9':		
+
+// 123			
+		case '0' <= Ch && Ch <='9':						// TODO: -1234.45e-12
 			Sym = Number
 			readNumber()
-		
+
+// '		
 		case '\'' == Ch:
 			Sym = Quote
 			NextCh()
-			
+
+// `			
 		case '`' == Ch:
 			Sym = Backquote
 			NextCh()
-						
+
+// ,						
 		case ',' == Ch:
 			PeekCh()
 			if '@' == Ch2 {
 				Sym = UnquoteSplicing
 				NextCh()
-				fmt.Println("Scanner - UnquoteSplicing")
 			} else {
 				Sym = Unquote
 			}
 			NextCh()
-					
+
+// ""					
 		case '"' == Ch:
 			Sym = String
 			readString()
-		
+
+// (		
 		case '(' == Ch:
 			Sym = Lparen
 			NextCh()
-			
+
+// )			
 		case ')' == Ch:
 			Sym = Rparen
 			NextCh()
-		
+
+// END		
 		default:
 			Sym = Other // EOT
 			NextCh()

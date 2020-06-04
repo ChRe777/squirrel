@@ -1,7 +1,7 @@
 package types
 
 import (
-	"reflect"	// TODO: Use cmp oder create your own
+	"reflect"											// TODO: Use cmp oder create your own equal
 )
 
 // Equal check if x equals y
@@ -9,8 +9,7 @@ func (x *Cell) Equal(y *Cell) bool {
 	
 	if x.Type.Cell == ATOM && y.Type.Cell == ATOM &&
 	   x.Type.Atom == y.Type.Atom {
-	   	// TODO: Use cmp
-		if reflect.DeepEqual(x.Val, y.Val) {
+		if reflect.DeepEqual(x, y) {					// TODO: Use cmp
 			return true
 		}
 	}

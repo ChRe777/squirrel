@@ -73,6 +73,11 @@ func (c *Cell) IsErr() bool {
 	return c.IsAtom() && (c.Type.Atom == ERROR)
 }
 
+// IsStr checks, if cell is an atom of type string
+func (c *Cell) IsStr() bool {
+	return c.IsAtom() && (c.Type.Atom == STRING)
+}
+
 // IsTagged checks, if cell is tagged with string t			// TODO: Check tag with SYMBOL
 func (c *Cell) IsTagged(t string) bool {
 	return c.Tag != nil && c.Tag == t

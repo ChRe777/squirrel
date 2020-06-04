@@ -7,63 +7,25 @@ import(
 	"github.com/squirrel/scanner"
 )
 
-/*
-PROCEDURE sexpr(level: INTEGER): cell;
-	VAR e: cell;
-*/
 func sexpr(level *int) *types.Cell {
 
-	/*	
-	PROCEDURE atom(level: INTEGER): cell;
-	VAR a: cell;
-	*/
 	atom := func(level *int) *types.Cell {
 	
-		/*
-		PROCEDURE symbol(level: INTEGER): cell; 
-		BEGIN incL(level); debug("symbol", level);
-			RETURN LSG.atom(LSS.id); (* TYPE = SYM *)
-		END symbol;
-		*/
 		symbol := func(level *int) *types.Cell {
 			incLevel(level); debug("symbol", level)
 			return generator.Atom(scanner.IdStr(), types.SYMBOL)
 		}
 
-		/*
-		PROCEDURE string(level: INTEGER): cell; 
-		BEGIN incL(level); debug("string", level);
-			RETURN LSG.atom("STRING"); (* TYPE = STRING*)
-		END string;
-		*/
 		string := func(level *int) *types.Cell {
 			incLevel(level); debug("string", level)
 			return generator.Atom("\""+scanner.IdStr()+"\"", types.STRING)
 		}
 
-
-		/*		
-		PROCEDURE number(level: INTEGER): cell; 
-		BEGIN  incL(level); debug("number", level);
-			RETURN LSG.atom("NUMBER");
-		END number;
-		*/
 		number := func(level *int) *types.Cell {
 			incLevel(level); debug("number", level)
 			return generator.Num(scanner.IdStr())
 		}
 
-		/*		
-		BEGIN (* atom *) incL(level); debug("atom", level);
-						
-			CASE LSS.sym OF
-				   LSS.symbol: RETURN symbol(level); |			
-				   LSS.string: RETURN string(level); |
-				   LSS.number : RETURN number(level);
-			END;
-			
-		END atom;
-		*/
 
 		incLevel(level); debug("atom", level)
 		
@@ -80,25 +42,8 @@ func sexpr(level *int) *types.Cell {
 		
 		return generator.Nil()
 	
-	} // atom
+	} // end of atom
 
-	/*	
-	PROCEDURE list(level: INTEGER): cell;
-		VAR list, e: cell;
-	BEGIN incL(level); list := LSG.list(); debug("list", level); 
-		
-		IF LSS.sym = LSS.lparen THEN LSS.GetSym; ELSE error(1); END;
-		
-		WHILE LSS.sym < LSS.rparen DO 
-				e := sexpr(level); list := LSG.add(list, e); 
-				LSS.GetSym;
-		END;	
-	
-		IF LSS.sym = LSS.rparen THEN (*LSS.GetSym;*) ELSE error(2); END;
-																															
-		RETURN list;
-	END list;
-	*/
 	list := func(level *int) *types.Cell {
 	
 		incLevel(level); list := generator.Nil(); last := generator.Nil(); debug("list", level)
@@ -124,12 +69,6 @@ func sexpr(level *int) *types.Cell {
 		return list
 	} // end of list
 
-	/*	
-	PROCEDURE quote(level: INTEGER): cell;
-	BEGIN debug("quote", level);
-		LSS.GetSym; RETURN LSG.quote(sexpr(level));
-	END quote;
-	*/
 	quote := func(level *int) *types.Cell {
 		debug("quote", level); scanner.GetSym();
 		cell := core.Quote_(sexpr(level))
@@ -154,17 +93,6 @@ func sexpr(level *int) *types.Cell {
 		return cell
 	}
 
-	/*
-	BEGIN (* sexpr *) level := level + 3; debug("sexpr", level);
-	
-		CASE LSS.sym OF
-			(* atoms  *) LSS.symbol: RETURN atom(level); | LSS.number: RETURN atom(level); | LSS.string: RETURN atom(level); | 
-			(* list   *) LSS.lparen: RETURN list(level); | 
-			(* quotes *) LSS.quote : RETURN quote(level); 
-		END;
-			
-	END sexpr;
-	*/
 	*level += 3; debug("sexpr", level)
 	
 	switch scanner.Sym {
@@ -198,12 +126,6 @@ func sexpr(level *int) *types.Cell {
 
 }
 
-/*
-PROCEDURE Parse*(T: Texts.Text): cell;
-	BEGIN debug("Parse",level); level := 0;
-		LSS.Init(T, 0); LSS.GetSym; RETURN sexpr(level);
-	END Parse;
-*/
 func Parse(b []byte) *types.Cell {
 
 	debug("Parse", &level)

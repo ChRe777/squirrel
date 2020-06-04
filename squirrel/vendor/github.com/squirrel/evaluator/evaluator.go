@@ -41,10 +41,7 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(core.CDR  ) 		: return core.Cdr (eval(builtin.Cadr(e), a))
 			case c.Equal(core.CONS ) 		: return core.Cons(eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))			
 			case c.Equal(core.COND ) 		: return evalCond(core.Cdr(e), a)
-			
-			
-			
-			
+					
 			// Macros			
 			case c.Equal(core.BACKQUOTE) 	: return evalBackquote(e, a) 		// Used for macros in combination with unquote
 			// Extra commands
@@ -58,6 +55,8 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(core.ENV ) 		: return evalEnv(e, a)				// Tests
 			case c.Equal(core.LIST) 		: return evalList(core.Cdr(e), a)
 	
+			// TESTS
+			case c.Equal(core.Sym("load")) 	: return evalLoad(e, a)
 			
 			// 3 extra core axioms from Arc (Paul Graham)
 			//
@@ -182,7 +181,15 @@ func evalFuncCall(e, a *types.Cell) *types.Cell {
 
 //	------------------------------------------------------------------------------------------------
 
+// evalLoad evals load function
+// e.g.
+//		(load "test.lqs")
+func evalLoad(e, a *types.Cell) *types.Cell {
 
+	name := builtin.Cadr(e); exp  := builtin.Load(name)
+	
+	return eval(exp, a)
+}
 
 
 

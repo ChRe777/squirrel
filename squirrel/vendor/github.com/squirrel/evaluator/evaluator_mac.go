@@ -1,10 +1,6 @@
 package evaluator
 
 import (
-	"fmt"
-)
-
-import (
 	"github.com/squirrel/types"
 	"github.com/squirrel/core"
 	"github.com/squirrel/builtin"
@@ -15,17 +11,15 @@ import (
 //	 	(mac {name} {params}_{body})
 //
 func evalMac(e, a *types.Cell) *types.Cell {
+
 	name := builtin.Cadr(e); params_body := builtin.Cddr(e)	
 		
-	key := name; val := core.Cons(core.FUNC, params_body)	// A macros is a func tagged as macro
-	
-	fmt.Printf("evalMac - key: %v, val: %v \n", key, val)
-	
-	core.Tag(val, core.ID_MAC)
-	
+	key := name; val := core.Cons(core.FUNC, params_body)	
+		
+	core.Tag(val, core.ID_MAC)	// A macros is a func tagged as macro (Paul Graham - Arc)
+
 	a = core.Add(builtin.List_(key, val), a)
 	
-
 	return eval(key, a)
 }
 
@@ -40,9 +34,6 @@ func evalMac(e, a *types.Cell) *types.Cell {
 func evalBackquote(e *types.Cell, a *types.Cell) *types.Cell {
     x := builtin.Cadr(e)
     y := mapEx(expand, x, a)
-    
-    fmt.Printf("evalBackquote - x: %v, e: %v, y: %v \n", x, e, y)		
-
     return y
 }
 
@@ -58,21 +49,16 @@ func unquote(e *types.Cell, a *types.Cell) *types.Cell {
 
 // unquoteSplicing
 //	e.g.
-//		`((+ 1 2) ,(+ 3 4) ,@(list 5 6))
+//	   `((+ 1 2) ,(+ 3 4) ,@(list 5 6))
 // 		((+ 1 2) 7 5 6)
 func unquoteSplicing(e *types.Cell, a *types.Cell) *types.Cell {
-	x := builtin.Cadr(e); y := eval(x, a)
-	
-	// e: (unquote_splicing xs), x: xs , y: (1 2 3)
-	
-	fmt.Printf("unquoteSplicing - e: %v, x: %v , y: %v\n", e, x, y)
-	
+	x := builtin.Cadr(e); y := eval(x, a)	
 	return y
 }
 
-//	--------------------------------
+//	------------------------------------------------------------------------------------------------
 //	Helpers for backquote and macros
-//  --------------------------------
+//	------------------------------------------------------------------------------------------------
 
 type fnCell func(e *types.Cell, a *types.Cell) *types.Cell
 
@@ -85,8 +71,7 @@ func mapEx(fn fnCell, e *types.Cell, a *types.Cell) *types.Cell {
 		x := core.Car(e); xs := core.Cdr(e)
 		y := fn(x, a)
 		
-		if y.IsCons() { // ,@
-			fmt.Printf("mapEx - y.IsCons() = true, y: %v \n", y)
+		if y.IsCons() { // y is a list from ,@ then append list
 			return builtin.Append(y, mapEx(fn, xs, a))
 		} else {		
 			return core.Cons(y, mapEx(fn, xs, a))
@@ -106,10 +91,11 @@ func expand(e *types.Cell, a *types.Cell) *types.Cell {
 	
 		if c.IsAtom() {
 			switch {	
+				// x=1, y=2 | `(,x ,y) -> (1 2)
 				case c.Equal(core.UNQUOTE): return unquote(e, a) 
 				// unquote-splicing shorcut: ,@
-				//`((+ 1 2) ,(+ 3 4) ,@(list 5 6))
-				// ((+ 1 2) 7 5 6)
+				// `((+ 1 2) ,(+ 3 4) ,@(list 5 6))
+				//  ((+ 1 2) 7 5 6)
 				case c.Equal(core.UNQUOTE_SPLICING): return unquoteSplicing(e, a)				
 			}
 		}

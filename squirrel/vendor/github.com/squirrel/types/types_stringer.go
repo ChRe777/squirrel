@@ -12,8 +12,6 @@ func (t AtomType) String() string {
 		case STRING: return "string"
 		case NUMBER: return "num"
 		case FUNC  : return "func"
-		case ERROR : return "error"
-		//case BOOL  : return "BOOL"
 		default    : return ""
 	}
 }
