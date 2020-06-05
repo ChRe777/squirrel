@@ -160,7 +160,6 @@ func Push(xs, x, last *types.Cell) (*types.Cell, *types.Cell) {
 
 }
 
-
 // Add is a special add that adds a new cell at the front of the environment
 // but LET the Pointer to first element the SAME !!!
 func Add(kv *types.Cell, a *types.Cell ) *types.Cell {

@@ -43,20 +43,18 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(core.COND ) 		: return evalCond(core.Cdr(e), a)
 					
 			// Macros			
-			case c.Equal(core.BACKQUOTE) 	: return evalBackquote(e, a) 		// Used for macros in combination with unquote
+			case c.Equal(core.BACKQUOTE) 	: return evalBackquote(e, a) 
+			
 			// Extra commands
 			//
-			case c.Equal(core.VAR ) 		: return evalVar(e, a)				// Tests
-			case c.Equal(core.LET ) 		: return evalLet(e, a)				// Tests	
-			case c.Equal(core.DEF ) 		: return evalDef(e, a)				// Tests
-			case c.Equal(core.MAC ) 		: return evalMac(e, a)				// Tests
-			case c.Equal(core.FUNC)			: return evalFunc(e, a)				// Tests
-			
-			case c.Equal(core.ENV ) 		: return evalEnv(e, a)				// Tests
-			case c.Equal(core.LIST) 		: return evalList(core.Cdr(e), a)
-	
-			// TESTS
-			case c.Equal(core.Sym("load")) 	: return evalLoad(e, a)
+			case c.Equal(core.VAR ) : return evalVar(e, a)				
+			case c.Equal(core.LET ) : return evalLet(e, a)					
+			case c.Equal(core.DEF ) : return evalDef(e, a)				
+			case c.Equal(core.MAC ) : return evalMac(e, a)				
+			case c.Equal(core.FUNC)	: return evalFun(e, a)				
+			case c.Equal(core.ENV ) : return evalEnv(e, a)				
+			case c.Equal(core.LIST) : return evalLst(core.Cdr(e), a)	
+			case c.Equal(core.LOAD) : return evalLoad(e, a)
 			
 			// 3 extra core axioms from Arc (Paul Graham)
 			//
@@ -67,46 +65,15 @@ func eval(e, a *types.Cell) *types.Cell {
 			// Extra axioms in environment e.g. (no '()) -> t
 			default: return evalFuncEnv(e, a)									// Builtin and others
 		}
-	}
-/*	
-	// c) Labels calls
-	if builtin.Caar(e).Equal(core.LABEL) {
-		return evlabel(e, a)
-	}
-*/ 
+	} 
 
-	// d) Function call with parameter values		// e.g. (call {fn} {values})
+	// e) Function call with parameter values		// e.g. (call {fn} {param-values})
 	if builtin.Caar(e).Equal(core.FUNC) {
 		return evalFuncCall(e, a)
 	}
 			
 	return core.Err("Wrong expression")
 }
-
-//	------------------------------------------------------------------------------------------------
-
-			
-// c) Labels calls 
-//		e.g. 
-//			( (label cadr (func (x) (car (cdr x))) ) (cadr '(1 2 3)) ) -> 2
-//			
-//			( (func (x) (car (cdr x))) )
-//			(
-//				(x '(1 2 3))
-//			)         
-//
-// A "label" expression is evaluated by pushing a list of the function name
-// and the function itself, onto the environment, and then calling eval on an
-// expression with the inner lambda expression substituted for the label expression.
-/*
-func evlabel(e, a *types.Cell) *types.Cell {
-	label := builtin.Cadar(e); fn := builtin.Caddar(e)
-	ee := core.Cons(builtin.Caddar(e), core.Cdr(e))		
-	aa := core.Cons(builtin.List_(label, fn), a)  // ( (no (func (x) (eq x nil)) (a 1) (b 2) )
-				
-	return eval(ee, aa)
-}
-*/
 
 //	------------------------------------------------------------------------------------------------
 
@@ -167,7 +134,7 @@ func evalFuncEnv(e, a *types.Cell) *types.Cell {
 //		( (func (x) `(cdr ,x)) '(1 2) ) -> 1	// Func tagged macros
 func evalFuncCall(e, a *types.Cell) *types.Cell {
 
-	key := builtin.Cadar(e); val := evalList(core.Cdr(e), a)			
+	key := builtin.Cadar(e); val := evalLst(core.Cdr(e), a)			
 	ee  := builtin.Caddar(e); aa := builtin.Append(builtin.Pair(key, val), a)		
 			
 	res := eval(ee, aa)			// will call func or expand backquotes and unquotes
@@ -183,15 +150,13 @@ func evalFuncCall(e, a *types.Cell) *types.Cell {
 
 // evalLoad evals load function
 // e.g.
-//		(load "test.lqs")
+//		(load "test.cell")
 func evalLoad(e, a *types.Cell) *types.Cell {
-
-	name := builtin.Cadr(e); exp := builtin.Load(name)
-	
+	name := builtin.Cadr(e); exp := builtin.Load(name)	
 	return eval(exp, a)
 }
 
-
+ 
 
 
 

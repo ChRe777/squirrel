@@ -13,11 +13,12 @@ import (
 /*
 
 	- evalCond
+	- evalList
 	
 	- evalVar
 	- evalDef
 	- evalLet
-	- evalFunc	
+	- evalFun	
 	
 	- evalEnv
 
@@ -39,13 +40,13 @@ func evalCond(c, a *types.Cell) *types.Cell {
 
 }
 
-// evalList evals each item of a list
-func evalList(m, a *types.Cell) *types.Cell {
+// evalLst evals each item of a list
+func evalLst(m, a *types.Cell) *types.Cell {
 
 	if m.Equal(core.NIL) {
 		return core.NIL
 	} else {
-		return core.Cons(eval(core.Car(m), a), evalList(core.Cdr(m), a))
+		return core.Cons(eval(core.Car(m), a), evalLst(core.Cdr(m), a))
 	}
 
 }
@@ -118,7 +119,7 @@ func evalEnv(e, a *types.Cell) *types.Cell {
 // evalFunc
 // e.g.
 //		(func (x) (car x))  -> func
-func evalFunc(e, a *types.Cell) *types.Cell {
+func evalFun(e, a *types.Cell) *types.Cell {
 	
 	v := e
 	core.Tag(v, core.ID_FUNC)
