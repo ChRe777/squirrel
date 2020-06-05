@@ -116,6 +116,8 @@ func evalFuncEnv(e, a *types.Cell) *types.Cell {
 		value = builtin.Assoc(key, a)			// value = (func (x) (is x (quote nil)))
 	}
 	
+	// 3. Look in loaded hash table
+	
 	if value.IsErr() && found == false {
 		return core.Err("reference to undefined identifier: %v", key) // TODO: Rename error message
 	}
@@ -140,6 +142,9 @@ func evalFuncCall(e, a *types.Cell) *types.Cell {
 	res := eval(ee, aa)			// will call func or expand backquotes and unquotes
 		
 	if isMac(e) {	
+	
+		fmt.Printf("evalFuncCall - res: %v \n", res)
+	
 		return eval(res, aa)	// and then if macros call func
 	}
 	

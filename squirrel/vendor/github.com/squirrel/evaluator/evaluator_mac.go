@@ -1,6 +1,10 @@
 package evaluator
 
 import (
+	"fmt"
+)
+
+import (
 	"github.com/squirrel/types"
 	"github.com/squirrel/core"
 	"github.com/squirrel/builtin"
@@ -72,6 +76,7 @@ func mapEx(fn fnCell, e *types.Cell, a *types.Cell) *types.Cell {
 		y := fn(x, a)
 		
 		if y.IsCons() { // y is a list from ,@ then append list
+			fmt.Printf("mapEx - y.IsCons() = true \n")
 			return builtin.Append(y, mapEx(fn, xs, a))
 		} else {		
 			return core.Cons(y, mapEx(fn, xs, a))

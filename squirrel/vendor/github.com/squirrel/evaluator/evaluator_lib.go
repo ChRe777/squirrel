@@ -121,8 +121,7 @@ func evalEnv(e, a *types.Cell) *types.Cell {
 //		(func (x) (car x))  -> func
 func evalFun(e, a *types.Cell) *types.Cell {
 	
-	v := e
-	core.Tag(v, core.ID_FUNC)
+	v := e; core.Tag(v, core.ID_FUNC)
 	
 	return v
 }
