@@ -1,0 +1,9 @@
+(do
+	(def foo (x y)  
+		(list  x  y)
+	)
+	
+	(mac bar (x y) 
+		`(list ,x ,y)
+	)
+)

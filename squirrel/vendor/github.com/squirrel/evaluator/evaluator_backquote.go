@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	"fmt"
+//	"fmt"
 )
 
 import (
@@ -35,7 +35,7 @@ func evalBackquote(e *types.Cell, a *types.Cell) *types.Cell {
     x := builtin.Cadr(e)
     y := macExpand(x, a)	// fill out all the "unquote" holes
     
-    fmt.Printf("evalBackquote - y: %v \n", y)	
+    //fmt.Printf("evalBackquote - y: %v \n", y)	
     
     return y
 }
@@ -120,6 +120,7 @@ func unquote(e *types.Cell, a *types.Cell) *types.Cell {
 //	e.g.
 //	   `((+ 1 2) ,(+ 3 4) ,@(list 5 6))
 // 		((+ 1 2) 7 5 6)
+/*
 func unquoteSplicing(e *types.Cell, a *types.Cell) *types.Cell {
 	
 	x := builtin.Cadr(e)
@@ -127,4 +128,4 @@ func unquoteSplicing(e *types.Cell, a *types.Cell) *types.Cell {
 	
 	return y
 }
-
+*/

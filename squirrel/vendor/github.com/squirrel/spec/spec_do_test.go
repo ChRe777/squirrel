@@ -18,3 +18,15 @@ func TestDo(t *testing.T) {
 	
 	test2(specs, t)
 }
+
+
+func TestDo2(t *testing.T) {
+	
+	specs := []spec {
+		{ "(do 'a)"						, "a"		},
+		{ "(do  1)"						, "1"		},
+		{ "(do (list 1 2) (list 3 4))"	, "(3 4)"	},		
+	}
+	
+	test(specs, t)
+}

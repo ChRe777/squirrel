@@ -19,8 +19,8 @@ func (t AtomType) String() string {
 // String return cell type as string
 func (t CellType) String() string {
 	switch t {
-		case CONS: return "CONS"
-		case ATOM: return "ATOM"
+		case CONS: return "cons"
+		case ATOM: return "atom"
 		default	 : return ""
 	}
 }
@@ -29,7 +29,7 @@ func (t CellType) String() string {
 func (t Type) String() string {
 	c := t.Cell.String()
 	if a := t.Atom.String(); a != "" {
-		c += "-" + a
+		c = a
 	}
 	return c
 }

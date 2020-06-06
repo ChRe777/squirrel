@@ -41,8 +41,10 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(core.CDR  ) 		: return core.Cdr (eval(builtin.Cadr(e), a))
 			case c.Equal(core.CONS ) 		: return core.Cons(eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))			
 			case c.Equal(core.COND ) 		: return evalCond(core.Cdr(e), a)
-					
-			// Macros			
+			
+			// Extra core
+			//
+			case c.Equal(core.TYPE) 		: return core.Type(eval(builtin.Cadr(e), a))		
 			case c.Equal(core.BACKQUOTE) 	: return evalBackquote(e, a) 
 			
 			// Extra commands
@@ -55,8 +57,9 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(core.ENV ) : return evalEnv(e, a)				
 			case c.Equal(core.LIST) : return evalLst(core.Cdr(e), a)	
 			case c.Equal(core.LOAD) : return evalLoad(e, a)
-			
 			case c.Equal(core.DO)   : return evalDo(e, a)
+			
+	
 			
 			// 3 extra core axioms from Arc (Paul Graham)
 			//
@@ -162,19 +165,26 @@ func evalLoad(e, a *types.Cell) *types.Cell {
 
 //	------------------------------------------------------------------------------------------------
 
-func doList (e, last, a *types.Cell) *types.Cell {
+// evalDo evals a list of expression and returns the last expression	
+//	e.g.
+//		(do
+//			(list 1 2)
+//			(no nil)
+//		)
+func evalDo(e, a *types.Cell) *types.Cell {
+
+	var doList func(e, last, a *types.Cell) *types.Cell
+
+	doList = func(e, last, a *types.Cell) *types.Cell {
 		if e.Equal(core.NIL) {
 			return last
 		} else {
 			x := core.Car(e); xs := core.Cdr(e)
-			y := eval(x, a)
-			fmt.Printf("doList - y:%v \n", y)
-			return doList(xs, y, a)
+			l := eval(x, a)
+			return doList(xs, l, a)
 		}	
 	}
-	
-func evalDo(e, a *types.Cell) *types.Cell {
-	fmt.Printf("evalDo - e:%v \n", e)
+
 	return doList(core.Cdr(e), core.NIL, a)
 }
 

@@ -26,6 +26,10 @@ const (
 	ID_SYM	  = "sym"
 	ID_TYPE0  = "type"
 	ID_REP    = "rep"
+	
+	// Extra core
+	//
+	ID_TYPE = "type"
 		
 	// Boolean
 	//
@@ -69,6 +73,13 @@ var (
 	UNQUOTE_SPLICING   	= Sym(ID_UNQUOTESPLICING) 	// For Macros, 
 )
 	
+	
+// Extended core
+//
+var (		
+	TYPE 	= Sym(ID_TYPE)
+)
+
 // Boolean
 //
 var (		
@@ -88,6 +99,7 @@ var (
 	MAC		= Sym(ID_MAC)
 	
 	LIST 	= Sym(ID_LIST)
+	
 	LOAD 	= Sym(ID_LOAD)
 	DO		= Sym(ID_DO)
 )
