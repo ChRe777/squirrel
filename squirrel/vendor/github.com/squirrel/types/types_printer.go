@@ -28,6 +28,10 @@ func sprintAtom(c *Cell) string {
 	if c == nil || c.Val == nil {
 		return ""
 	}
+	if c.IsStr() {
+		s, _ := c.Val.(string)
+		return fmt.Sprintf("\"%s\"", s)
+	}
 	return fmt.Sprintf("%v", c.Val)
 }
 

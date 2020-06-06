@@ -44,29 +44,21 @@ func eval(e, a *types.Cell) *types.Cell {
 			
 			// Extra core
 			//
+			case c.Equal(core.BACKQUOTE) 	: return evalBackquote(e, a)
 			case c.Equal(core.TYPE) 		: return core.Type(eval(builtin.Cadr(e), a))		
-			case c.Equal(core.BACKQUOTE) 	: return evalBackquote(e, a) 
+			case c.Equal(core.DO)   		: return evalDo(e, a)
+			case c.Equal(core.PRINTLN)   	: return core.Println_(evalLst(core.Cdr(e), a))
 			
-			// Extra commands
-			//
-			case c.Equal(core.VAR ) : return evalVar(e, a)				
-			case c.Equal(core.LET ) : return evalLet(e, a)					
-			case c.Equal(core.DEF ) : return evalDef(e, a)				
-			case c.Equal(core.MAC ) : return evalMac(e, a)				
-			case c.Equal(core.FUNC)	: return evalFun(e, a)				
-			case c.Equal(core.ENV ) : return evalEnv(e, a)				
-			case c.Equal(core.LIST) : return evalLst(core.Cdr(e), a)	
-			case c.Equal(core.LOAD) : return evalLoad(e, a)
-			case c.Equal(core.DO)   : return evalDo(e, a)
+			case c.Equal(core.VAR ) 		: return evalVar(e, a)				
+			case c.Equal(core.LET ) 		: return evalLet(e, a)					
+			case c.Equal(core.DEF ) 		: return evalDef(e, a)				
+			case c.Equal(core.MAC ) 		: return evalMac(e, a)				
+			case c.Equal(core.FUNC)			: return evalFun(e, a)				
+			case c.Equal(core.ENV ) 		: return evalEnv(e, a)				
+			case c.Equal(core.LIST) 		: return evalLst(core.Cdr(e), a)	
+			case c.Equal(core.LOAD) 		: return evalLoad(e, a)
 			
-	
 			
-			// 3 extra core axioms from Arc (Paul Graham)
-			//
-			//case c.Equal(core.TAG  ): return core.Tag  (eval(builtin.cadr(e), a), eval(builtin.caddr(e), a))
-			//case c.Equal(core.TYPE0): return core.Type0(eval(builtin.cadr(e), a))
-			//case c.Equal(core.REP  ): return core.Rep  (eval(builtin.cadr(e), a))		
-
 			// Extra axioms in environment e.g. (no '()) -> t
 			default: return evalFuncEnv(e, a)									// Builtin and others
 		}

@@ -8,9 +8,9 @@ func (c *Cell) String() string {
 // String return atom type as string
 func (t AtomType) String() string {
 	switch t {
-		case SYMBOL: return "sym"
+		case SYMBOL: return "symbol"
 		case STRING: return "string"
-		case NUMBER: return "num"
+		case NUMBER: return "number"
 		case FUNC  : return "func"
 		default    : return ""
 	}

@@ -29,7 +29,8 @@ const (
 	
 	// Extra core
 	//
-	ID_TYPE = "type"
+	ID_TYPE 	= "type"
+	ID_PRINTLN 	= "println"
 		
 	// Boolean
 	//
@@ -77,14 +78,15 @@ var (
 // Extended core
 //
 var (		
-	TYPE 	= Sym(ID_TYPE)
+	TYPE 		= Sym(ID_TYPE)
+	PRINTLN 	= Sym(ID_PRINTLN)
 )
 
 // Boolean
 //
 var (		
-	T 		= Sym(ID_T) 							// TRUE
-	NIL 	= Nil_() 								// NIL or FALSE
+	T 			= Sym(ID_T) 							// TRUE
+	NIL 		= Nil_() 								// NIL or FALSE
 )
 
 // Builtin Core

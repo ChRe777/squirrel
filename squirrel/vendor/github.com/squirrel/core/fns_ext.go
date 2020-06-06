@@ -2,11 +2,11 @@ package core
 
 import (
 	"fmt"
+	//"strings"
 )
 
 import (
 	"github.com/squirrel/types"
-//	"github.com/squirrel/generator"
 )
 
 
@@ -45,5 +45,34 @@ func cdr_(c *types.Cell) *types.Cell {
 
 // Type return the type of the cell
 func Type(c *types.Cell) *types.Cell {
-	return Sym(c.Type_())				// TODO: Type Type
+	return Sym(c.Type_())
 }
+
+
+// Println prints all elements and add \n
+// e.g.
+//		> (println "test" 1 '(2 3))
+//		test1(2 3)
+//		"test"
+func Println_(xs *types.Cell) *types.Cell {	
+	x := Car(xs)
+	fmt.Println(sprintList(xs))
+	return x
+}
+
+func sprintList(xs *types.Cell) string {
+	if xs.Equal(NIL) {
+		return "";
+	} else {
+		x := Car(xs)
+		s := ""
+		if x.IsStr() {
+			s, _ = x.AsStr() // removes '"' and start and end
+		} else {
+			s = fmt.Sprintf("%v", x)
+		}
+		
+		return s + sprintList(Cdr(xs))
+	}
+}
+
