@@ -16,3 +16,13 @@ func TestMac(t *testing.T) {
 	
 	test2(specs, t)
 }
+
+
+func TestMac2(t *testing.T) {
+
+	specs := []spec2 {
+		{ "(mac when (c e) `(cond (,c ,e)))"     	, "(when (is 'a 'a) 't)"		, "t"			},
+	}
+	
+	test2(specs, t)
+}

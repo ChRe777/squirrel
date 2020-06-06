@@ -4,10 +4,9 @@ import (
 	"testing"
 )
 	
-func TestFunc(t *testing.T) {
+func TestFuncCall(t *testing.T) {
 	
 	specs := []spec {
-		// Function Calls
 		{ "((func (x)   (cons x '(b))) 'a )"			, "(a b)"  	},  
 		{ "((func (x y) (cons x (cdr y))) 'z '(a b c))"	, "(z b c)"	},
 	}

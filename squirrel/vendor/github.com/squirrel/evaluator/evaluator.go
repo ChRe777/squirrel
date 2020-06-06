@@ -56,6 +56,8 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(core.LIST) : return evalLst(core.Cdr(e), a)	
 			case c.Equal(core.LOAD) : return evalLoad(e, a)
 			
+			case c.Equal(core.DO)   : return evalDo(e, a)
+			
 			// 3 extra core axioms from Arc (Paul Graham)
 			//
 			//case c.Equal(core.TAG  ): return core.Tag  (eval(builtin.cadr(e), a), eval(builtin.caddr(e), a))
@@ -141,10 +143,7 @@ func evalFuncCall(e, a *types.Cell) *types.Cell {
 			
 	res := eval(ee, aa)			// will call func or expand backquotes and unquotes
 		
-	if isMac(e) {	
-	
-		fmt.Printf("evalFuncCall - res: %v \n", res)
-	
+	if isMac(e) {		
 		return eval(res, aa)	// and then if macros call func
 	}
 	
@@ -159,6 +158,24 @@ func evalFuncCall(e, a *types.Cell) *types.Cell {
 func evalLoad(e, a *types.Cell) *types.Cell {
 	name := builtin.Cadr(e); exp := builtin.Load(name)	
 	return eval(exp, a)
+}
+
+//	------------------------------------------------------------------------------------------------
+
+func doList (e, last, a *types.Cell) *types.Cell {
+		if e.Equal(core.NIL) {
+			return last
+		} else {
+			x := core.Car(e); xs := core.Cdr(e)
+			y := eval(x, a)
+			fmt.Printf("doList - y:%v \n", y)
+			return doList(xs, y, a)
+		}	
+	}
+	
+func evalDo(e, a *types.Cell) *types.Cell {
+	fmt.Printf("evalDo - e:%v \n", e)
+	return doList(core.Cdr(e), core.NIL, a)
 }
 
  

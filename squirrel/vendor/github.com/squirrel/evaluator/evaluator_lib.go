@@ -126,3 +126,19 @@ func evalFun(e, a *types.Cell) *types.Cell {
 	return v
 }
 
+// evmac eval 'mac and create a macros in environment
+// 	e.g.
+//	 	(mac {name} {params}_{body})
+//
+func evalMac(e, a *types.Cell) *types.Cell {
+
+	name := builtin.Cadr(e); params_body := builtin.Cddr(e)	
+		
+	key := name; val := core.Cons(core.FUNC, params_body)	
+		
+	core.Tag(val, core.ID_MAC)	// A macros is a func tagged as macro (Paul Graham - Arc)
+
+	a = core.Add(builtin.List_(key, val), a)
+	
+	return eval(key, a)
+}

@@ -46,6 +46,7 @@ const (
 	
 	ID_LIST	= "list"
 	ID_LOAD = "load"
+	ID_DO   = "do"
 
 )
 
@@ -88,6 +89,7 @@ var (
 	
 	LIST 	= Sym(ID_LIST)
 	LOAD 	= Sym(ID_LOAD)
+	DO		= Sym(ID_DO)
 )
 
 
