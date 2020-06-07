@@ -145,40 +145,6 @@ func evalFuncCall(e, a *types.Cell) *types.Cell {
 	return res
 }
 
-//	------------------------------------------------------------------------------------------------
-
-// evalLoad evals load function
-// e.g.
-//		(load "test.cell")
-func evalLoad(e, a *types.Cell) *types.Cell {
-	name := builtin.Cadr(e); exp := builtin.Load(name)	
-	return eval(exp, a)
-}
-
-//	------------------------------------------------------------------------------------------------
-
-// evalDo evals a list of expression and returns the last expression	
-//	e.g.
-//		(do
-//			(list 1 2)
-//			(no nil)
-//		)
-func evalDo(e, a *types.Cell) *types.Cell {
-
-	var doList func(e, last, a *types.Cell) *types.Cell
-
-	doList = func(e, last, a *types.Cell) *types.Cell {
-		if e.Equal(core.NIL) {
-			return last
-		} else {
-			x := core.Car(e); xs := core.Cdr(e)
-			l := eval(x, a)
-			return doList(xs, l, a)
-		}	
-	}
-
-	return doList(core.Cdr(e), core.NIL, a)
-}
 
  
 

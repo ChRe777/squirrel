@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-//	"fmt"
+	"fmt"
 )
 
 import (
@@ -111,7 +111,11 @@ func expand(e *types.Cell, a *types.Cell) (*types.Cell, bool) {
 func unquote(e *types.Cell, a *types.Cell) *types.Cell {
 	
 	x := builtin.Cadr(e)
-	y := eval(x, a)
+	
+	
+	y := eval(x, a)	// TODO: Should fill in, but not EVAL ..???
+	
+	fmt.Printf("unquote - x: %v, y: %v \n", x, y)
 	
 	return y
 }

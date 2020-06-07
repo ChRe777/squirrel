@@ -109,12 +109,12 @@ func GetSym() {
 	readString := func() {
 		NextCh()
 		i := 0
-		for ;Ch != '"' && Ch > ' '; {
+		for ;Ch != '"' && Ch >= ' '; {
 			Id[i] = Ch
 			inc(&i)
 			NextCh()
 		}
-		if Ch <= ' ' {
+		if Ch < ' ' {
 			Mark("No control chars allowed in string")
 		}
 		Id[i] = '\x00'
