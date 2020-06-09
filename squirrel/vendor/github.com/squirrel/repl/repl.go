@@ -13,6 +13,7 @@ import(
 	"github.com/squirrel/builtin"
 	"github.com/squirrel/parser"
 	"github.com/squirrel/evaluator"
+	"github.com/squirrel/printer"
 )
 
 var (
@@ -28,7 +29,7 @@ func readLine(reader *bufio.Reader) []byte {
 }
 
 func printRes(e *types.Cell) {
-	fmt.Printf("%v\n", types.SprintCell(e))
+	fmt.Printf("%v\n", printer.SprintCell(e))
 }
 
 func printBye() {

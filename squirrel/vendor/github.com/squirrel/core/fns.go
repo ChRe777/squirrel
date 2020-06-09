@@ -47,7 +47,7 @@ func Car(e *types.Cell) *types.Cell {
 		if e.IsCons() {
 			return car_(e) 
 		} else {
-			return Err("Can't take car of %v", e)
+			return Err("Can't take car of atom")
 		}
 	}
 }
@@ -60,7 +60,7 @@ func Cdr(e *types.Cell) *types.Cell {
 		if e.IsCons() {
 			return cdr_(e)
 		} else {
-			return Err("Can't take cdr of %v", e)
+			return Err("Can't take cdr of atom")
 		}
 	}
 	

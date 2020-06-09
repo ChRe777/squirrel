@@ -47,7 +47,7 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(core.BACKQUOTE) 	: return evalBackquote(e, a)
 			case c.Equal(core.TYPE) 		: return core.Type(eval(builtin.Cadr(e), a))		
 			case c.Equal(core.DO)   		: return evalDo(e, a)
-			case c.Equal(core.PRINTLN)   	: return core.Println_(evalLst(core.Cdr(e), a))
+			//case c.Equal(core.PRINTLN)   	: return core.Println_(evalLst(core.Cdr(e), a))
 			
 			case c.Equal(core.VAR ) 		: return evalVar(e, a)				
 			case c.Equal(core.LET ) 		: return evalLet(e, a)					

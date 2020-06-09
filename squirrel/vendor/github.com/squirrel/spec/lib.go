@@ -1,7 +1,6 @@
 package spec
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -10,6 +9,7 @@ import (
 	"github.com/squirrel/builtin"
 	"github.com/squirrel/evaluator"
 	"github.com/squirrel/parser"	
+	"github.com/squirrel/printer"	
 )
 
 type spec struct {
@@ -39,7 +39,7 @@ func test2(specs []spec2, t *testing.T) {
 	for _, spec := range specs {
 
 		evaluator.Eval(p(spec.expr1), env); 
-		gotExp := evaluator.Eval(p(spec.expr2), env); got := fmt.Sprintf("%v", gotExp)
+		gotExp := evaluator.Eval(p(spec.expr2), env); got := printer.SprintCell(gotExp)
 	
 		if got != spec.want {
 			t.Errorf("Spec eval %v was incorrect, got: %v, want: %v", spec.expr2, got, spec.want)
@@ -63,18 +63,14 @@ func testWithEnv(specs []spec, t *testing.T, env *types.Cell) {
 		env = builtin.Append(builtInEnv, env)
 	}
 		
-	for i, spec := range specs {
+	for _, spec := range specs {
 		
-		name := fmt.Sprintf("test%v", i);
-		t.Run(name, func(t *testing.T) {
-		
-			bs := []byte(spec.expression); e := parser.Parse(bs)
-			res := evaluator.Eval(e, env); got := fmt.Sprintf("%v", res)
-						
-			if got != spec.want {
-				t.Errorf("Spec eval %v was incorrect, got: %v, want: %v", spec.expression, got, spec.want)
-			}
+		bs := []byte(spec.expression); e := parser.Parse(bs)
+		res := evaluator.Eval(e, env); got := printer.SprintCell(res)
+					
+		if got != spec.want {
+			t.Errorf("Spec eval %v was incorrect, got: %v, want: %v", spec.expression, got, spec.want)
+		}
 				
-		})
 	}		
 }

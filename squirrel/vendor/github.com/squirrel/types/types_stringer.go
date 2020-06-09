@@ -1,8 +1,12 @@
 package types
+
+import (
+	"fmt"
+)
 	
 // String return a cell as string
 func (c *Cell) String() string {
-	return SprintCell(c)
+	return fmt.Sprintf("type: %v, tag: %v, val: %v, car: %p, cdr: %p", c.Type, c.Tag, c.Val, c.Car, c.Cdr)
 }
 
 // String return atom type as string

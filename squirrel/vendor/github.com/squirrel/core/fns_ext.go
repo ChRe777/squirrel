@@ -48,7 +48,7 @@ func Type(c *types.Cell) *types.Cell {
 	return Sym(c.Type_())
 }
 
-
+/*
 // Println prints all elements and add \n
 // e.g.
 //		> (println "test" 1 '(2 3))
@@ -56,7 +56,7 @@ func Type(c *types.Cell) *types.Cell {
 //		"test"
 func Println_(xs *types.Cell) *types.Cell {	
 	x := Car(xs)
-	fmt.Println(sprintList(xs))
+	printer.SprintCell(sprintList(xs))
 	return x
 }
 
@@ -76,3 +76,4 @@ func sprintList(xs *types.Cell) string {
 	}
 }
 
+*/
