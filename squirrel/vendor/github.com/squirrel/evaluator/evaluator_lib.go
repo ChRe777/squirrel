@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	"fmt"
+	//"fmt"
 )
 
 import (
@@ -114,8 +114,7 @@ func evalLet(e, a *types.Cell) *types.Cell {
 //		> (env) -> ((a 1) (b 1))
 //
 func evalEnv(e, a *types.Cell) *types.Cell {
-	fmt.Printf("evalEnv - a: %v ap:%p \n\n", a, a)
-	return core.NIL
+	return a
 }
 
 

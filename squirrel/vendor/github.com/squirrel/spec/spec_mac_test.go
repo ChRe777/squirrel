@@ -21,7 +21,9 @@ func TestMac(t *testing.T) {
 func TestMac2(t *testing.T) {
 
 	specs := []spec2 {
-		{ "(mac when (c e) `(cond (,c ,e)))"     	, "(when (is 'a 'a) 't)"		, "t"			},
+		{ "(mac when (c e) `(cond (,c ,e)('t nil)) )"     	, "(when (is 'a 'a) 't)"		, "t"			},
+		{ "(mac when (c e) `(cond (,c ,e)('t nil)) )"     	, "(when (is 'a 'b) nil)"		, "nil"			},
+
 	}
 	
 	test2(specs, t)

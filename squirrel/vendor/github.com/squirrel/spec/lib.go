@@ -39,9 +39,9 @@ func test2(specs []spec2, t *testing.T) {
 	for _, spec := range specs {
 
 		evaluator.Eval(p(spec.expr1), env); 
-		got := evaluator.Eval(p(spec.expr2), env); 
-		
-		if got.NotEqual(p(spec.want)) {
+		gotExp := evaluator.Eval(p(spec.expr2), env); got := fmt.Sprintf("%v", gotExp)
+	
+		if got != spec.want {
 			t.Errorf("Spec eval %v was incorrect, got: %v, want: %v", spec.expr2, got, spec.want)
 		}
 
@@ -69,12 +69,12 @@ func testWithEnv(specs []spec, t *testing.T, env *types.Cell) {
 		t.Run(name, func(t *testing.T) {
 		
 			bs := []byte(spec.expression); e := parser.Parse(bs)
-			res := evaluator.Eval(e, env)
-			got := fmt.Sprintf("%v", res)
-			
+			res := evaluator.Eval(e, env); got := fmt.Sprintf("%v", res)
+						
 			if got != spec.want {
 				t.Errorf("Spec eval %v was incorrect, got: %v, want: %v", spec.expression, got, spec.want)
 			}
+				
 		})
 	}		
 }

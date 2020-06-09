@@ -16,7 +16,7 @@ import(
 )
 
 var (
-	PS1 = "> "
+	PS1 = ">>> "
 	BYE = "good bye :-)"
 	QUIT = "quit"
 	QUIT_ = core.Cons(core.Sym(QUIT), core.NIL)

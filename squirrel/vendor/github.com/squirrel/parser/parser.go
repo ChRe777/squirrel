@@ -1,6 +1,10 @@
 package parser
 
-import(
+import (
+	//"fmt"
+)
+
+import (
 	"github.com/squirrel/types"
 	"github.com/squirrel/core"
 	"github.com/squirrel/generator"
@@ -55,9 +59,26 @@ func sexpr(level *int) *types.Cell {
 			return generator.Error("Left paren is missing")
 		}
 		
+		symWasDot := false;
+		
 		for ;scanner.Sym < scanner.Rparen; {
-			e := sexpr(level); list, last = core.Push(list, e, last)
+			
+			e := sexpr(level); 
+			
+			// (a b . c)
+			if symWasDot {
+				last.Cdr = e; scanner.GetSym()
+				break;				
+			} else {
+				list, last = core.Push(list, e, last)
+			}
+			
 			scanner.GetSym()
+
+			if scanner.Sym == scanner.Dot {
+				symWasDot = true;
+				scanner.GetSym()
+			}
 		}
 		
 		if scanner.Sym == scanner.Rparen {
@@ -93,33 +114,35 @@ func sexpr(level *int) *types.Cell {
 		return cell
 	}
 
+/*
+	dot := func(level *int) *types.Cell {
+		debug("dot", level); scanner.GetSym();
+		cell := core.UnquoteSplicing_(sexpr(level))
+		return cell
+	}
+*/
+	
 	*level += 3; debug("sexpr", level)
 	
 	switch scanner.Sym {
 	
-		case scanner.Symbol:
-			return atom(level)
+		case scanner.Symbol: 	return atom(level)
 
-		case scanner.Number: 
-			return atom(level)
+		case scanner.Number: 	return atom(level)
 
-		case scanner.String:
-			return atom(level)
+		case scanner.String: 	return atom(level)
 
-		case scanner.Lparen:
-			return list(level)
+		case scanner.Lparen: 	return list(level)
 			
-		case scanner.Quote:
-			return quote(level)
+		case scanner.Quote: 	return quote(level)
 			
-		case scanner.Backquote:
-			return backquote(level)
+		case scanner.Backquote:	return backquote(level)
 			
-		case scanner.Unquote:
-			return unquote(level)
+		case scanner.Unquote:	return unquote(level)
 			
-		case scanner.UnquoteSplicing:
-			return unquoteSplicing(level)
+		case scanner.UnquoteSplicing:	return unquoteSplicing(level)
+		
+		//case scanner.Dot:		return dot(level)
 	}
 	
 	return generator.Nil()
@@ -130,8 +153,7 @@ func Parse(b []byte) *types.Cell {
 
 	debug("Parse", &level)
 	
-	scanner.Init(b)
-	scanner.GetSym()
+	scanner.Init(b); scanner.GetSym()
 	
 	return sexpr(&level)
 }

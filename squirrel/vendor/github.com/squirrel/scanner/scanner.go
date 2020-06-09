@@ -15,6 +15,7 @@ const (
 	Backquote 		= 21	// 	`
 	Unquote			= 22    //  ,
 	UnquoteSplicing = 23	//  ,@
+	Dot				= 24	//  .
 	Rparen 			= 100  	//	)
 	Other 			= 255	// 	EOF 
 )
@@ -69,6 +70,8 @@ func printSym() {
 			fmt.Printf("unquote: ,")
 		case Sym == UnquoteSplicing:
 			fmt.Printf("unquote-splicing: ,@")
+		case Sym == Dot:
+			fmt.Printf("Dot: .")
 		case Sym == Other:
 			fmt.Printf("other")
 	}
@@ -176,6 +179,11 @@ func GetSym() {
 			}
 			NextCh()
 
+// .			
+		case '.' == Ch:
+			Sym = Dot
+			NextCh()
+			
 // ""					
 		case '"' == Ch:
 			Sym = String

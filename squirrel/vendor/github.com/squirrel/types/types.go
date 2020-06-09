@@ -28,11 +28,11 @@ const (
 // Atom types like Strings or Numbers or Booleans
 const (
 	SYMBOL 	AtomType = iota + 1
-	STRING  // e.g. "foo", "bar"
-	NUMBER	// e.g. 123.4e-10	
-	FUNC	// e.g. (func (x) (+ x 1))
-	//BOOL    // e.g. true, false
-	ERROR	// e.g.	error("Can't take car of a")
+	STRING  	// e.g. "foo", "bar"
+	NUMBER		// e.g. 123.4e-10	
+	FUNC		// e.g. (func (x) (+ x 1))
+	//BOOL    	// e.g. true, false (currently we have 't nil)
+	ERROR		// e.g.	error("Can't take car of a")
 )
 
 //  Cell
@@ -40,15 +40,23 @@ const (
 //
 //  +------+-----+-----+-----+
 //  | type | val | car | cdr |
-//  +---------------|-----|--+
+//  +------+-----+--|--+--|--+
 //					v     v
 //
 //  TODO: Double linked list
 //  ------------------------
+//  We will need another pointer
 //
+//    car   cdr   cgr
+//	+-----+-----+-----+
+//  |  o  |  o  |  o  |
+//  +-----+-----+-----+
+//
+//			   cgr
 //  +-------+ <---o	+-------+
 //  | cell1 | 		| cell2 |
 // 	+-------+ o--->	+-------+
+//			   car
 //
 type Cell struct {
     Type 	Type
@@ -58,7 +66,19 @@ type Cell struct {
     Val 	interface{}
     Car 	*Cell
 	Cdr 	*Cell
+//	Cgr		*Cell
 }
+
+//  Levels
+//  ------
+//
+//  +--------------+
+//  | Level 2  o   |		// Level 2 functions can access functions of level 1	(VIEW)
+//  +----------|---+
+//  | Level 1  v o |		// Level 1 functions can access functions of level 0	(PRESENTER)
+//  +------------|-+
+//  | Level 0    v |		// Level 0 functions can access functions of ....		(MODEL)
+//  +--------------+
 
 // IsCons checks, if cell is a cons
 func (c *Cell) IsCons() bool {

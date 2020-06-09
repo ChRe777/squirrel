@@ -25,9 +25,12 @@ func TestParseAtom(t *testing.T) {
 func TestParseCons(t *testing.T) {
 
 	specs := []spec {
-		{   "(1)"	, generator.Cons(generator.Num("1"), generator.Nil())},
-		{  "(1 2)"	, generator.Cons(generator.Num("1"), generator.Cons(generator.Num("2"), generator.Nil())) },
-//		{ "(a . b)"	, generator.Cons(generator.Sym("a"), generator.Sym("b")) },
+		{   "(1)"		, generator.Cons(generator.Num("1"), generator.Nil())},
+		{  "(1 2)"		, generator.Cons(generator.Num("1"), generator.Cons(generator.Num("2"), generator.Nil())) },
+		{ "(a . b)"		, generator.Cons(generator.Sym("a"), generator.Sym("b")) },
+		{ "(a b . c)"	, generator.Cons(generator.Sym("a"), generator.Cons(generator.Sym("b"), generator.Sym("c"))) },
+		{ "(a b . c d)"	, generator.Cons(generator.Sym("a"), generator.Cons(generator.Sym("b"), generator.Sym("c"))) },
+
 	} 
 
 	test(specs, t)
