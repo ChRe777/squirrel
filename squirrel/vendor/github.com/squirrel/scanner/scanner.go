@@ -7,6 +7,17 @@ import (
 )
 
 const (
+	ID_QUOTE 			= '\''
+	ID_BACKQUOTE		= '`'
+	ID_UNQUOTE			= ','
+	ID_UNQUOTE_SLICING 	= '@'
+	ID_DOT				= '.'
+	ID_LPAREN			= '('
+	ID_RPAREN			= ')'
+	ID_QUOTE_STRING		= '"'
+)
+
+const (
 	Lparen 			= 0		// 	(
 	Symbol 			= 10	// 	'foo
 	String 			= 11 	// 	"bar"
@@ -79,7 +90,7 @@ func printSym() {
 }
 
 func Mark(msg string) {
-	pos := R.Size() - int64(R.Len()) // TODO: Check
+	pos := R.Size() - int64(R.Len())
 	if pos > errpos {
 		fmt.Printf(" pos %v - %v", pos, msg)
 		fmt.Println()
@@ -129,7 +140,7 @@ func GetSym() {
 	readNumber := func() {
 	
 		i := 0
-		for ;('0' <=Ch && Ch <= '9') || Ch == '.'; {
+		for ;('0' <=Ch && Ch <= '9') || Ch == '+' || Ch == '-' || Ch == '.'; {
 			Id[i] = Ch
 			inc(&i)
 			NextCh()
@@ -149,29 +160,30 @@ func GetSym() {
 
 // abc
 		case 'a' <= Ch && Ch <= 'z' || 
-		     'A' <= Ch && Ch <= 'Z':
+		     'A' <= Ch && Ch <= 'Z' :
 			Sym = Symbol
 			readSymbol()
 
-// 123			
-		case '0' <= Ch && Ch <='9':						// TODO: -1234.45e-12
+// (+|-)123.4			
+		case ('0' <= Ch && Ch <= '9') || Ch == '+' || Ch == '-' :  // TODO: -1234.45e-12
 			Sym = Number
 			readNumber()
 
 // '		
-		case '\'' == Ch:
+		case ID_QUOTE == Ch:
 			Sym = Quote
 			NextCh()
 
 // `			
-		case '`' == Ch:
+		case ID_BACKQUOTE == Ch:
 			Sym = Backquote
 			NextCh()
 
 // ,						
-		case ',' == Ch:
+		case ID_UNQUOTE == Ch:
 			PeekCh()
-			if '@' == Ch2 {
+		if ID_UNQUOTE_SLICING == Ch2 {	
+// ,@
 				Sym = UnquoteSplicing
 				NextCh()
 			} else {
@@ -180,26 +192,26 @@ func GetSym() {
 			NextCh()
 
 // .			
-		case '.' == Ch:
+		case ID_DOT == Ch:
 			Sym = Dot
 			NextCh()
 			
-// ""					
-		case '"' == Ch:
+// "					
+		case ID_QUOTE_STRING == Ch:
 			Sym = String
 			readString()
 
 // (		
-		case '(' == Ch:
+		case ID_LPAREN == Ch:
 			Sym = Lparen
 			NextCh()
 
 // )			
-		case ')' == Ch:
+		case ID_RPAREN == Ch:
 			Sym = Rparen
 			NextCh()
 
-// END		
+// EOF		
 		default:
 			Sym = Other // EOT
 			NextCh()
