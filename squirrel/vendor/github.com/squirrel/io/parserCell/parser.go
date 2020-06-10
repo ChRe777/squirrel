@@ -1,4 +1,4 @@
-package parser
+package parserCell
 
 import (
 	//"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/squirrel/types"
 	"github.com/squirrel/core"
 	"github.com/squirrel/generator"
-	"github.com/squirrel/scanner"
+	"github.com/squirrel/io/scanner"
 )
 
 func sexpr(level *int) *types.Cell {

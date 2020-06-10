@@ -17,41 +17,51 @@ const (
 	RPAREN = ')'
 )
 
-func SprintCell(c *types.Cell) string {	
+func SprintLisp(c *types.Cell) []byte {	
+
+	var buffer bytes.Buffer
+
 	if c == nil {
-		return ""
+		buffer.WriteString("")
+		return buffer.Bytes()
 	}
 	switch c.Type.Cell { 
 		case types.CONS: return sprintCons(c)
 		case types.ATOM: return sprintAtom(c)
-		default  : return ""
+		default: buffer.WriteString(""); return buffer.Bytes()
 	}
 }
 
-func sprintAtom(c *types.Cell) string {
+func sprintAtom(c *types.Cell) []byte {
+
+	var buffer bytes.Buffer
+
 	if c == nil || c.Val == nil {
-		return ""
+		buffer.WriteString("")
+		return buffer.Bytes()
 	}
 	
 	if c.IsStr() {
 		s, _ := c.Val.(string)
-		return fmt.Sprintf("\"%s\"", s)
+		ss := fmt.Sprintf("\"%s\"", s)
+		buffer.WriteString(ss)
+		return buffer.Bytes()
 	}
 	
-	return fmt.Sprintf("%v", c.Val)
+	s := fmt.Sprintf("%v", c.Val)
+	buffer.WriteString(s)
+	return buffer.Bytes()
 }
 
-func sprintCons(c *types.Cell) string {
+func sprintCons(c *types.Cell) []byte {
+
+	var buffer bytes.Buffer
 
 	if c.Tag != nil {
-		return fmt.Sprintf("%v", c.Tag)		// mac or func
+		s := fmt.Sprintf("%v", c.Tag)		// mac or func or ...
+		buffer.WriteString(s)
+		return buffer.Bytes()
 	}
-
-	//fmt.Printf("sprintCons - c.Cdr.IsAtom(): %v, c.Val: %v\n", c.Cdr.IsAtom(), c.Val);
-
-	//if c.Cdr.IsAtom() {
-	//	return sprintDottedPair(c)
-	//}
 	
 	return sprintList(c)
 }
@@ -61,14 +71,14 @@ func sprintCons(c *types.Cell) string {
 // 	[ ]-->[ ]-->[ ]-->nil
 // ( 1     2     3 )
 //
-func sprintList(c *types.Cell) string {
+func sprintList(c *types.Cell) []byte {
 
 	//fmt.Printf("sprintList - c.Cdr.IsAtom(): %v, c.Val: %v\n", c.Cdr.IsAtom(), c.Val);
 
 	var buffer bytes.Buffer
 
 	printCell := func(cc *types.Cell) *types.Cell {
-		buffer.WriteString(SprintCell(cc.Car))
+		buffer.Write(SprintLisp(cc.Car))
 		cc = cc.Cdr
 		if cc.Cdr != nil {
 			buffer.WriteRune(SPACE)
@@ -76,14 +86,12 @@ func sprintList(c *types.Cell) string {
 		return cc
 	}
 
-
-
 	buffer.WriteRune(LPAREN)
 	cc := c
 	
 	// (a . b)
 	if cc.Cdr.IsAtom() {		
-		buffer.WriteString(sprintDottedPair(cc))	
+		buffer.Write(sprintDottedPair(cc))	
 	} else {
 	
 //
@@ -103,7 +111,7 @@ func sprintList(c *types.Cell) string {
 //      +---+---+  	+---+---+
 //
 			if cc.Cdr.IsAtom() {		
-				buffer.WriteString(sprintDottedPair(cc))
+				buffer.Write(sprintDottedPair(cc))
 				break;
 			}
 		
@@ -112,7 +120,7 @@ func sprintList(c *types.Cell) string {
 	
 	buffer.WriteRune(RPAREN)
 	
-	return buffer.String()
+	return buffer.Bytes()
 }
 
 // Print dotted pair e.g. (a . b)
@@ -120,15 +128,15 @@ func sprintList(c *types.Cell) string {
 //		(cons a b)   		-> "(a . b)"
 //		(cons a (cons b c)) -> "(a b . c)"
 // 		(cons (1) b) 		-> "((1) . b)"
-func sprintDottedPair(c *types.Cell) string {
+func sprintDottedPair(c *types.Cell) []byte {
 	
 	var buffer bytes.Buffer
 	
-	buffer.WriteString(SprintCell(c.Car))
+	buffer.Write(SprintLisp(c.Car))
 	if c.Cdr.Val != NIL {
 		buffer.WriteRune(SPACE); buffer.WriteRune(DOT); buffer.WriteRune(SPACE)
-		buffer.WriteString(SprintCell(c.Cdr))
+		buffer.Write(SprintLisp(c.Cdr))
 	}
 	
-	return buffer.String()
+	return buffer.Bytes()
 }

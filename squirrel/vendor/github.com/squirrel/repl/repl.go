@@ -11,9 +11,8 @@ import(
 	"github.com/squirrel/types"
 	"github.com/squirrel/core"
 	"github.com/squirrel/builtin"
-	"github.com/squirrel/parser"
+	"github.com/squirrel/io"
 	"github.com/squirrel/evaluator"
-	"github.com/squirrel/printer"
 )
 
 var (
@@ -28,8 +27,8 @@ func readLine(reader *bufio.Reader) []byte {
 	return bs    
 }
 
-func printRes(e *types.Cell) {
-	fmt.Printf("%v\n", printer.SprintCell(e))
+func printRes(printer io.Printer, e *types.Cell) {
+	fmt.Printf("%v\n", string(printer.Sprint(e)))
 }
 
 func printBye() {
@@ -54,7 +53,7 @@ func createList (fns []string) []byte {
 	return b.Bytes()
 }
 
-func Repl() {
+func Repl(parser io.Parser, printer io.Printer) {
 
 	reader := bufio.NewReader(os.Stdin)
 	env := parser.Parse(createList(builtin.Env()));
@@ -64,6 +63,6 @@ func Repl() {
     for ;; {
 		exp := parser.Parse(readLine(reader)); if isQuit(exp) { printBye(); break }
 		res := evaluator.Eval(exp, env)
-		printRes(res)
+		printRes(printer, res)
     }
 }

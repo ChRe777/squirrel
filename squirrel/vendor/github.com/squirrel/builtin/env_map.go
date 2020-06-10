@@ -2,7 +2,7 @@ package builtin
 
 import (
 	"github.com/squirrel/types"
-	"github.com/squirrel/parser"
+	"github.com/squirrel/io/parser"
 )
 
 var fnsMap = map[string]string{
