@@ -44,57 +44,33 @@ func getFlagUI() string {
  	return *uiPtr
 }
 
+// -------------------------------------------------------------------------------------------------
+
 func main() {
 
-
-
  	ui := getFlagUI()
- 	
  	fmt.Printf("\nUI set to: %v \n\n", ui)
  	
- 	loadGreeterPlugin(ui)
+ 	fileParser  := getFileName(ui, "parser", "1.0.0")
+ 	filePrinter := getFileName(ui, "printer", "1.0.0")
  	
- 	parser  := loadParserPlugin(ui)
- 	printer := loadPrinterPlugin(ui)
+ 	parser  := loadParserPlugin(fileParser)
+ 	printer := loadPrinterPlugin(filePrinter)
  	
 	fmt.Println(welcome)
 	
 	repl.Repl(parser, printer)
-	
-}
-
-
-// loadParserPlugin loads the parser plugin
-func loadGreeterPlugin(ui string)  {
-
-	file := "../bin/parser_"+ui+".1.0.0.so"
-
-	plugIn, err := plugin.Open(file)
-	if err != nil {
-		panic(err)
-	}
-
-	parserSym, err := plugIn.Lookup("Greeter")
-	if err != nil {
-		panic(err)
-	}
-	
-	var greeter Greeter
-	greeter, ok := parserSym.(Greeter)
-	if !ok {
-		fmt.Println("unexpected type from module symbol:" +file)
-		os.Exit(1)
-	}
-	
-	fmt.Println(greeter.Greet())
 }
 
 // -------------------------------------------------------------------------------------------------
 
-// loadParserPlugin loads the parser plugin
-func loadParserPlugin(ui string) Parser {
+func getFileName(ui string, pluginName string, version string) string {
+	file := "../bin/"+pluginName+"_"+ui+"."+version+".so"
+	return file
+}
 
-	file := "../bin/parser_"+ui+".1.0.0.so"
+// loadParserPlugin loads the parser plugin
+func loadParserPlugin(file string) Parser {
 
 	plugIn, err := plugin.Open(file)
 	if err != nil {
@@ -113,13 +89,16 @@ func loadParserPlugin(ui string) Parser {
 		os.Exit(1)
 	}
 	
+	fmt.Printf("Plugin '%v' loaded. \n", file)
+	
 	return parser
 }
 
 // loadPrinterPlugin loads the printer plugin
-func loadPrinterPlugin(ui string) Printer {
+func loadPrinterPlugin(file string) Printer {
 
-	plugIn, err := plugin.Open("../bin/printer_"+ui+".1.0.0.so")	//(*Plugin, error)
+
+	plugIn, err := plugin.Open(file)	//(*Plugin, error)
 	if err != nil {
 		panic(err)
 	}
@@ -128,6 +107,8 @@ func loadPrinterPlugin(ui string) Printer {
 	if err != nil {
 		panic(err)
 	}
+	
+	fmt.Printf("Plugin '%v' loaded. \n", file)
 	
 	return printerSym.(Printer)
 }
