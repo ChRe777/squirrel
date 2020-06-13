@@ -5,11 +5,21 @@ import (
 	"bytes"
 	"net/http"
 	"io/ioutil"
+	"encoding/json"
 )
 
 const (
 	URL = "http://localhost:8080/repl"
 )
+
+// -------------------------------------------------------------------------------------------------
+
+type RequestMsg struct {
+	Id int
+  	Expression string
+}
+
+// -------------------------------------------------------------------------------------------------
 
 func createReq(jsonStr []byte) (*http.Request, error){
 
@@ -21,9 +31,10 @@ func createReq(jsonStr []byte) (*http.Request, error){
 }
 
 func main() {
-    fmt.Println("URL:>", URL)
-
-    var jsonStr = []byte(`{"title":"Buy cheese and bread for breakfast."}`)
+    
+    reqMsg := RequestMsg{Id:1, Expression: "(cdr '(1 2 3))"}
+  	jsonStr, _ := json.Marshal(reqMsg)
+  	  
  	req, err := createReq(jsonStr)
  	if err != nil {
         panic(err)
