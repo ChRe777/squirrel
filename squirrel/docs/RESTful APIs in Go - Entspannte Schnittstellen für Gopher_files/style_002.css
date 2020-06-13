@@ -1,0 +1,130 @@
+@CHARSET "UTF-8";
+
+/* ----------------------- Mood Message Breaking News Start ----------------------- */
+.top-mood-message-breaking-news {
+    height: 40px;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+.top-mood-message-breaking-news::before {
+    content: "";
+    width: 30px;
+    height: 50px;
+    background-color: #05101b;
+    position: absolute;
+    z-index: 2;
+}
+	
+@-webkit-keyframes breakingnewsanimate {
+  0% { 
+    left: 0;
+  }
+  20% { 
+    left: 0; 
+  }
+  100% { left: -120%; }
+}
+
+@keyframes breakingnewsanimate {
+  0% { 
+    left: 0;
+  }
+  20% { 
+    left: 0; 
+  }
+  100% { left: -120%; }
+}
+	
+@media screen and (max-width:1199px) {
+	@-webkit-keyframes breakingnewsanimate {
+		0% { 
+			left: 0;
+		}
+		20% { 
+			left: 0; 
+		}
+		100% { left: -150%; }
+		}
+
+		@keyframes breakingnewsanimate {
+		0% { 
+			left: 0;
+		}
+		20% { 
+			left: 0; 
+		}
+		100% { left: -150%; }
+	}
+}
+	
+.top-mood-message-breaking-news .widget {
+    height: 40px;
+    width: 100%;
+    background-color: #070b12;
+    background-image: url(/wp-content/plugins/sands-breaking-news/dyf_breaking_news_banner.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+	
+.top-mood-message-breaking-news p.breaking-news-content {
+	animation: breakingnewsanimate 30s linear infinite;
+	-webkit-animation: breakingnewsanimate 30s linear infinite;
+	-webkit-animation-duration: 30s;
+	-moz-animation-duration: 30s;
+	-webkit-animation-delay: 7s; 
+	animation-delay: 7s;
+}
+	
+.top-mood-message-breaking-news p.breaking-news-content {
+  display: block;
+  position: absolute;
+  font-family: arial;
+  font-size: 14px;
+  margin-top: 4px;
+  color: white;
+  margin-left: 210px;
+  white-space: nowrap;
+}
+
+.top-mood-message-breaking-news .breaking-news-title {
+    background-color: #FFEA00;
+    display: block;
+    height: 40px;
+    width: 160px;
+    font-size: 11px;
+    font-weight: 600;
+    position: absolute;
+    top: 0px;
+    margin-top: 0px;
+    margin-left: 30px;
+    padding-top: 4px;
+    padding-left: 10px;
+    z-index: 3;
+    color: #333333;
+}
+.top-mood-message-breaking-news .breaking-news-title::before {
+    content:"";
+    position: absolute;
+    display: block;
+    width: 0px;
+    height: 0px;
+    top: 0;
+    left: -12px;
+    border-left:12px solid transparent;
+    border-right: 0px solid transparent;
+    border-bottom: 40px solid #FFEA00;
+}
+.top-mood-message-breaking-news .breaking-news-title::after {
+    content:"";
+    position: absolute;
+    display: block;
+    width: 0px;
+    height: 0px;
+    right: -12px;
+    top: 0;
+    border-right:12px solid transparent;
+    border-left: 0px solid transparent;
+    border-top: 40px solid #FFEA00;
+}
+/* ----------------------- Mood Message Breaking News END ----------------------- */ 
