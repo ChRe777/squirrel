@@ -28,6 +28,8 @@ import (
 
 */
 
+// -------------------------------------------------------------------------------------------------
+
 func Pair (x, y *types.Cell) *types.Cell {
 	if x.Equal(core.NIL) && y.Equal(core.NIL) {
 		return core.NIL
@@ -41,12 +43,16 @@ func Pair (x, y *types.Cell) *types.Cell {
 	return generator.Error("x and y must be a cons") // TODO: Check
 }
 
+// -------------------------------------------------------------------------------------------------
+
 func No (x *types.Cell) *types.Cell { // call "no" instead of "null"
 	if x.Equal(core.NIL) {
 		return core.T
 	}
 	return core.NIL
 }
+
+// -------------------------------------------------------------------------------------------------
 
 func Not (x *types.Cell) *types.Cell {
 	if x.Equal(core.T) {
@@ -56,6 +62,8 @@ func Not (x *types.Cell) *types.Cell {
 	}
 }
 
+// -------------------------------------------------------------------------------------------------
+
 func And (x, y *types.Cell) *types.Cell {
 	if x.Equal(core.T) && y.Equal(core.T) {
 		return core.T
@@ -63,6 +71,8 @@ func And (x, y *types.Cell) *types.Cell {
 		return core.NIL
 	}
 }
+
+// -------------------------------------------------------------------------------------------------
 
 func Append (x, y *types.Cell) *types.Cell {
 	if x.Equal(core.NIL) {
@@ -72,9 +82,13 @@ func Append (x, y *types.Cell) *types.Cell {
 	}
 }
 
+// -------------------------------------------------------------------------------------------------
+
 func List_ (x, y *types.Cell) *types.Cell {
 	return core.Cons(x, core.Cons (y, core.NIL))
 }
+
+// -------------------------------------------------------------------------------------------------
 
 func Assoc (x, ys *types.Cell) *types.Cell {
 	if ys.Equal(core.NIL) {
@@ -88,6 +102,8 @@ func Assoc (x, ys *types.Cell) *types.Cell {
 	}
 }
 
+// -------------------------------------------------------------------------------------------------
+
 func Caar  (e *types.Cell) *types.Cell { return car(car(e))           }
 func Cadr  (e *types.Cell) *types.Cell { return car(cdr(e))           }
 func Cddr  (e *types.Cell) *types.Cell { return cdr(cdr(e))           }
@@ -98,9 +114,9 @@ func Caddar(e *types.Cell) *types.Cell { return car(cdr(cdr(car(e)))) }
 func Cadddr(e *types.Cell) *types.Cell { return car(cdr(cdr(cdr(e)))) } 	
 
 
-// ---------------------------------
+// -------------------------------------------------------------------------------------------------
 // Just ALIAS for better readability
-// ---------------------------------
+// -------------------------------------------------------------------------------------------------
 
 func car (x *types.Cell) *types.Cell {
 	return core.Car(x)
@@ -114,6 +130,9 @@ func Sym_(s string) *types.Cell {
 	return generator.Sym(s)
 }
 
+// -------------------------------------------------------------------------------------------------
+
+// (def map (f x) (cond ((no x) nil) ('t (cons (f (car x)) (map f (cdr x))))))
 
 
 

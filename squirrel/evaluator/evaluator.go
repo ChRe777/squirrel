@@ -39,6 +39,16 @@ func eval(e, a *types.Cell) *types.Cell {
 
 	// a) Atom e.g. "foo" -> "foo"
 	if e.IsAtom() {
+	
+		// LISP boolean values
+		//
+		if e.Equal(core.NIL) {
+			return core.NIL
+		}
+		if e.Equal(core.T) {
+			return core.T
+		}
+	
 		return evalAtom(e, a)
 	} 
 	

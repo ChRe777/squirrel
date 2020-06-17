@@ -17,6 +17,9 @@ var (
 
 )
 
+// (def map (f x) (cond ((no x) nil) ('t (cons (f (car x)) (map f (cdr x))))))
+
+
 func Env() []string {
 
 	xs := []string{ 

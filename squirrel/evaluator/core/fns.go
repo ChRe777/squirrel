@@ -20,10 +20,13 @@ import (
 	
 */
 
+// -------------------------------------------------------------------------------------------------
 
 func Quote(x *types.Cell) *types.Cell {
 	return cadr(x)  // (quote a) -> cdr -> (a) -> car -> a
 }
+
+// -------------------------------------------------------------------------------------------------
 
 func Atom(x *types.Cell) *types.Cell {
 	if x.IsAtom() {
@@ -33,12 +36,16 @@ func Atom(x *types.Cell) *types.Cell {
 	}
 }
 
+// -------------------------------------------------------------------------------------------------
+
 func Is(x, y *types.Cell) *types.Cell {	
 	if x.Equal(y) {
 	 	return T	
 	}
 	return NIL 	// FALSE
 }
+
+// -------------------------------------------------------------------------------------------------
 
 func Car(e *types.Cell) *types.Cell {
 	if e.Equal(NIL) {
@@ -51,6 +58,8 @@ func Car(e *types.Cell) *types.Cell {
 		}
 	}
 }
+
+// -------------------------------------------------------------------------------------------------
 
 func Cdr(e *types.Cell) *types.Cell {
 	
@@ -66,9 +75,13 @@ func Cdr(e *types.Cell) *types.Cell {
 	
 }
 
+// -------------------------------------------------------------------------------------------------
+
 func Cons(x, y *types.Cell) *types.Cell {
 	return Cons_(x, y)
 }
+
+// -------------------------------------------------------------------------------------------------
 
 func Cond(x *types.Cell) *types.Cell {
 
@@ -111,3 +124,5 @@ func Type(c *types.Cell) *types.Cell {
 func Tag(c *types.Cell, t string) *types.Cell {
 	return generator.Tag(c, t)
 }
+
+// -------------------------------------------------------------------------------------------------
