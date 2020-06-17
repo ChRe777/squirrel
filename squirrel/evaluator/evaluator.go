@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	"fmt"
+//	"fmt"
 )
 
 import (
@@ -129,17 +129,17 @@ func evalFuncEnv(e, a *types.Cell) *types.Cell {
 	key := core.Car(e)							// a = (foo  (func (x) (is x (quote nil))) )
 	
 	// 1. First look in builtin hash table
-	keyStr := fmt.Sprintf("%v", key)			// key   = 'foo, keyStr = "foo"
-	value, found := builtin.Fns[keyStr]			// value = (func (x) (is x (quote nil)))
+	//keyStr := fmt.Sprintf("%v", key)			// key   = 'foo, keyStr = "foo"
+	//value, found := builtin.Fns[keyStr]			// value = (func (x) (is x (quote nil)))
 	
 	// 2. Look in environment association list
-	if found == false {
-		value = builtin.Assoc(key, a)			// value = (func (x) (is x (quote nil)))
-	}
+	//if found == false {
+		value := builtin.Assoc(key, a)			// value = (func (x) (is x (quote nil)))
+	//}
 	
 	// 3. Look in loaded hash table
 	
-	if value.IsErr() && found == false {
+	if value.IsErr()/* && found == false */{
 		return core.Err("reference to undefined identifier: %v", key.Val) // TODO: Rename error message
 	}
 	

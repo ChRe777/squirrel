@@ -1,6 +1,6 @@
 package builtin
 
-
+/*
 var (
 	t		 = "(t t)"
 	n		 = "(nil nil)"
@@ -34,3 +34,4 @@ func Env() []string {
 	
 	return xs
 }
+*/
