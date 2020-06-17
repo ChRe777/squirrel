@@ -6,14 +6,29 @@ import (
 
 import (
 	"github.com/mysheep/squirrel/types"
+	"github.com/mysheep/squirrel/interfaces"
 	"github.com/mysheep/squirrel/evaluator/core"
 	"github.com/mysheep/squirrel/evaluator/builtin"
 )
+
+var (
+	opsBuiltin interfaces.OpEvaluator = nil
+)
+
+// -------------------------------------------------------------------------------------------------
+
+func SetOpEvaluator(ops interfaces.OpEvaluator) {
+	opsBuiltin = ops
+}
+
+// -------------------------------------------------------------------------------------------------
 
 // Eval evals expression e with environment env and returns result
 func Eval(e, env *types.Cell) *types.Cell {
 	return eval(e, env)
 }
+
+// -------------------------------------------------------------------------------------------------
 
 func eval(e, a *types.Cell) *types.Cell {
 
@@ -27,50 +42,57 @@ func eval(e, a *types.Cell) *types.Cell {
 		return evalAtom(e, a)
 	} 
 	
-	// b) Functions e.g. (car '(1 2)) -> 1	
+	// b.0) Builtin operators, like AND, NOT, APPEND, ...
+	res, err := opsBuiltin.EvalOp(e, a)
+	if err == nil {
+		return res
+	}
+	
+	// b.1) Functions e.g. (car '(1 2)) -> 1	
 	if c := core.Car(e); c.IsAtom() {
-		
+	
 		switch {	
 		
 			// 7 core axioms - "The Roots of lisp" (McCarthy, Paul Graham)
 			//
 			case c.Equal(core.QUOTE) 		: return core.Quote(e) 
+			
 			case c.Equal(core.ATOM ) 		: return core.Atom(eval(builtin.Cadr(e), a))
 			case c.Equal(core.IS   ) 		: return core.Is  (eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
 			case c.Equal(core.CAR  ) 		: return core.Car (eval(builtin.Cadr(e), a))
 			case c.Equal(core.CDR  ) 		: return core.Cdr (eval(builtin.Cadr(e), a))
 			case c.Equal(core.CONS ) 		: return core.Cons(eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))			
-			case c.Equal(core.COND ) 		: return evalCond(core.Cdr(e), a)
+			case c.Equal(core.TYPE) 		: return core.Type(eval(builtin.Cadr(e), a))
 			
+			case c.Equal(core.COND ) 		: return evalCond(core.Cdr(e), a)
+			case c.Equal(core.LIST) 		: return evalLst(core.Cdr(e), a)
+
 			// Extra core
 			//
-			case c.Equal(core.BACKQUOTE) 	: return evalBackquote(e, a)
-			case c.Equal(core.TYPE) 		: return core.Type(eval(builtin.Cadr(e), a))		
+			case c.Equal(core.BACKQUOTE) 	: return evalBackquote(e, a)	
 			case c.Equal(core.DO)   		: return evalDo(e, a)
-			//case c.Equal(core.PRINTLN)   	: return core.Println_(evalLst(core.Cdr(e), a))
-			
 			case c.Equal(core.VAR ) 		: return evalVar(e, a)				
 			case c.Equal(core.LET ) 		: return evalLet(e, a)					
 			case c.Equal(core.DEF ) 		: return evalDef(e, a)				
 			case c.Equal(core.MAC ) 		: return evalMac(e, a)				
 			case c.Equal(core.FUNC)			: return evalFun(e, a)				
-			case c.Equal(core.ENV ) 		: return evalEnv(e, a)				
-			case c.Equal(core.LIST) 		: return evalLst(core.Cdr(e), a)
+			case c.Equal(core.ENV ) 		: return evalEnv(e, a)	
 			
 			// TODO: Load/Save with interface	
 			//case c.Equal(core.LOAD) 		: return evalLoad(e, a)
-			
+			//case c.Equal(core.PRINTLN)   	: return core.Println_(evalLst(core.Cdr(e), a))
 			
 			// Extra axioms in environment e.g. (no '()) -> t
 			default: return evalFuncEnv(e, a)									// Builtin and others
 		}
 	} 
 
-	// e) Function call with parameter values		// e.g. (call {fn} {param-values})
+	// c) Function call with parameter values		// e.g. (call {fn} {param-values})
 	if builtin.Caar(e).Equal(core.FUNC) {
 		return evalFuncCall(e, a)
 	}
-			
+		
+	// d)	
 	return core.Err("Wrong expression")
 }
 

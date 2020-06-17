@@ -7,7 +7,7 @@ import (
 import (
 	"github.com/mysheep/squirrel/types"
 	"github.com/mysheep/squirrel/generator"
-	"github.com/mysheep/squirrel/plugin/lisp/scanner"
+	"github.com/mysheep/squirrel/plugins/lisp/scanner"
 )
 
 func sexpr(level *int) *types.Cell {

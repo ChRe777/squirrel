@@ -15,5 +15,7 @@ func Error(s string, a ...interface{}) *types.Cell {
 	return &types.Cell {
 		Type: types.Type{Cell: types.ATOM, Atom: types.ERROR},
 		Val : val,
+		Car : NIL,
+		Cdr : NIL,
 	}
 }
