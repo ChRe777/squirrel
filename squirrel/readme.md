@@ -15,20 +15,21 @@ other ideas connected together. Tagging. Connectable objects.
 	- UI   			is a plugin to the business
 	- Store 		is a plugin to the business
 
-			  [plugin]
+			  Console
 			  +--------------+
  			  |      UI      |  (Repl) 
  			  +--------------+
- 			
+ 		
+ 	[IO plugin]			[IO plugin]	
  	+---------------+	+---------------+
- 	|    Reader     |   |    Printer    |  
+ 	|    Reader     |   |    Writer     |  
  	+---------------+	+---------------+		
  	
  				
 	 ====================================
-	||								    ||		[plugin]
+	||								    ||		[IO plugin]
 	||		  +---------------+			||		+---------------+
- 	||		  |   Evaluator   | 		||		|     Store     |  
+ 	||		  |   Evaluator   | 		||		|     Storage   |  
  	||		  +---------------+			||		+---------------+
  	||        							||
 	 ====================================

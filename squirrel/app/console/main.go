@@ -22,7 +22,7 @@ const (
 const (
 	PLUGIN_PATH				= "../../bin/"
 	PLUGIN_SUFFIX			= ".so"
-	PLUGIN_IO_READER_WRITER = "io_reader_writer"
+	PLUGIN_IO_READER_WRITER = "reader_writer"
 	PLUGIN_OPS_BUILTIN 		= "ops_builtin"
 	PLUGIN_VERSION 			= "1.0.0"
 )
@@ -55,7 +55,7 @@ func main() {
 // -------------------------------------------------------------------------------------------------
 
 func getFileNameReaderWriter(ui string, pluginName string, version string) string {
-	file := PLUGIN_PATH+pluginName+"_"+ui+"."+version+PLUGIN_SUFFIX
+	file := PLUGIN_PATH+"io_"+ui+"_"+pluginName+"."+version+PLUGIN_SUFFIX
 	return file
 }
 

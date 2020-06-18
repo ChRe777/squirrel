@@ -14,6 +14,10 @@ import (
 //		Writer
 //	}
 
+// -------------------------------------------------------------------------------------------------
+// Cell reader and writer plugin interface (as user interface for the language)
+// -------------------------------------------------------------------------------------------------
+
 type CellReader interface {
 	Read(s []byte) *types.Cell
 }
@@ -28,16 +32,31 @@ type CellReadWriter interface {
 }
 
 // -------------------------------------------------------------------------------------------------
+// Evaluator plugin interface
+// -------------------------------------------------------------------------------------------------
 
 type OpEvaluator interface {
 	EvalOp(e, a *types.Cell) (*types.Cell, error)  
 }
 
 // -------------------------------------------------------------------------------------------------
+// Storage plugin interface
+// -------------------------------------------------------------------------------------------------
+
+type Loader interface {
+	Load(location string) (*types.Cell, error)
+}
 
 type Storer interface {
-	Load(s []byte) (*types.Cell, error)
-	Save(s string, e *types.Cell) error
+	Store(location string, e *types.Cell) error
 }
+
+type Storage interface {
+	Loader
+	Storer
+}
+
+// -------------------------------------------------------------------------------------------------
+
 
 
