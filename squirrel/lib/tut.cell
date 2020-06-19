@@ -20,7 +20,7 @@
 	(mac if (c a b)
 		`(cond 
 			(,c ,a)
-			('t ,b)		// THIS SHOULD NOT BE EVALUATED !!
+			('t ,b)
 		)
 	)
 	

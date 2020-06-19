@@ -25,7 +25,7 @@ var (
 
 // -------------------------------------------------------------------------------------------------
 
-func Repl(readerWriter interfaces.CellReadWriter, opsBuiltin interfaces.OpEvaluator) {
+func Repl(readerWriter 	interfaces.CellReadWriter, opsBuiltin 	interfaces.OpEvaluator, storage interfaces.OpEvaluator ) {
 
 	env := createEnvironmentList()	// TODO: Fix EMPTY Enviroment '()
 	var parse = readerWriter.Read
@@ -33,6 +33,7 @@ func Repl(readerWriter interfaces.CellReadWriter, opsBuiltin interfaces.OpEvalua
 	printHelp()
 	
 	evaluator.SetOpEvaluator(opsBuiltin)	// TODO: ReThink
+	evaluator.SetStorage(storage)			// TODO: ReThink - Optional Injection
 	
     for ;; {
 		expr := parse(readLine(STDIN_READER)); 

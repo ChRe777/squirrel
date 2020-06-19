@@ -52,8 +52,9 @@ type Storer interface {
 }
 
 type Storage interface {
-	Loader
-	Storer
+	OpEvaluator
+	Loader				// TODO: ReThink
+	Storer				// TODO: ReThink
 }
 
 // -------------------------------------------------------------------------------------------------

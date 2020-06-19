@@ -22,9 +22,12 @@ const (
 const (
 	PLUGIN_PATH				= "../../bin/"
 	PLUGIN_SUFFIX			= ".so"
+	PLUGIN_VERSION 			= "1.0.0"
+		
 	PLUGIN_IO_READER_WRITER = "reader_writer"
 	PLUGIN_OPS_BUILTIN 		= "ops_builtin"
-	PLUGIN_VERSION 			= "1.0.0"
+	PLUGIN_STORAGE			= "io_fs_loader_storer"
+	
 )
 
 
@@ -45,22 +48,28 @@ func main() {
  	
  	readerWriter := loadCellReaderWriterPlugin(getFileNameReaderWriter(ui, PLUGIN_IO_READER_WRITER, PLUGIN_VERSION))
  	opsBuiltin   := loadCellBuiltinPlugin(getFileNameOpsBuiltin(PLUGIN_OPS_BUILTIN, PLUGIN_VERSION))
+ 	storage 	 := loadIOStoragePlugin(getFileNameStorage(PLUGIN_STORAGE, PLUGIN_VERSION))
  	
  	fmt.Println()
 	fmt.Println(welcome)
 	
-	repl.Repl(readerWriter, opsBuiltin)
+	repl.Repl(readerWriter, opsBuiltin, storage)
 }
 
 // -------------------------------------------------------------------------------------------------
 
 func getFileNameReaderWriter(ui string, pluginName string, version string) string {
-	file := PLUGIN_PATH+"io_"+ui+"_"+pluginName+"."+version+PLUGIN_SUFFIX
+	file := PLUGIN_PATH + "io_" + ui + "_" + pluginName + "." + version + PLUGIN_SUFFIX
 	return file
 }
 
 func getFileNameOpsBuiltin(pluginName string, version string) string {
-	file := PLUGIN_PATH+pluginName+"."+version+PLUGIN_SUFFIX
+	file := PLUGIN_PATH + pluginName + "." + version + PLUGIN_SUFFIX
+	return file
+}
+
+func getFileNameStorage(pluginName string, version string) string {
+	file := PLUGIN_PATH + pluginName + "." + version + PLUGIN_SUFFIX
 	return file
 }
 
@@ -112,4 +121,29 @@ func loadCellBuiltinPlugin(file string) interfaces.OpEvaluator {
 	fmt.Printf("Plugin '%v' loaded. \n", file)
 	
 	return opEvaluator
+}
+
+// loadIOStoragePlugin loads the storage plugin
+func loadIOStoragePlugin(file string) interfaces.OpEvaluator {
+
+	plugIn, err := plugin.Open(file)
+	if err != nil {
+		panic(err)
+	}
+
+	sym, err := plugIn.Lookup("LoaderStorer")
+	if err != nil {
+		panic(err)
+	}
+	
+	var storage interfaces.OpEvaluator
+	storage, ok := sym.(interfaces.OpEvaluator)
+	if !ok {
+		fmt.Println("unexpected type from module symbol:" +file)
+		os.Exit(1)
+	}
+	
+	fmt.Printf("Plugin '%v' loaded. \n", file)
+	
+	return storage
 }
