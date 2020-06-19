@@ -12,18 +12,13 @@ import (
 )
 
 var (
-	opsBuiltin 	interfaces.OpEvaluator
-	storage 	interfaces.OpEvaluator
+	evaluators 	[]interfaces.Evaluator
 )
 
 // -------------------------------------------------------------------------------------------------
 
-func SetOpEvaluator(ops interfaces.OpEvaluator) {
-	opsBuiltin = ops
-}
-
-func SetStorage(s interfaces.OpEvaluator) {
-	storage = s
+func SetEvaluators(evs []interfaces.Evaluator) {
+	evaluators = evs
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -57,22 +52,18 @@ func eval(e, a *types.Cell) *types.Cell {
 		return evalAtom(e, a)
 	} 
 	
-	// b.0) Builtin operators, like and, not, append, ...
-	if opsBuiltin != nil {
-		res, err := opsBuiltin.EvalOp(e, a)
-		if err == nil {
-			return res
-		}
-	}
 	
-	// b.1) Storage operators like load, save 
-	if storage != nil {	
-		res, err := storage.EvalOp(e, a)
+	// Builtin operators, like and, not, append, ...
+	// Storage operators like load, save
+	// ... 
+	
+	for _, evaluator_ := range evaluators {
+		res, err := evaluator_.Eval(e, a)
 		if err == nil {
 			return res
 		}
 	}
-							
+								
 	// b.1) Functions e.g. (car '(1 2)) -> 1	
 	if c := core.Car(e); c.IsAtom() {
 	

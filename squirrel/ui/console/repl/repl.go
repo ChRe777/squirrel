@@ -11,6 +11,7 @@ import(
 	"github.com/mysheep/squirrel/evaluator"
 	"github.com/mysheep/squirrel/generator"
 	"github.com/mysheep/squirrel/interfaces"
+	"github.com/mysheep/squirrel/plugins"
 )
 
 // -------------------------------------------------------------------------------------------------
@@ -25,15 +26,19 @@ var (
 
 // -------------------------------------------------------------------------------------------------
 
-func Repl(readerWriter 	interfaces.CellReadWriter, opsBuiltin 	interfaces.OpEvaluator, storage interfaces.OpEvaluator ) {
+func Repl(plugins *plugins.Plugins) {
+
+	// Check MUSTS !!!
+	if plugins.ReaderWriter == nil {
+		panic("No ReaderWriter plugin - It's a MUST plugin!!")
+	}
 
 	env := createEnvironmentList()	// TODO: Fix EMPTY Enviroment '()
-	var parse = readerWriter.Read
+	var parse = plugins.ReaderWriter.Read
 
 	printHelp()
 	
-	evaluator.SetOpEvaluator(opsBuiltin)	// TODO: ReThink
-	evaluator.SetStorage(storage)			// TODO: ReThink - Optional Injection
+	evaluator.SetEvaluators(plugins.Evaluators)					
 	
     for ;; {
 		expr := parse(readLine(STDIN_READER)); 
@@ -41,7 +46,7 @@ func Repl(readerWriter 	interfaces.CellReadWriter, opsBuiltin 	interfaces.OpEval
 			printBye(); break 
 		}
 		result := evaluator.Eval(expr, env)		// TODO: return Quit = TRUE
-		printResult(readerWriter, result)
+		printResult(plugins.ReaderWriter, result)
     }
 }
 

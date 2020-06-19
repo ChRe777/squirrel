@@ -13,13 +13,29 @@ import (
 	"github.com/mysheep/squirrel/plugins/storages/fs/storer"
 )
 
-type plugInStorage string
+// -------------------------------------------------------------------------------------------------
+
+type any string		// Could be any type
+
+var Evaluator any	// Name ist important to detected plugin
 
 // -------------------------------------------------------------------------------------------------
 
+
+func (p any) Eval(e, a *types.Cell) (*types.Cell, error)  {
+
+	if c := core.Car(e); c.IsAtom() {
+		if op, found := builtOps[*c]; found {
+			return op(e, a), nil
+		}
+	}
+
+	return nil, errors.New("Operator not found")
+}
+
 // -------------------------------------------------------------------------------------------------
 
-func (p plugInStorage) Load(location string) (*types.Cell, error) {
+func (p any) Load(location string) (*types.Cell, error) {
 	
 	s := generator.Str(location)
 	
@@ -33,7 +49,7 @@ func (p plugInStorage) Load(location string) (*types.Cell, error) {
 	return res, nil
 }
 
-func (p plugInStorage) Store(location string, c *types.Cell) error {
+func (p any) Store(location string, c *types.Cell) error {
 	
 	s := generator.Str(location)
 	res := storer.Store(s, c)
@@ -45,23 +61,6 @@ func (p plugInStorage) Store(location string, c *types.Cell) error {
 	
 	return nil
 }
-
-// -------------------------------------------------------------------------------------------------
-
-func (p plugInStorage) EvalOp(e, a *types.Cell) (*types.Cell, error)  {
-
-	if c := core.Car(e); c.IsAtom() {
-		if op, found := builtOps[*c]; found {
-			return op(e, a), nil
-		}
-	}
-
-	return nil, errors.New("Operator not found")
-}
-
-// -------------------------------------------------------------------------------------------------
-
-var LoaderStorer plugInStorage
 
 // -------------------------------------------------------------------------------------------------
 

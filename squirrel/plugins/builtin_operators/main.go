@@ -15,11 +15,11 @@ import (
 
 type any string 	// could any type
 
-var Evaler any
+var Evaluator any	// Name is used to detect plugin type
 
 // -------------------------------------------------------------------------------------------------
 
-func (p any) EvalOp(e, a *types.Cell) (*types.Cell, error)  {
+func (p any) Eval(e, a *types.Cell) (*types.Cell, error)  {
 
 	if c := core.Car(e); c.IsAtom() {
 		if op, found := builtOps[*c]; found {

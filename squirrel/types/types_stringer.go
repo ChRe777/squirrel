@@ -1,9 +1,7 @@
 package types
 
-
 // String return a cell as string
 func (c *Cell) String() string {
-	//return fmt.Sprintf("type: %v, tag: %v, val: %v, car: %p, cdr: %p", c.Type, c.Tag, c.Val, c.Car, c.Cdr)
 	return string(Sprint(c))
 }
 

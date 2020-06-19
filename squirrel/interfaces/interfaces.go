@@ -35,8 +35,8 @@ type CellReadWriter interface {
 // Evaluator plugin interface
 // -------------------------------------------------------------------------------------------------
 
-type OpEvaluator interface {
-	EvalOp(e, a *types.Cell) (*types.Cell, error)  
+type Evaluator interface {
+	Eval(e, a *types.Cell) (*types.Cell, error)  
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ type Storer interface {
 }
 
 type Storage interface {
-	OpEvaluator
+	Evaluator
 	Loader				// TODO: ReThink
 	Storer				// TODO: ReThink
 }
