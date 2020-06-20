@@ -5,13 +5,81 @@ const (
 
 	// 7 Core Primitives
 	//
-	ID_QUOTE  = "quote"
-	ID_ATOM   = "atom"
-	ID_IS	  = "is"		// was "eq"
-	ID_CAR    = "car"		// can be first		// go slices  xs[0:]
-	ID_CDR	  = "cdr"		// can be rest		// go slices  xs[:len-1]
-	ID_CONS	  = "cons"	
-	ID_COND   = "cond"	
+	ID_QUOTE  	= "quote"
+	ID_ATOM   	= "atom"
+	ID_IS	  	= "is"			// was "eq"
+	ID_CAR    	= "car"			// can be first		// go slices  xs[0:]
+	ID_CDR	  	= "cdr"			// can be rest		// go slices  xs[:len-1]
+	ID_CONS	  	= "cons"	
+	ID_COND   	= "cond"	
+)
+
+// Core symbols of language
+var (	
+	QUOTE 		= Sym_(ID_QUOTE)
+	ATOM 		= Sym_(ID_ATOM)
+	IS 			= Sym_(ID_IS)		// was EQ
+	CAR 		= Sym_(ID_CAR)
+	CDR 		= Sym_(ID_CDR) 
+	CONS 		= Sym_(ID_CONS)
+	COND 		= Sym_(ID_COND) 
+)
+
+const (
+	
+	ID_CAAR   	= "caar"  
+	ID_CADR   	= "cadr" 
+	ID_CDDR   	= "cddr"  
+	ID_CADAR  	= "cadar" 
+	ID_CDDDR  	= "cdddr" 
+	ID_CADDR  	= "caddr" 
+	ID_CADDAR 	= "caddar"
+	ID_CADDDR 	= "cadddr"
+
+)
+
+var (
+		
+	CAAR   		= Sym_(ID_CAAR  )
+	CADR   		= Sym_(ID_CADR  )
+	CDDR   		= Sym_(ID_CDDR  )
+	CADAR  		= Sym_(ID_CADAR )
+	CDDDR  		= Sym_(ID_CDDDR )
+	CADDR  		= Sym_(ID_CADDR )
+	CADDAR 		= Sym_(ID_CADDAR)
+	CADDDR 		= Sym_(ID_CADDDR)
+
+)
+
+const (
+	ID_TYPE 	= "type"
+	
+	//ID_PRINTLN 	= "println"
+		
+	// Boolean
+	//
+	ID_T	  	= "t"
+//	ID_NIL	  	= "nil	// Nil in generator
+	
+
+)
+
+// Boolean
+//
+var (		
+	T 			= Sym_(ID_T) 	// TRUE
+	NIL 		= Nil_() 		// NIL or FALSE
+)
+
+// Extended core
+//
+var (		
+	TYPE 		= Sym_(ID_TYPE)
+	//PRINTLN 	= Sym_(ID_PRINTLN)
+)
+
+/*
+const (
 	
 	// For Macros
 	//
@@ -37,76 +105,9 @@ const (
 	ID_T	  = "t"
 //	ID_NIL	  = "nil	// Nil in generator
 	
-	// Builtin-Core
-	//
-	ID_ENV	= "env"
-	
-	ID_VAR	= "var"
-	ID_LET	= "let"
-	
-	ID_DEF	= "def"
-	
-	ID_FUNC = "func"
-	ID_MAC  = "mac"
-	
-	ID_LIST	= "list"
-	ID_LOAD = "load"
-	ID_DO   = "do"
 
 )
-
-// Core symbols of language
-var (	
-	QUOTE 	= Sym_(ID_QUOTE)
-	ATOM 	= Sym_(ID_ATOM)
-	IS 		= Sym_(ID_IS)							// was EQ
-	CAR 	= Sym_(ID_CAR)
-	CDR 	= Sym_(ID_CDR) 
-	CONS 	= Sym_(ID_CONS)
-	COND 	= Sym_(ID_COND) 
-)
 	
-// Macros
-//
-var (
-	BACKQUOTE 			= Sym_(ID_BACKQUOTE)			// For Macros
-	UNQUOTE   			= Sym_(ID_UNQUOTE) 			// For Macros, 
-	UNQUOTE_SPLICING   	= Sym_(ID_UNQUOTESPLICING) 	// For Macros, 
-)
-	
-	
-// Extended core
-//
-var (		
-	TYPE 		= Sym_(ID_TYPE)
-	PRINTLN 	= Sym_(ID_PRINTLN)
-)
-
-// Boolean
-//
-var (		
-	T 		= Sym_(ID_T) 							// TRUE
-	NIL 	= Nil_() 								// NIL or FALSE
-)
-
-// Builtin Core
-//
-var (	
-	VAR 	= Sym_(ID_VAR)
-	ENV 	= Sym_(ID_ENV)
-	LET 	= Sym_(ID_LET)
-	DEF 	= Sym_(ID_DEF)
-
-	FUNC 	= Sym_(ID_FUNC) 
-	MAC		= Sym_(ID_MAC)
-	
-	LIST 	= Sym_(ID_LIST)
-	
-	LOAD 	= Sym_(ID_LOAD)
-	DO		= Sym_(ID_DO)
-)
-
-
 // Tagging	(Used different)
 var (
 	TAG 	= Sym_(ID_TAG)
@@ -116,4 +117,4 @@ var (
 	REP 	= Sym_(ID_REP)	
 )
 
-
+*/

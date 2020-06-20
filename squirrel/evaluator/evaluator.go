@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	"fmt"
+	//"fmt"
 )
 
 import (
@@ -72,27 +72,26 @@ func eval(e, a *types.Cell) *types.Cell {
 			// 7 core axioms - "The Roots of lisp" (McCarthy, Paul Graham)
 			//
 			case c.Equal(core.QUOTE) 		: return core.Quote(e) 
-			
 			case c.Equal(core.ATOM ) 		: return core.Atom(eval(builtin.Cadr(e), a))
 			case c.Equal(core.IS   ) 		: return core.Is  (eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))
 			case c.Equal(core.CAR  ) 		: return core.Car (eval(builtin.Cadr(e), a))
 			case c.Equal(core.CDR  ) 		: return core.Cdr (eval(builtin.Cadr(e), a))
 			case c.Equal(core.CONS ) 		: return core.Cons(eval(builtin.Cadr(e), a), eval(builtin.Caddr(e), a))			
-			case c.Equal(core.TYPE) 		: return core.Type(eval(builtin.Cadr(e), a))
-			
 			case c.Equal(core.COND ) 		: return evalCond(core.Cdr(e), a)
+			
+			case c.Equal(core.TYPE) 		: return core.Type(eval(builtin.Cadr(e), a))
 			case c.Equal(core.LIST) 		: return evalLst(core.Cdr(e), a)
 
 			// Extra core
 			//
-			case c.Equal(core.BACKQUOTE) 	: return evalBackquote(e, a)	
-			case c.Equal(core.DO)   		: return evalDo(e, a)
-			case c.Equal(core.VAR ) 		: return evalVar(e, a)				
-			case c.Equal(core.LET ) 		: return evalLet(e, a)					
-			case c.Equal(core.DEF ) 		: return evalDef(e, a)				
-			case c.Equal(core.MAC ) 		: return evalMac(e, a)				
-			case c.Equal(core.FUNC)			: return evalFun(e, a)				
-			case c.Equal(core.ENV ) 		: return evalEnv(e, a)	
+			case c.Equal(builtin.BACKQUOTE) : return builtin.evalBackquote(e, a)	
+			case c.Equal(builtin.DO)   		: return builtin.evalDo(e, a)
+			case c.Equal(builtin.VAR ) 		: return builtin.evalVar(e, a)				
+			case c.Equal(builtin.LET ) 		: return builtin.evalLet(e, a)					
+			case c.Equal(builtin.DEF ) 		: return builtin.evalDef(e, a)				
+			case c.Equal(builtin.MAC ) 		: return builtin.evalMac(e, a)				
+			case c.Equal(builtin.FUNC)		: return builtin.evalFun(e, a)				
+			case c.Equal(builtin.ENV ) 		: return builtin.evalEnv(e, a)	
 						
 			// Extra axioms in environment e.g. (no '()) -> t
 			default: return evalFuncEnv(e, a)									// Builtin and others
@@ -171,20 +170,20 @@ func evalFuncOrMacCall(e, a *types.Cell) *types.Cell {
 }
 
 func funcCall(e, a *types.Cell) *types.Cell {
-	
-	fmt.Println("funcCall")
-		
+			
 	keys := builtin.Cadar(e); vals := evalLst(core.Cdr(e), a)	
 	
 	//
 	// keys: (x y . z), vals: (1 2 3 4)
 	//
-	fmt.Printf("funcCall - keys: %v, vals: %v", keys, vals)
+	
+	kvs := builtin.Pair(keys, vals)
+	
 	//
-	//		
+	// kvs: ((x 1) (y 2) (z (3 4))
 	//
 	
-	ee  := builtin.Caddar(e); aa := builtin.Append(builtin.Pair(keys, vals), a)		
+	ee  := builtin.Caddar(e); aa := builtin.Append(kvs, a)		
 	
 	res := eval(ee, aa)			// will call func or expand backquotes and unquotes
 	
@@ -192,23 +191,17 @@ func funcCall(e, a *types.Cell) *types.Cell {
 }
 
 func macCall(e, a *types.Cell) *types.Cell {
-	
-	fmt.Println("macCall")
-	
+		
 	// Comparing ac-mac-call to ac-call shows why macros receive their arguments unevaluated. 
 	// ac-mac-call applies the macro function to the arguments, 
 	// while ac-call maps ac on the arguments before applying the function, 
 	// causing the arguments to be evaluated.
 
-	keys := builtin.Cadar(e); vals := core.Cdr(e)			
-
-	fmt.Printf("macCall - keys: %v, vals: %v", keys, vals)
+	keys := builtin.Cadar(e); vals := core.Cdr(e)	
 	
-	// (when (is 'a 'a) 'a)
-	// macCall
-	// macCall - keys: (test . body), vals: ((is (quote a) (quote a))
+	kvs := builtin.Pair(keys, vals)		
 
-	ee  := builtin.Caddar(e); aa := builtin.Append(builtin.Pair(keys, vals), a)		
+	ee  := builtin.Caddar(e); aa := builtin.Append(kvs, a)		
 	
 	ff  := macex(ee, aa)		// if macro expand first and then evaluate
 	

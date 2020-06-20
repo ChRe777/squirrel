@@ -22,7 +22,7 @@ import (
 // -------------------------------------------------------------------------------------------------
 
 func Quote(x *types.Cell) *types.Cell {
-	return cadr(x)  // (quote a) -> cdr -> (a) -> car -> a
+	return Cadr(x)  // (quote a) -> cdr -> (a) -> car -> a
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -134,6 +134,39 @@ func Type(c *types.Cell) *types.Cell {
 
 func Tag(c *types.Cell, t string) *types.Cell {
 	return generator.Tag(c, t)
+}
+
+// -------------------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------
+// Shortcuts for car, cdr functions
+// -------------------------------------------------------------------------------------------------
+
+func Caar  (e *types.Cell) *types.Cell { return car_(car_(e))             }
+func Cadr  (e *types.Cell) *types.Cell { return car_(cdr_(e))             }
+func Cddr  (e *types.Cell) *types.Cell { return cdr_(cdr_(e))             }
+func Cadar (e *types.Cell) *types.Cell { return car_(cdr_(car_(e)))       } 
+func Cdddr (e *types.Cell) *types.Cell { return cdr_(cdr_(cdr_(e)))       } 
+func Caddr (e *types.Cell) *types.Cell { return car_(cdr_(cdr_(e)))       }
+func Caddar(e *types.Cell) *types.Cell { return car_(cdr_(cdr_(car_(e)))) }
+func Cadddr(e *types.Cell) *types.Cell { return car_(cdr_(cdr_(cdr_(e)))) } 	
+
+// -------------------------------------------------------------------------------------------------
+// Helpers
+// -------------------------------------------------------------------------------------------------
+
+func car_(c *types.Cell) *types.Cell {
+	if c.IsCons() {
+		return c.Car
+	}
+	return NIL
+}
+
+func cdr_(c *types.Cell) *types.Cell {
+	if c.IsCons() {
+		return c.Cdr
+	}
+	return NIL
 }
 
 // -------------------------------------------------------------------------------------------------

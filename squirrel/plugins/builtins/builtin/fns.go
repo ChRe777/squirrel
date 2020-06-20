@@ -1,8 +1,14 @@
 package builtin
 
-import (
-	//"fmt"
+
+var (
+    mapFn    = "(map	(func (f x)  (cond ((no x) nil) ('t (cons (f (car x)) (map f (cdr x)))))))"
+
 )
+
+// (def map (f x) (cond ((no x) nil) ('t (cons (f (car x)) (map f (cdr x))))))
+
+
 
 import (
 	"github.com/mysheep/squirrel/types"
@@ -33,17 +39,34 @@ import (
 
 */
 
-func Pair (x, y *types.Cell) *types.Cell {
-	if x.Equal(core.NIL) && y.Equal(core.NIL) {
+func Pair (xs, ys *types.Cell) *types.Cell {
+	
+	if xs.Equal(core.NIL) || 
+	   ys.Equal(core.NIL) {
 		return core.NIL
-	} else {
-		if x.IsCons() && y.IsCons() {
-			a := list_(car(x), car(y))
-			b := Pair(cdr(x), cdr(y))
-			return core.Cons(a,b)
-		}
+	} 
+
+	if xs.IsCons() && ys.IsCons() {		// (x y z) (1 2 3)
+	
+		x := car(xs)
+		y := car(ys)
+	
+		ws := cdr(xs)
+		zs := cdr(ys)
+		
+		a := List_(x, y)
+		b := Pair(ws, zs)
+		
+		return core.Cons(a, b)
+	
+	} else {							// (x y . z) (1 2 3 4)
+		return core.Cons(List_(xs, ys), core.NIL)
 	}
-	return core.Err_("x and y must be a cons") // TODO: Check
+	
+}
+
+func List_ (x, y *types.Cell) *types.Cell {
+	return core.Cons(x, core.Cons (y, core.NIL))
 }
 
 func No (x *types.Cell) *types.Cell { // call "no" instead of "null"
@@ -77,18 +100,6 @@ func Append (x, y *types.Cell) *types.Cell {
 	}
 }
 
-/*
-// evalLst evals each item of a list
-func evalLst(m, a *types.Cell) *types.Cell {
-
-	if m.Equal(core.NIL) {
-		return core.NIL
-	} else {
-		return core.Cons(eval(core.Car(m), a), evalLst(core.Cdr(m), a))
-	}
-
-}
-*/
 func List (xs, a *types.Cell) *types.Cell {
 
 	if xs.Equal(core.NIL) {
