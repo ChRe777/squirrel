@@ -1,1 +1,0 @@
-go build -buildmode=plugin -o ../../../bin/io_reader_writer_lisp.1.0.0.so  main.go

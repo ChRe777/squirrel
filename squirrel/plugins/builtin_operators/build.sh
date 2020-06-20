@@ -1,1 +1,0 @@
-go build -buildmode=plugin -o ../../bin/eval_builtin_operators.1.0.0.so  main.go

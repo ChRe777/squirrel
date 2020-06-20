@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	//"fmt"
+	"fmt"
 )
 
 import (
@@ -93,22 +93,17 @@ func eval(e, a *types.Cell) *types.Cell {
 			case c.Equal(core.MAC ) 		: return evalMac(e, a)				
 			case c.Equal(core.FUNC)			: return evalFun(e, a)				
 			case c.Equal(core.ENV ) 		: return evalEnv(e, a)	
-			
-			// TODO: Load/Save with interface	
-			//case c.Equal(core.LOAD) 		: return evalLoad(e, a)
-			//case c.Equal(core.PRINTLN)   	: return core.Println_(evalLst(core.Cdr(e), a))
-			
+						
 			// Extra axioms in environment e.g. (no '()) -> t
 			default: return evalFuncEnv(e, a)									// Builtin and others
 		}
 	} 
 
-	// c) Function call with parameter values		// e.g. (call {fn} {param-values})
+	// c) Function or macros call with parameter values		// e.g. (call {fn} {param-values})
 	if builtin.Caar(e).Equal(core.FUNC) {
-		return evalFuncCall(e, a)
+		return evalFuncOrMacCall(e, a)
 	}
-		
-	// d)	
+	
 	return core.Err_("Wrong expression")
 }
 
@@ -142,20 +137,10 @@ func evalAtom(e, a *types.Cell) *types.Cell {
 //
 func evalFuncEnv(e, a *types.Cell) *types.Cell {
 
-	key := core.Car(e)							// a = (foo  (func (x) (is x (quote nil))) )
+	key := core.Car(e)						// a = (foo  (func (x) (is x (quote nil))) )
+	value := builtin.Assoc(key, a)			// value = (func (x) (is x (quote nil)))
 	
-	// 1. First look in builtin hash table
-	//keyStr := fmt.Sprintf("%v", key)			// key   = 'foo, keyStr = "foo"
-	//value, found := builtin.Fns[keyStr]			// value = (func (x) (is x (quote nil)))
-	
-	// 2. Look in environment association list
-	//if found == false {
-		value := builtin.Assoc(key, a)			// value = (func (x) (is x (quote nil)))
-	//}
-	
-	// 3. Look in loaded hash table
-	
-	if value.IsErr()/* && found == false */{
+	if value.IsErr(){
 		return core.Err_("reference to undefined identifier: %v", key.Val) // TODO: Rename error message
 	}
 	
@@ -171,19 +156,67 @@ func evalFuncEnv(e, a *types.Cell) *types.Cell {
 //	e.g.
 //		( (func (x)  (car  x)) '(1 2) ) -> 1
 //		( (func (x) `(cdr ,x)) '(1 2) ) -> 1	// Func tagged macros
-func evalFuncCall(e, a *types.Cell) *types.Cell {
+func evalFuncOrMacCall(e, a *types.Cell) *types.Cell {
 
-	key := builtin.Cadar(e); val := evalLst(core.Cdr(e), a)			
-	ee  := builtin.Caddar(e); aa := builtin.Append(builtin.Pair(key, val), a)		
-			
-	res := eval(ee, aa)			// will call func or expand backquotes and unquotes
+	// Comparing ac-mac-call to ac-call shows why macros receive their arguments unevaluated. 
+	// ac-mac-call applies the macro function to the arguments, 
+	// while ac-call maps ac on the arguments before applying the function, 
+	// causing the arguments to be evaluated.
 		
-	if isMac(e) {		
-		return eval(res, aa)	// and then if macros call func
+	if isMac(e) {
+		return macCall(e, a)
 	}
+
+	return funcCall(e, a)
+}
+
+func funcCall(e, a *types.Cell) *types.Cell {
+	
+	fmt.Println("funcCall")
+		
+	keys := builtin.Cadar(e); vals := evalLst(core.Cdr(e), a)	
+	
+	//
+	// keys: (x y . z), vals: (1 2 3 4)
+	//
+	fmt.Printf("funcCall - keys: %v, vals: %v", keys, vals)
+	//
+	//		
+	//
+	
+	ee  := builtin.Caddar(e); aa := builtin.Append(builtin.Pair(keys, vals), a)		
+	
+	res := eval(ee, aa)			// will call func or expand backquotes and unquotes
 	
 	return res
 }
+
+func macCall(e, a *types.Cell) *types.Cell {
+	
+	fmt.Println("macCall")
+	
+	// Comparing ac-mac-call to ac-call shows why macros receive their arguments unevaluated. 
+	// ac-mac-call applies the macro function to the arguments, 
+	// while ac-call maps ac on the arguments before applying the function, 
+	// causing the arguments to be evaluated.
+
+	keys := builtin.Cadar(e); vals := core.Cdr(e)			
+
+	fmt.Printf("macCall - keys: %v, vals: %v", keys, vals)
+	
+	// (when (is 'a 'a) 'a)
+	// macCall
+	// macCall - keys: (test . body), vals: ((is (quote a) (quote a))
+
+	ee  := builtin.Caddar(e); aa := builtin.Append(builtin.Pair(keys, vals), a)		
+	
+	ff  := macex(ee, aa)		// if macro expand first and then evaluate
+	
+	res := eval(ff, a)
+	
+	return res
+}
+
 
 //	------------------------------------------------------------------------------------------------
 

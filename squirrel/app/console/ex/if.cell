@@ -1,16 +1,11 @@
 (do
 
-	(mac if (c a b)
-		`(cond 
-			(,c ,a)
-			('t ,b)
-		)
-	)
+	(mac if (c a b) `(cond (,c ,a) ('t ,b)))
+	
+	(mac when (test body) `(if ,test ,body nil))
 	
 	(var name "foo")
 	
-	(if (is name "foo")
-		(list "name is " name)
-		(list "name is not " name)
-	)
+	(if (is name "foo") "name is foo" "name is not foo")
 )
+

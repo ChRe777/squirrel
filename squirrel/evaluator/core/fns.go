@@ -17,7 +17,6 @@ import (
 	6. Cons
 	7. Cond
 	
-	
 */
 
 // -------------------------------------------------------------------------------------------------
@@ -82,8 +81,10 @@ func Cons(x, y *types.Cell) *types.Cell {
 }
 
 // -------------------------------------------------------------------------------------------------
-
+/*
 func Cond(x *types.Cell) *types.Cell {
+
+	fmt.Printf("Cond - x: %v \n", x)
 
 	if x.IsCons() {
 		if caar(x).Equal(T) {
@@ -96,6 +97,8 @@ func Cond(x *types.Cell) *types.Cell {
 	}
 	
 }
+
+*/
 
 // END 7 primitive core operators
 

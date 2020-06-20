@@ -8,7 +8,7 @@ import(
 import (
 	"github.com/mysheep/squirrel/types"
 	"github.com/mysheep/squirrel/evaluator/core"
-	"github.com/mysheep/squirrel/plugins/reader_writers/lisp/parser"
+	"github.com/mysheep/squirrel/plugins/readerwriters/lisp/parser"
 )
 
 func Load(s *types.Cell ) *types.Cell {

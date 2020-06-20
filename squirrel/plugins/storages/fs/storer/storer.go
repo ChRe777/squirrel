@@ -7,7 +7,7 @@ import (
 import (
 	"github.com/mysheep/squirrel/types"
 	"github.com/mysheep/squirrel/evaluator/core"
-	"github.com/mysheep/squirrel/plugins/lisp/printer"
+	"github.com/mysheep/squirrel/plugins/readerwriters/lisp/printer"
 )
 
 // -------------------------------------------------------------------------------------------------

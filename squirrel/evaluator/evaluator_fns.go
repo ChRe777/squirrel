@@ -35,7 +35,16 @@ import (
 //
 func evalCond(c, a *types.Cell) *types.Cell {
 
-	if eval(builtin.Caar(c), a).Equal(core.T) { 
+	if c.Equal(core.NIL) {
+		return core.NIL
+	}
+		
+	y := eval(builtin.Caar(c), a)
+	if y.IsErr() {
+		return y;
+	}
+
+	if y.Equal(core.T) { 
 		return eval(builtin.Cadar(c), a) 
 	} else { 
 		return evalCond(core.Cdr(c), a)
@@ -48,10 +57,14 @@ func evalLst(m, a *types.Cell) *types.Cell {
 
 	if m.Equal(core.NIL) {
 		return core.NIL
-	} else {
-		return core.Cons(eval(core.Car(m), a), evalLst(core.Cdr(m), a))
 	}
-
+	
+	y := eval(core.Car(m), a)
+	if y.IsErr() {
+		return y;
+	}
+	
+	return core.Cons(y, evalLst(core.Cdr(m), a))
 }
 
 // isMac checks if car(e) is tagged as macro

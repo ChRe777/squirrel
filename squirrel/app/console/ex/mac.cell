@@ -1,0 +1,5 @@
+(do
+	(mac if (c a b) `(cond (,c ,a) ('t ,b)))
+
+	(mac when (test . body) `(if ,test (do ,@body) nil))
+)

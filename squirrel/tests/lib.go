@@ -8,8 +8,8 @@ import (
 	"github.com/mysheep/squirrel/types"
 	"github.com/mysheep/squirrel/evaluator"
 	"github.com/mysheep/squirrel/evaluator/builtin"
-	"github.com/mysheep/squirrel/plugins/reader_writers/lisp/parser"	
-	"github.com/mysheep/squirrel/plugins/reader_writers/lisp/printer"	
+	"github.com/mysheep/squirrel/plugins/readerwriters/lisp/parser"	
+	"github.com/mysheep/squirrel/plugins/readerwriters/lisp/printer"	
 )
 
 type spec struct {

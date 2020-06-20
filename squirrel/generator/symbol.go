@@ -4,6 +4,10 @@ import (
 	"github.com/mysheep/squirrel/types"
 )
 
+const (
+	ID_NIL = "nil"
+)
+
 // Sym creates a symbol from string
 func Sym(s string) *types.Cell {
 	return &types.Cell {
@@ -28,5 +32,5 @@ func Tag(c *types.Cell, t string) *types.Cell {
 
 // The only won nil atom in system
 var (
-	NIL = Atom("nil", types.SYMBOL)
+	NIL = Atom(ID_NIL, types.SYMBOL)
 )

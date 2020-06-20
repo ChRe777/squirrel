@@ -30,15 +30,20 @@ import (
 // 		(list 1 2 (list a 1 2))
 //		(1 2 (a 1 2))
 //
+
+func macex(e *types.Cell, a *types.Cell) *types.Cell {
+	return evalBackquote(e, a)
+}
+
 func evalBackquote(e *types.Cell, a *types.Cell) *types.Cell {
    
     x := builtin.Cadr(e)
     y := macExpand(x, a)	// fill out all the "unquote" holes
-    
-    //fmt.Printf("evalBackquote - y: %v \n", y)	
-    
+       
     return y
 }
+
+// TODO : WRONG NAMING !!!
 
 // mapEx - maps through a element in list and expand each element
 // if the element is wrapped with (unquote) the element will be evaluated
