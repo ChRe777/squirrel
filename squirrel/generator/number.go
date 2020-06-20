@@ -16,7 +16,7 @@ func Num(s string) *types.Cell {
 	if err == nil {
 		return num(d)
 	} else {
-		return Error(err.Error())
+		return Err(err.Error())
 	}
 }
 

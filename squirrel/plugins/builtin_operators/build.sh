@@ -1,1 +1,1 @@
-go build -buildmode=plugin -o ../../bin/ops_builtin.1.0.0.so  main.go
+go build -buildmode=plugin -o ../../bin/eval_builtin_operators.1.0.0.so  main.go

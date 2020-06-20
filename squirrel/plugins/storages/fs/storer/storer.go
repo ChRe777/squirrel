@@ -6,7 +6,7 @@ import (
 
 import (
 	"github.com/mysheep/squirrel/types"
-	"github.com/mysheep/squirrel/generator"			// TODO: Use core
+	"github.com/mysheep/squirrel/evaluator/core"
 	"github.com/mysheep/squirrel/plugins/lisp/printer"
 )
 
@@ -15,21 +15,22 @@ import (
 func Store(loc *types.Cell, s *types.Cell ) *types.Cell {
 
 	if loc.IsStr() == false {
-		return generator.Error("file name must be a string")
+		return core.Err_("file name must be a string")
 	}
 	
 	name, err := loc.AsStr()			
 	if err != nil {
-		return generator.Error(err.Error())
+		return core.Err_(err.Error())
 	}
 	
 	bs := printer.Sprint(s)
 	
 	err = writeAllBytes(name, bs)
 	if err != nil {		
-		return generator.Error(err.Error())
+		return core.Err_(err.Error())
 	}
-	return generator.NIL
+	
+	return loc
 }
 
 // -------------------------------------------------------------------------------------------------

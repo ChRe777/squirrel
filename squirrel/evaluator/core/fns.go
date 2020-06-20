@@ -54,7 +54,7 @@ func Car(e *types.Cell) *types.Cell {
 		if e.IsCons() {
 			return car_(e) 
 		} else {
-			return Err("Can't take car of atom")
+			return Err_("Can't take car of atom")
 		}
 	}
 }
@@ -69,7 +69,7 @@ func Cdr(e *types.Cell) *types.Cell {
 		if e.IsCons() {
 			return cdr_(e)
 		} else {
-			return Err("Can't take cdr of atom")
+			return Err_("Can't take cdr of atom")
 		}
 	}
 	
@@ -92,7 +92,7 @@ func Cond(x *types.Cell) *types.Cell {
 			return Cond(cdr_(x))
 		}
 	} else {
-		return Err("x must be a list of form ((p1 e1) (p2 e2) .. (pn en))")
+		return Err_("x must be a list of form ((p1 e1) (p2 e2) .. (pn en))")
 	}
 	
 }
@@ -109,12 +109,20 @@ func Nil_() *types.Cell {
 	return generator.Nil()
 }
 
+func Num_(s string) *types.Cell {
+	return generator.Num(s)
+}
+
 func Sym_(s string) *types.Cell {
 	return generator.Sym(s)
 }
 
-func Err(s string, a ...interface{}) *types.Cell {
-	return generator.Error(s, a)
+func Str_(s string) *types.Cell {
+	return generator.Str(s)
+}
+
+func Err_(s string, a ...interface{}) *types.Cell {
+	return generator.Err(s, a...)  // Don't forget the ... !!
 }
 
 func Type(c *types.Cell) *types.Cell {
@@ -126,3 +134,4 @@ func Tag(c *types.Cell, t string) *types.Cell {
 }
 
 // -------------------------------------------------------------------------------------------------
+

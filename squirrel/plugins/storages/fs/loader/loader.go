@@ -7,24 +7,24 @@ import(
 
 import (
 	"github.com/mysheep/squirrel/types"
-	"github.com/mysheep/squirrel/generator"
+	"github.com/mysheep/squirrel/evaluator/core"
 	"github.com/mysheep/squirrel/plugins/reader_writers/lisp/parser"
 )
 
 func Load(s *types.Cell ) *types.Cell {
 
 	if s.IsStr() == false {
-		return generator.Error("file name must be a string")
+		return core.Err_("file name must be a string")
 	}
 	
 	name, err := s.AsStr()			
 	if err != nil {
-		return generator.Error(err.Error())
+		return core.Err_(err.Error())
 	}
 	
 	bs, err := readAllBytes(name)
 	if err != nil {		
-		return generator.Error(err.Error())
+		return core.Err_(err.Error())
 	}
 
 	e := parser.Parse(bs)

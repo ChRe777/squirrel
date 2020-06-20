@@ -6,9 +6,10 @@ import (
 )
 
 import (
-	"github.com/squirrel/types"
-	"github.com/squirrel/parser"
-	"github.com/squirrel/core"
+	"github.com/mysheep/squirrel/types"
+	"github.com/mysheep/squirrel/evaluator/core"
+	"github.com/mysheep/squirrel/plugins/reader_writers/lisp/parser"
+
 )
 
 func TestEvalAtom(t *testing.T) {
@@ -20,11 +21,11 @@ func TestEvalAtom(t *testing.T) {
 		e 	 *types.Cell
 		want *types.Cell
 	}{
-		{ core.Sym("t"  ), core.Sym("t"  ) },
-		{ core.Sym("nil"), core.Sym("nil") },
-		{ core.Num("1"  ), core.Num("1"  ) },
-		{ core.Str("a"  ), core.Str("a"  ) },
-		{ core.Sym("b"  ), core.Err("reference to undefined identifier: b") },
+		{ core.Sym_("t"  ), core.Sym_("t"  ) },
+		{ core.Sym_("nil"), core.Sym_("nil") },
+		{ core.Num_("1"  ), core.Num_("1"  ) },
+		{ core.Str_("a"  ), core.Str_("a"  ) },
+		{ core.Sym_("b"  ), core.Err_("reference to undefined identifier: b") },
 	}
 
 	for _, spec := range specs {
@@ -49,7 +50,7 @@ func TestEvalFunc(t *testing.T) {
 		e 	 *types.Cell
 		want *types.Cell
 	}{
-		{ p("((func (x)(car x)) '(a b c))")	, core.Sym("a") },
+		{ p("((func (x)(car x)) '(a b c))")	, core.Sym_("a") },
 	}
 	
 	for _, spec := range specs {
@@ -107,8 +108,8 @@ func TestEvalDef(t *testing.T) {
 		e2		*types.Cell
 		want 	*types.Cell
 	} {
-		{ p("(def foo(x) (no x))")	, p("(foo '(1 2))")	, core.NIL  		},
-		{ p("(def bar(x) (no x))")	, p("(bar '())"   )	, core.Sym("t")  },
+		{ p("(def foo(x) (no x))")	, p("(foo '(1 2))")	, core.NIL  	  },
+		{ p("(def bar(x) (no x))")	, p("(bar '())"   )	, core.Sym_("t")  },
 	}
 	
 	for _, spec := range specs {
@@ -165,7 +166,7 @@ func TestEvalLet(t *testing.T) {
 		want 	*types.Cell
 	} {
 		{ p("(let xs '(1 2) (no  xs))"), core.NIL  	   },
-		{ p("(let ys '(1 2) (car ys))"), core.Num("1") },
+		{ p("(let ys '(1 2) (car ys))"), core.Num_("1") },
 		{ p("(let fn (func (x) (list x x)) (fn 1))"), p("(1 1)") },
 	}
 	

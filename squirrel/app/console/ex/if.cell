@@ -1,0 +1,16 @@
+(do
+
+	(mac if (c a b)
+		`(cond 
+			(,c ,a)
+			('t ,b)
+		)
+	)
+	
+	(var name "foo")
+	
+	(if (is name "foo")
+		(list "name is " name)
+		(list "name is not " name)
+	)
+)

@@ -55,7 +55,7 @@ func sexpr(level *int) *types.Cell {
 			debug("list lparen", level)
 			scanner.GetSym()
 		} else {
-			return generator.Error("Left paren is missing")
+			return generator.Err("Left paren is missing")
 		}
 		
 		symWasDot := false;
@@ -83,7 +83,7 @@ func sexpr(level *int) *types.Cell {
 		if scanner.Sym == scanner.Rparen {
 			debug("list rparen", level)
 		} else {
-			return generator.Error("Right paren is missing") 	// Right paren missing
+			return generator.Err("Right paren is missing") 	// Right paren missing
 		}
 		
 		return list

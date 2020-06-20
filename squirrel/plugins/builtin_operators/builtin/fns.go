@@ -43,7 +43,7 @@ func Pair (x, y *types.Cell) *types.Cell {
 			return core.Cons(a,b)
 		}
 	}
-	return generator.Error("x and y must be a cons") // TODO: Check
+	return core.Err_("x and y must be a cons") // TODO: Check
 }
 
 func No (x *types.Cell) *types.Cell { // call "no" instead of "null"
@@ -102,7 +102,7 @@ func List (xs, a *types.Cell) *types.Cell {
 
 func Assoc (x, ys *types.Cell) *types.Cell {
 	if ys.Equal(core.NIL) {
-		return core.Err("Not found")
+		return core.Err_("Not found")
 	} else {
 		if x.Equal(Caar(ys)) {
 			return Cadar(ys)

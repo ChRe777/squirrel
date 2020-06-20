@@ -2,8 +2,7 @@ package builtin
 
 import (
 	"github.com/mysheep/squirrel/types"
-	"github.com/mysheep/squirrel/evaluator/core"
-	"github.com/mysheep/squirrel/generator"
+	"github.com/mysheep/squirrel/evaluator/core"		// builtin layer based on core layer
 )
 /*
 
@@ -40,7 +39,7 @@ func Pair (x, y *types.Cell) *types.Cell {
 			return core.Cons(a,b)
 		}
 	}
-	return generator.Error("x and y must be a cons") // TODO: Check
+	return core.Err_("x and y must be a cons") // TODO: Check
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -92,7 +91,7 @@ func List_ (x, y *types.Cell) *types.Cell {
 
 func Assoc (x, ys *types.Cell) *types.Cell {
 	if ys.Equal(core.NIL) {
-		return core.Err("Not found")
+		return core.Err_("Not found")
 	} else {
 		if x.Equal(Caar(ys)) {
 			return Cadar(ys)
@@ -126,15 +125,6 @@ func cdr (x *types.Cell) *types.Cell {
 	return core.Cdr(x)
 }
 
-func Sym_(s string) *types.Cell {
-	return generator.Sym(s)
-}
-
 // -------------------------------------------------------------------------------------------------
-
-// (def map (f x) (cond ((no x) nil) ('t (cons (f (car x)) (map f (cdr x))))))
-
-
-
 
 

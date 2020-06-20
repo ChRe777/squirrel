@@ -9,9 +9,17 @@ import (
 )
 
 // Error creates an error from error string
-func Error(s string, a ...interface{}) *types.Cell {
-	m := fmt.Sprintf(s, a...)
-	val := fmt.Sprintf("Error: \"%s\"", m)
+func Err(format string, args ...interface{}) *types.Cell {
+	
+	msg := format
+	if len(args) > 0 {
+	
+		fmt.Printf("generator.Err - args: %v, len(args): %v\n", args, len(args))
+		msg = fmt.Sprintf(format, args...)
+	}
+	
+	val := fmt.Sprintf("Error: \"%s\"", msg)
+
 	return &types.Cell {
 		Type: types.Type{Cell: types.ATOM, Atom: types.ERROR},
 		Val : val,

@@ -30,7 +30,7 @@ func TestLoadPluginFile(t *testing.T) {
 	
 	for _, spec := range specs {
 	
-		_, got, err := loadPlugin(spec.file)
+		_, got, err := tryLoadKnownPlugin(spec.file)
 		if got != spec.want {
 			t.Errorf("Load plugin got type: %v, want: %v, file: '%v' \n", got, spec.want, spec.file)
 		

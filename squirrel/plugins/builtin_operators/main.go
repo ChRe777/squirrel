@@ -55,7 +55,7 @@ var builtOps = map[types.Cell] OpFunc {
 	*builtin.CADDDR	: Cadddr_	, 
 }
 
-// func foo (param1, param2, param3, ... , Environment)
+// -------------------------------------------------------------------------------------------------
 
 func Pair_ (e, a *types.Cell) *types.Cell {
 	x := evaluator.Eval(builtin.Cadr (e), a)

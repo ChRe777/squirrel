@@ -109,7 +109,7 @@ func eval(e, a *types.Cell) *types.Cell {
 	}
 		
 	// d)	
-	return core.Err("Wrong expression")
+	return core.Err_("Wrong expression")
 }
 
 //	------------------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ func evalAtom(e, a *types.Cell) *types.Cell {
 	if e.IsSymbol() {	
 		x := builtin.Assoc(e, a) // ToDo: Hash-table // nil means also not found !!!	
 		if x.IsErr() {
-			return core.Err("reference to undefined identifier: %v", e.Val) // TODO: Rename error message
+			return core.Err_("reference to undefined identifier: %v", e.Val) // TODO: Rename error message
 		}
 		return x
 	}
@@ -156,7 +156,7 @@ func evalFuncEnv(e, a *types.Cell) *types.Cell {
 	// 3. Look in loaded hash table
 	
 	if value.IsErr()/* && found == false */{
-		return core.Err("reference to undefined identifier: %v", key.Val) // TODO: Rename error message
+		return core.Err_("reference to undefined identifier: %v", key.Val) // TODO: Rename error message
 	}
 	
 	// Function call with parameter values
@@ -184,6 +184,8 @@ func evalFuncCall(e, a *types.Cell) *types.Cell {
 	
 	return res
 }
+
+//	------------------------------------------------------------------------------------------------
 
 
  

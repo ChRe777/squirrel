@@ -5,6 +5,7 @@ import(
 	"log"
 	"fmt"
 	"errors"
+	"strings"
 	"plugin"
     "path/filepath"
 )
@@ -26,7 +27,7 @@ func Load(ui string, pluginPath string) *plugins.Plugins {
 	
 	for _, file := range getPluginFiles(pluginPath) {
 	
-		sym, plugInType, err := loadPlugin(file)
+		sym, plugInType, err := tryLoadKnownPlugin(file)
 
 		if err == nil {
 		
@@ -99,125 +100,24 @@ func getPluginFiles(path string) []string {
 	return files
 }
 
-func loadPlugin(file string) (plugin.Symbol, string, error) {
+func tryLoadKnownPlugin(file string) (plugin.Symbol, string, error) {
 
 	plugIn, err := plugin.Open(file)
 	if err != nil {
 		return nil, "", err
 	}
-	
-	// Try this
-	
-	sym, err := plugIn.Lookup(plugins.PLUGIN_TYPE_READER_WRITER)
-	if err == nil {
-		return sym, plugins.PLUGIN_TYPE_READER_WRITER, nil
+		
+	for _, knownType := range plugins.ALL_PLUGIN_TYPES {
+		sym, err := plugIn.Lookup(knownType)
+		if err == nil {
+			return sym, knownType, nil
+		}
 	}
 	
-	// Try next
+	str := strings.Join(plugins.ALL_PLUGIN_TYPES, ", ")
 	
-	sym, err = plugIn.Lookup(plugins.PLUGIN_TYPE_EVALUATOR)
-	if err == nil {
-		return sym, plugins.PLUGIN_TYPE_EVALUATOR, nil
-	}
-
-	return nil, "", errors.New("No known plugin type detected !!")
+	return nil, "", errors.New(fmt.Sprintf("No known plugin type (%v) detected !!", str))
 }
 
 
 // -------------------------------------------------------------------------------------------------
-
-/*
-func getFileNameReaderWriter(ui string, pluginName string, version string) string {
-	file := plugins.PLUGIN_PATH + "io_" + ui + "_" + pluginName + "." + version + PLUGIN_SUFFIX
-	return file
-}
-
-func getFileNameOpsBuiltin(pluginName string, version string) string {
-	file := plugins.PLUGIN_PATH + pluginName + "." + version + PLUGIN_SUFFIX
-	return file
-}
-
-func getFileNameStorage(pluginName string, version string) string {
-	file := plugins.PLUGIN_PATH + pluginName + "." + version + PLUGIN_SUFFIX
-	return file
-}
-
-
-// loadCellReaderWriterPlugin loads the reader write plugin
-func loadCellReaderWriterPlugin(file string) (interfaces.CellReadWriter, error) {
-
-	plugIn, err := plugin.Open(file)
-	if err != nil {
-		return nil, err
-	}
-
-	sym, err := plugIn.Lookup("ReaderWriter")
-	if err != nil {
-		panic(err)
-	}
-	
-	var readerWriter interfaces.CellReadWriter
-	readerWriter, ok := sym.(interfaces.CellReadWriter)
-	if !ok {
-		fmt.Println("unexpected type from module symbol:" +file)
-		os.Exit(1)
-	}
-	
-	fmt.Printf("Plugin '%v' loaded. \n", file)
-	
-	return readerWriter
-}
-
-
-// loadCellBuiltinPlugin loads the builtin operators plugin
-func loadCellBuiltinPlugin(file string) interfaces.OpEvaluator {
-
-	plugIn, err := plugin.Open(file)
-	if err != nil {
-		panic(err)
-	}
-
-	sym, err := plugIn.Lookup("Evaler")
-	if err != nil {
-		panic(err)
-	}
-	
-	var opEvaluator interfaces.OpEvaluator
-	opEvaluator, ok := sym.(interfaces.OpEvaluator)
-	if !ok {
-		fmt.Println("unexpected type from module symbol:" +file)
-		os.Exit(1)
-	}
-	
-	fmt.Printf("Plugin '%v' loaded. \n", file)
-	
-	return opEvaluator
-}
-
-
-// loadIOStoragePlugin loads the storage plugin
-func loadIOStoragePlugin(file string) interfaces.OpEvaluator {
-
-	plugIn, err := plugin.Open(file)
-	if err != nil {
-		panic(err)
-	}
-
-	sym, err := plugIn.Lookup("LoaderStorer")
-	if err != nil {
-		panic(err)
-	}
-	
-	var storage interfaces.OpEvaluator
-	storage, ok := sym.(interfaces.OpEvaluator)
-	if !ok {
-		fmt.Println("unexpected type from module symbol:" +file)
-		os.Exit(1)
-	}
-	
-	fmt.Printf("Plugin '%v' loaded. \n", file)
-	
-	return storage
-}
-
-*/
