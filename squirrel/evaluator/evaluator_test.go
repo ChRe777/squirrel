@@ -4,9 +4,12 @@ import (
 	"testing"
 )
 
-func TestEval(t *testing.T) {
+import (
+	"github.com/mysheep/squirrel/types"
+	"github.com/mysheep/squirrel/evaluator/core"
+	"github.com/mysheep/squirrel/plugins/readerwriters/lisp/parser"
 
-}
+)
 
 func TestEvalAtom(t *testing.T) {
 
@@ -59,18 +62,41 @@ func TestEvalFunc(t *testing.T) {
 		
 }
 
-func TestEvalFuncEnv(e, a *types.Cell) *types.Cell {
+func TestEvalFuncEnv(t *testing.T) {
 
+	p := func(s string) *types.Cell {
+		return parser.Parse([]byte(s))
+	}
+	
+	s := "((t t) (nil nil) (bar (func (x) x)))"
+	envBuiltin := p(s)
+	
+	specs := []struct {
+		e 	 *types.Cell
+		want *types.Cell
+	}{
+		{ p("(foo 'a)")	, core.Err_("reference to undefined identifier: foo") },
+		{ p("(bar 'a)")	, core.Sym_("a") },
+	}
+	
+	for _, spec := range specs {
+		
+		got := evalFuncEnv(spec.e, envBuiltin)
+	
+		if got.NotEqual(spec.want) {
+			t.Errorf("evalFuncEnv e: %v - got: %v, want: %v", spec.e, got, spec.want)
+		}
+	}
 }
 
-func TestEvalFuncOrMacCall(e, a *types.Cell) *types.Cell {
-
+func TestEvalFuncOrMacCall(t *testing.T) {
+	// TODO
 }
 
-func TestFuncCall(e, a *types.Cell) *types.Cell {
-
+func TestFuncCall(t *testing.T) {
+	// TODO
 }
 
-func TestMacCall(e, a *types.Cell) *types.Cell {
-
+func TestMacCall(t *testing.T) {
+	// TODO
 }

@@ -5,8 +5,8 @@ import (
 )
 
 import(	
-	"github.com/squirrel/types"
-	"github.com/squirrel/generator"
+	"github.com/mysheep/squirrel/types"
+	"github.com/mysheep/squirrel/generator"
 )
 
 /*
@@ -16,32 +16,24 @@ func quote(x *types.Cell) *types.Cell {
 */
 func TestQuote(t *testing.T) {
 	
-	e := Quote_(Sym("a"))
+	e := Quote(Sym_("a"))
 		
 	got  := Quote(e)
-	want := Sym("a")	
+	want := Sym_("a")	
 	
 	if got.NotEqual(want) {
 		t.Errorf("Quote failed, got: %v, want: %v", got, want)
 	}
 }
 
-/*
-func atom(x *types.Cell) *types.Cell {
-	if isAtom(x) {
-		return T
-	} else {
-		return NIL
-	}
-}
-*/
+
 func TestAtom(t *testing.T) {
 	
 	specs := []struct {
 		expr *types.Cell
 		want *types.Cell
 	} {
-		{ Sym("a")	, T },
+		{ Sym_("a")	, T },
 		{ NIL 		, T },
 	}
 	
@@ -56,29 +48,21 @@ func TestAtom(t *testing.T) {
 		
 }
 
-/*
-func eq(x, y *types.Cell) *types.Cell {	
-	if x.Equal(y) {
-	 	return T	
-	}
-	return NIL 	// FALSE
-}
-*/
-func TestEq(t *testing.T) {
+func TestIs(t *testing.T) {
 
 	specs := []struct{
 		x		*types.Cell
 		y		*types.Cell
 		want 	*types.Cell
 	}{
-		{Sym("a"), Sym("a"), T  },
-		{Sym("a"), Sym("b"), NIL},
+		{Sym_("a"), Sym_("a"), T  },
+		{Sym_("a"), Sym_("b"), NIL},
 		// ... TODO MANY TESTS ...
 	}
 
 	for _, spec := range specs {
 		
-		got := Eq(spec.x, spec.y)
+		got := Is(spec.x, spec.y)
 		
 		if got != spec.want {
 			t.Errorf("%v eq %v failed, got: %v, want: %v", spec.x, spec.y, got, spec.want)
@@ -87,29 +71,16 @@ func TestEq(t *testing.T) {
 	
 }
 
-/*
-func car(e *types.Cell) *types.Cell {
-	if e == NIL {
-		return NIL
-	} else {
-		if isCons(e) {
-			return generator.Car(e) 
-		} else {
-			return error(fmt.Sprintf("can not take car of %v", e))
-		}
-	}
-}
-*/
 func TestCar(t *testing.T) {
 	specs := []struct{
 		x		*types.Cell
 		want 	*types.Cell
 	}{
-		{Sym("a")	, generator.Error("Can't take car of a")},
+		{Sym_("a")	, Err_("Can't take car of a")},
 		// (car nil) -> nil
 		{NIL   		, NIL},
 		// (car (a b)) -> a
-		{List(Sym("a"), Sym("b")), Sym("a")},
+		{list2_(Sym_("a"), Sym_("b")), Sym_("a")},
 	}
 	
 	for _, spec := range specs {
@@ -128,13 +99,13 @@ func TestCdr(t *testing.T) {
 		want 	*types.Cell
 	}{
 		// (car 'a)  -> error
-		{Sym("a")	, generator.Error("Can't take cdr of a")},
+		{Sym_("a")	, Err_("Can't take cdr of a")},
 		
 		// (car nil) -> nil
 		{NIL   		, NIL},
 		
 		// (car (a b)) -> a
-		{List(Sym("a"), Sym("b")), List(Sym("b"))},
+		{list2_(Sym_("a"), Sym_("b")), list2_(Sym_("b"), NIL)},
 	}
 	
 	for _, spec := range specs {
@@ -148,25 +119,14 @@ func TestCdr(t *testing.T) {
 	
 }
 
-/*
-func cons (x, y *types.Cell) *types.Cell {
-	if y.IsCons() {
-		return generator.Cons(x, y)
-	} else {
-		// TODO: dotted pair (cons 'a 'b) -> (a . b) *)
-		return generator.Error(fmt.Sprintf("y must be a list"))
-	}
-}
-*/
-
 func TestCons(t *testing.T) {
 	specs := []struct{
 		x		*types.Cell
 		y       *types.Cell
 		want 	*types.Cell
 	}{
-		{Sym("a"), NIL, 	 List(Sym("a"))},
-		{Sym("a"), Sym("b"), generator.Cons(Sym("a"), Sym("b"))},
+		{Sym_("a"), NIL, 	 list2_(Sym_("a"), NIL)},
+		{Sym_("a"), Sym_("b"), generator.Cons(Sym_("a"), Sym_("b"))},
 	}
 	
 	for _, spec := range specs {
@@ -180,25 +140,6 @@ func TestCons(t *testing.T) {
 	
 }
 
-/*	
-PROCEDURE cond(x: cell): cell;
-BEGIN
-	IF x IS consCell THEN
-		IF eq(caar(x), T) = T THEN RETURN cadar(x);				
-		ELSE RETURN cond(cdr(x)) END;
-	ELSE
-		error(1); (* TODO: x must be a list of from ((p1 e1) (p2 e2) .. (pn en)) *)		
-	END;
-END cond;
-*/
-/*
-	(
-		(p1 e1) 
-		(p2 e2)  
-		...
-		(pn en)
-	)
-*/
 func TestCond(t *testing.T) {
 
 /*
@@ -208,11 +149,9 @@ func TestCond(t *testing.T) {
 	)
 
 */
-	e := List(
-		List(Sym("nil"), Sym("a")),
-		List(Sym("t")  , Sym("b")),
-	)
-	want := Sym("b")
+	e := list2_(list2_(Sym_("nil"), Sym_("a")), list2_(Sym_("t")  , Sym_("b")))
+		
+	want := Sym_("b")
 
 	specs := []struct{
 		x		*types.Cell

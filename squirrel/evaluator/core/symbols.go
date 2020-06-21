@@ -1,20 +1,22 @@
 package core
 
-// Identifiers of built-in core symbols
+// Core
+//
 const (
 
 	// 7 Core Primitives
 	//
 	ID_QUOTE  	= "quote"
 	ID_ATOM   	= "atom"
-	ID_IS	  	= "is"			// was "eq"
-	ID_CAR    	= "car"			// can be first		// go slices  xs[0:]
-	ID_CDR	  	= "cdr"			// can be rest		// go slices  xs[:len-1]
+	ID_IS	  	= "is"				// was "eq"
+	ID_CAR    	= "car"				// can be first		// go slices  xs[0:]
+	ID_CDR	  	= "cdr"				// can be rest		// go slices  xs[:len-1]
 	ID_CONS	  	= "cons"	
 	ID_COND   	= "cond"	
 )
 
-// Core symbols of language
+// Core
+//
 var (	
 	QUOTE 		= Sym_(ID_QUOTE)
 	ATOM 		= Sym_(ID_ATOM)
@@ -25,8 +27,9 @@ var (
 	COND 		= Sym_(ID_COND) 
 )
 
+// CarCdrs
+//
 const (
-	
 	ID_CAAR   	= "caar"  
 	ID_CADR   	= "cadr" 
 	ID_CDDR   	= "cddr"  
@@ -35,11 +38,11 @@ const (
 	ID_CADDR  	= "caddr" 
 	ID_CADDAR 	= "caddar"
 	ID_CADDDR 	= "cadddr"
-
 )
 
+// CarCdrs
+//
 var (
-		
 	CAAR   		= Sym_(ID_CAAR  )
 	CADR   		= Sym_(ID_CADR  )
 	CDDR   		= Sym_(ID_CDDR  )
@@ -48,73 +51,42 @@ var (
 	CADDR  		= Sym_(ID_CADDR )
 	CADDAR 		= Sym_(ID_CADDAR)
 	CADDDR 		= Sym_(ID_CADDDR)
-
 )
 
+// Boolean
+//
 const (
-	ID_TYPE 	= "type"
-	
-	//ID_PRINTLN 	= "println"
-		
-	// Boolean
-	//
 	ID_T	  	= "t"
-//	ID_NIL	  	= "nil	// Nil in generator
-	
-
+//	ID_NIL	  	= "nil				// Nil in generator
 )
 
 // Boolean
 //
 var (		
-	T 			= Sym_(ID_T) 	// TRUE
-	NIL 		= Nil_() 		// NIL or FALSE
+	T 			= Sym_(ID_T) 		// TRUE
+	NIL 		= Nil_() 			// NIL or FALSE
+)
+
+// Extended core
+//
+const (
+	ID_TYPE 	= "type"
+	ID_FUNC		= "func"
 )
 
 // Extended core
 //
 var (		
 	TYPE 		= Sym_(ID_TYPE)
-	//PRINTLN 	= Sym_(ID_PRINTLN)
+	FUNC 		= Sym_(ID_FUNC)
+	
+//	TAG 		= Sym_(ID_TAG)		// TODO: Tagging
+//	TAGGED 		= Sym_(ID_TAGGED)
+//	SYM 		= Sym_(ID_SYM)
+//	TYPE0 		= Sym_(ID_TYPE0)							
+//	REP 		= Sym_(ID_REP)	
+	
 )
 
-/*
-const (
-	
-	// For Macros
-	//
-	ID_BACKQUOTE 		= "backquote"	
-	ID_UNQUOTE   		= "unquote"
-	ID_UNQUOTESPLICING  = "unquote_splicing"
 
-	// New core axioms
-	//
-	ID_TAG 	  = "tag"
-	ID_TAGGED = "tagged"
-	ID_SYM	  = "sym"
-	ID_TYPE0  = "type"
-	ID_REP    = "rep"
-	
-	// Extra core
-	//
-	ID_TYPE 	= "type"
-	ID_PRINTLN 	= "println"
-		
-	// Boolean
-	//
-	ID_T	  = "t"
-//	ID_NIL	  = "nil	// Nil in generator
-	
 
-)
-	
-// Tagging	(Used different)
-var (
-	TAG 	= Sym_(ID_TAG)
-	TAGGED 	= Sym_(ID_TAGGED)
-	SYM 	= Sym_(ID_SYM)
-	TYPE0 	= Sym_(ID_TYPE0)							
-	REP 	= Sym_(ID_REP)	
-)
-
-*/

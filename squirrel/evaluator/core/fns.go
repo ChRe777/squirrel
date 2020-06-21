@@ -15,7 +15,12 @@ import (
 	4. Car
 	5. Cdr
 	6. Cons
-	7. Cond
+	7. Cond		// ???? Now in BUILTIN
+	
+	New core operators:
+	
+	8. Type
+	9. Tag
 	
 */
 
@@ -104,6 +109,16 @@ func Cond(x *types.Cell) *types.Cell {
 
 // -------------------------------------------------------------------------------------------------
 
+func Type(c *types.Cell) *types.Cell {
+	return Sym_(c.Type_())
+}
+
+func Tag(c *types.Cell, t string) *types.Cell {
+	return generator.Tag(c, t)
+}
+
+// -------------------------------------------------------------------------------------------------
+
 func Cons_(x, y *types.Cell) *types.Cell {
 	return generator.Cons(x, y)
 }
@@ -128,13 +143,7 @@ func Err_(s string, a ...interface{}) *types.Cell {
 	return generator.Err(s, a...)  // Don't forget the ... !!
 }
 
-func Type(c *types.Cell) *types.Cell {
-	return Sym_(c.Type_())
-}
 
-func Tag(c *types.Cell, t string) *types.Cell {
-	return generator.Tag(c, t)
-}
 
 // -------------------------------------------------------------------------------------------------
 
@@ -167,6 +176,10 @@ func cdr_(c *types.Cell) *types.Cell {
 		return c.Cdr
 	}
 	return NIL
+}
+
+func list2_(x, y *types.Cell) *types.Cell {
+	return Cons_(x, Cons_ (y, NIL))
 }
 
 // -------------------------------------------------------------------------------------------------

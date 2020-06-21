@@ -1,14 +1,14 @@
 package builtin
 
 import (
-	"testing"
-	"fmt"
+//	"testing"
+//	"fmt"
 )
 
 import (
-	"github.com/mysheep/squirrel/types"
-	"github.com/mysheep/squirrel/evaluator/core"
-	"github.com/mysheep/squirrel/plugins/readerwriters/lisp/parser"
+//	"github.com/mysheep/squirrel/types"
+//	"github.com/mysheep/squirrel/evaluator/core"
+//	"github.com/mysheep/squirrel/plugins/readerwriters/lisp/parser"
 
 )
 
@@ -22,7 +22,7 @@ import (
 	
 */
 
-
+/*
 func TestEvalVar(t *testing.T) {
 
 	p := func(s string) *types.Cell {
@@ -42,7 +42,7 @@ func TestEvalVar(t *testing.T) {
 	
 	for _, spec := range specs {
 	
-		eval(spec.e, envBuiltin)
+		evaluator.Eval(spec.e, envBuiltin)
 		
 		fmt.Printf("e: %v, envBuiltin: %v  \n", spec.e, envBuiltin)
 		
@@ -53,7 +53,7 @@ func TestEvalVar(t *testing.T) {
 		}
 	}
 }
-
+/*
 func TestEvalDef(t *testing.T) {
 
 	p := func(s string) *types.Cell {
@@ -139,3 +139,4 @@ func TestEvalLet(t *testing.T) {
 	}
 	
 }
+*/
