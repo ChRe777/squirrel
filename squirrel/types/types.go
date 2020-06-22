@@ -1,38 +1,38 @@
 package types
 
-import(
-	"strings"
+import (
 	"errors"
+	"strings"
 )
 
 type Identifier string
 
-type CellType 	byte
+type CellType byte
 
-type AtomType 	byte
+type AtomType byte
 
 // Type of Cells atom or cons
 // if cell is atom then also
 // the type of the atom symbol, string, number, bool or error
 type Type struct {
-	Cell	CellType
-	Atom 	AtomType
+	Cell CellType
+	Atom AtomType
 }
 
 // Cell types like Atom or Cons cells
 const (
-	CONS 	CellType = iota + 1
+	CONS CellType = iota + 1
 	ATOM
 )
 
 // Atom types like Strings or Numbers or Booleans
 const (
-	SYMBOL 	AtomType = iota + 1
-	STRING  	// e.g. "foo", "bar"
-	NUMBER		// e.g. 123.4e-10	
-	FUNC		// e.g. (func (x) (+ x 1))
+	SYMBOL AtomType = iota + 1
+	STRING          // e.g. "foo", "bar"
+	NUMBER          // e.g. 123.4e-10
+	FUNC            // e.g. (func (x) (+ x 1))
 	//BOOL    	// e.g. true, false (currently we have 't nil)
-	ERROR		// e.g.	error("Can't take car of a")
+	ERROR // e.g.	error("Can't take car of a")
 )
 
 //  Cell
@@ -43,7 +43,7 @@ const (
 //  +------+-----+--|--+--|--+
 //					v     v
 //
-//  TODO: Double linked list
+//  Double linked list
 //  ------------------------
 //  We will need another pointer
 //
@@ -59,14 +59,14 @@ const (
 //			   car
 //
 type Cell struct {
-    Type 	Type
-    Tag     interface{}
-//  Level	interface{}		// each function is in a level -> level 2 can access level 1
-//  Sec		interface{}		// security - more information later
-    Val 	interface{}
-    Car 	*Cell
-	Cdr 	*Cell
-//	Cgr		*Cell
+	Type Type
+	Tag  interface{}
+	//  Level	interface{}		// each function is in a level -> level 2 can access level 1
+	//  Sec		interface{}		// security - more information later
+	Val interface{}
+	Car *Cell
+	Cdr *Cell
+	//	Cgr		*Cell
 }
 
 //  Levels
@@ -105,7 +105,7 @@ func (c *Cell) IsStr() bool {
 	return c.IsAtom() && (c.Type.Atom == STRING)
 }
 
-// IsTagged checks, if cell is tagged with string t			// TODO: Check tag with SYMBOL
+// IsTagged checks, if cell is tagged with string t
 func (c *Cell) IsTagged(t string) bool {
 	return c.Tag != nil && c.Tag == t
 }
@@ -116,8 +116,7 @@ func (c *Cell) AsStr() (string, error) {
 		s, ok := c.Val.(string)
 		if ok {
 			return strings.Trim(s, "\""), nil
-		} 
+		}
 	}
-	return "", errors.New("No atom and/or string")
+	return "", errors.New("no atom and/or string")
 }
-

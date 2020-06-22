@@ -1,36 +1,35 @@
 package loader
 
-import(
-	"os"
-	"log"
-	"fmt"
+import (
 	"errors"
-	"strings"
+	"fmt"
+	"log"
+	"os"
+	"path/filepath"
 	"plugin"
-    "path/filepath"
+	"strings"
 )
 
 import (
-	"github.com/mysheep/squirrel/plugins"
 	"github.com/mysheep/squirrel/interfaces"
+	"github.com/mysheep/squirrel/plugins"
 )
-
 
 // -------------------------------------------------------------------------------------------------
 
 func Load(ui string, pluginPath string) *plugins.Plugins {
-	
+
 	loadedPlugins := &plugins.Plugins{
 		ReaderWriter: nil,
-		Evaluators	: []interfaces.Evaluator{ }, // Empty list
+		Evaluators:   []interfaces.Evaluator{}, // Empty list
 	}
-	
+
 	for _, file := range getPluginFiles(pluginPath) {
-	
+
 		sym, plugInType, err := tryLoadKnownPlugin(file)
 
 		if err == nil {
-		
+
 			switch plugInType {
 
 			//
@@ -43,7 +42,7 @@ func Load(ui string, pluginPath string) *plugins.Plugins {
 					fmt.Printf("Plugin '%v' loaded!\n", file)
 					loadedPlugins.ReaderWriter = readerWriter
 				}
-			
+
 			//
 			// EVALUATOR
 			//
@@ -55,10 +54,10 @@ func Load(ui string, pluginPath string) *plugins.Plugins {
 					loadedPlugins.Evaluators = append(loadedPlugins.Evaluators, evaluator)
 				}
 			}
-		} 
-	
+		}
+
 	}
-	
+
 	if loadedPlugins.ReaderWriter == nil {
 		panic("ReaderWriter plugin is a must!!")
 	}
@@ -67,36 +66,36 @@ func Load(ui string, pluginPath string) *plugins.Plugins {
 }
 
 func visit(files *[]string) filepath.WalkFunc {
-    return func(path string, info os.FileInfo, err error) error {
-        if err != nil {
-            log.Fatal(err)
-        }
-        
-        // Avoid to walk of directories
-        if info.IsDir() {
-    		return nil
+	return func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Avoid to walk of directories
+		if info.IsDir() {
+			return nil
 		}
 
 		// Only files with .so
 		if filepath.Ext(path) != plugins.PLUGIN_SUFFIX {
-    		return nil
+			return nil
 		}
 
-        *files = append(*files, path)
-        
-        return nil
-    }
+		*files = append(*files, path)
+
+		return nil
+	}
 }
 
 func getPluginFiles(path string) []string {
-	
-	files := []string{}
+
+	var files []string
 	err := filepath.Walk(path, visit(&files))
-	
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	return files
 }
 
@@ -106,18 +105,17 @@ func tryLoadKnownPlugin(file string) (plugin.Symbol, string, error) {
 	if err != nil {
 		return nil, "", err
 	}
-		
+
 	for _, knownType := range plugins.ALL_PLUGIN_TYPES {
 		sym, err := plugIn.Lookup(knownType)
 		if err == nil {
 			return sym, knownType, nil
 		}
 	}
-	
+
 	str := strings.Join(plugins.ALL_PLUGIN_TYPES, ", ")
-	
+
 	return nil, "", errors.New(fmt.Sprintf("No known plugin type (%v) detected !!", str))
 }
-
 
 // -------------------------------------------------------------------------------------------------

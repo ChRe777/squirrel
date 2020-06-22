@@ -1,8 +1,8 @@
 package printer
 
 import (
-	"fmt"
 	"bytes"
+	"fmt"
 )
 
 import (
@@ -17,7 +17,7 @@ const (
 	RPAREN = ')'
 )
 
-func Sprint(c *types.Cell) []byte {	
+func Sprint(c *types.Cell) []byte {
 
 	var buffer bytes.Buffer
 
@@ -25,10 +25,14 @@ func Sprint(c *types.Cell) []byte {
 		buffer.WriteString("")
 		return buffer.Bytes()
 	}
-	switch c.Type.Cell { 
-		case types.CONS: return sprintCons(c)
-		case types.ATOM: return sprintAtom(c)
-		default: buffer.WriteString(""); return buffer.Bytes()
+	switch c.Type.Cell {
+	case types.CONS:
+		return sprintCons(c)
+	case types.ATOM:
+		return sprintAtom(c)
+	default:
+		buffer.WriteString("")
+		return buffer.Bytes()
 	}
 }
 
@@ -40,14 +44,14 @@ func sprintAtom(c *types.Cell) []byte {
 		buffer.WriteString("")
 		return buffer.Bytes()
 	}
-	
+
 	if c.IsStr() {
 		s, _ := c.Val.(string)
 		ss := fmt.Sprintf("\"%s\"", s)
 		buffer.WriteString(ss)
 		return buffer.Bytes()
 	}
-	
+
 	s := fmt.Sprintf("%v", c.Val)
 	buffer.WriteString(s)
 	return buffer.Bytes()
@@ -58,11 +62,11 @@ func sprintCons(c *types.Cell) []byte {
 	var buffer bytes.Buffer
 
 	if c.Tag != nil {
-		s := fmt.Sprintf("%v", c.Tag)		// mac or func or ...
+		s := fmt.Sprintf("%v", c.Tag) // mac or func or ...
 		buffer.WriteString(s)
 		return buffer.Bytes()
 	}
-	
+
 	return sprintList(c)
 }
 
@@ -88,38 +92,38 @@ func sprintList(c *types.Cell) []byte {
 
 	buffer.WriteRune(LPAREN)
 	cc := c
-	
-	// (a . b)
-	if cc.Cdr.IsAtom() {		
-		buffer.Write(sprintDottedPair(cc))	
-	} else {
-	
-//
-//      +---+---+   +---+---+	+---+---+
-//  l-->| a |   |-->| b	|	|-->| c |   |-->nil		(a b c)
-//      +---+---+  	+---+---+	+---+---+
-//
 
-		for ;cc.Cdr != nil; {
+	// (a . b)
+	if cc.Cdr.IsAtom() {
+		buffer.Write(sprintDottedPair(cc))
+	} else {
+
+		//
+		//      +---+---+   +---+---+	+---+---+
+		//  l-->| a |   |-->| b	|	|-->| c |   |-->nil		(a b c)
+		//      +---+---+  	+---+---+	+---+---+
+		//
+
+		for cc.Cdr != nil {
 			cc = printCell(cc)
-		
-//				    cc
-//					|		
-//					v
-//      +---+---+   +---+---+
-//  a-->| a |   |-->| b	| c	| 		(a b . c)
-//      +---+---+  	+---+---+
-//
-			if cc.Cdr.IsAtom() {		
+
+			//				    cc
+			//					|
+			//					v
+			//      +---+---+   +---+---+
+			//  a-->| a |   |-->| b	| c	| 		(a b . c)
+			//      +---+---+  	+---+---+
+			//
+			if cc.Cdr.IsAtom() {
 				buffer.Write(sprintDottedPair(cc))
-				break;
+				break
 			}
-		
+
 		}
 	}
-	
+
 	buffer.WriteRune(RPAREN)
-	
+
 	return buffer.Bytes()
 }
 
@@ -129,14 +133,16 @@ func sprintList(c *types.Cell) []byte {
 //		(cons a (cons b c)) -> "(a b . c)"
 // 		(cons (1) b) 		-> "((1) . b)"
 func sprintDottedPair(c *types.Cell) []byte {
-	
+
 	var buffer bytes.Buffer
-	
+
 	buffer.Write(Sprint(c.Car))
 	if c.Cdr.Val != NIL {
-		buffer.WriteRune(SPACE); buffer.WriteRune(DOT); buffer.WriteRune(SPACE)
+		buffer.WriteRune(SPACE)
+		buffer.WriteRune(DOT)
+		buffer.WriteRune(SPACE)
 		buffer.Write(Sprint(c.Cdr))
 	}
-	
+
 	return buffer.Bytes()
 }

@@ -5,20 +5,20 @@ import (
 )
 
 import (
+	"github.com/mysheep/squirrel/core"
 	"github.com/mysheep/squirrel/types"
-	"github.com/mysheep/squirrel/evaluator/core"
-//	"github.com/mysheep/squirrel/evaluator/builtin"
+	//	"github.com/mysheep/squirrel/builtin"
 )
 
 // -------------------------------------------------------------------------------------------------
 
-type any string 	// could any type
+type any string // could any type
 
-var Evaluator any	// Name is used to detect plugin type
+var Evaluator any // Name is used to detect plugin type
 
 // -------------------------------------------------------------------------------------------------
 
-func (p any) Eval(e, a *types.Cell) (*types.Cell, error)  {
+func (p any) Eval(e, a *types.Cell) (*types.Cell, error) {
 
 	if c := core.Car(e); c.IsAtom() {
 		if op, found := builtOps[*c]; found {
@@ -31,9 +31,9 @@ func (p any) Eval(e, a *types.Cell) (*types.Cell, error)  {
 
 // -------------------------------------------------------------------------------------------------
 
-type OpFunc func (e, a *types.Cell) *types.Cell
+type OpFunc func(e, a *types.Cell) *types.Cell
 
-var builtOps = map[types.Cell] OpFunc {
+var builtOps = map[types.Cell]OpFunc{
 	/*
 	*builtin.NO     : No_		,
 	*builtin.NOT    : Not_		,
@@ -42,28 +42,26 @@ var builtOps = map[types.Cell] OpFunc {
 	*builtin.LIST   : List_		,
 	*builtin.ASSOC  : Assoc_	,
 	*builtin.APPEND : Append_	,
-	*/
+	 */
 	//
 	// no more caarrrrsss or cdrrrrssss :-)
 	//
 	/*
-	*builtin.CAAR  	: Caar_		,  
-	*builtin.CADR  	: Cadr_		,  
-	*builtin.CDDR  	: Cddr_		,  
-	*builtin.CADAR 	: Cadar_	, 
-	*builtin.CDDDR 	: Cdddr_	, 
-	*builtin.CADDR 	: Caddr_	, 
+	*builtin.CAAR  	: Caar_		,
+	*builtin.CADR  	: Cadr_		,
+	*builtin.CDDR  	: Cddr_		,
+	*builtin.CADAR 	: Cadar_	,
+	*builtin.CDDDR 	: Cdddr_	,
+	*builtin.CADDR 	: Caddr_	,
 	*builtin.CADDAR	: Caddar_	,
-	*builtin.CADDDR	: Cadddr_	, 
-	*/
-	
+	*builtin.CADDDR	: Cadddr_	,
+	 */
+
 }
 
-// TODO: 
+// TODO:
 
 //    mapFn    = "(map	(func (f x)  (cond ((no x) nil) ('t (cons (f (car x)) (map f (cdr x)))))))"
-
-
 
 // -------------------------------------------------------------------------------------------------
 /*

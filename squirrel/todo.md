@@ -1,6 +1,3 @@
-
-
-
 # ToDo
 
 An lisp interpreter exists of following components:
