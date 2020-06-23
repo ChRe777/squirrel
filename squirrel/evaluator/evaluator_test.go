@@ -80,10 +80,10 @@ func TestEvalFuncEnv(t *testing.T) {
 
 	for _, spec := range specs {
 
-		got := evalFuncEnv(spec.e, envBuiltin)
+		got := evalApplyFunc(spec.e, envBuiltin)
 
 		if got.NotEqual(spec.want) {
-			t.Errorf("evalFuncEnv e: %v - got: %v, want: %v", spec.e, got, spec.want)
+			t.Errorf("evalApplyFunc e: %v - got: %v, want: %v", spec.e, got, spec.want)
 		}
 	}
 }
