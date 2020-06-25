@@ -107,7 +107,16 @@ func (c *Cell) IsStr() bool {
 
 // IsTagged checks, if cell is tagged with string t
 func (c *Cell) IsTagged(t string) bool {
-	return c.Tag != nil && c.Tag == t
+	s, ok := c.Tag.(string)
+	if ok {
+		return s == t
+	}
+	return false 
+}
+
+// HasTag checks, if cell has a tag
+func (c *Cell) HasTag() bool {
+	return c.Tag != nil
 }
 
 // AsStr checks, if cell is an atom of type string and return string value

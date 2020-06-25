@@ -54,11 +54,20 @@ func sprintAtom(c *types.Cell) []byte {
 
 	s := fmt.Sprintf("%v", c.Val)
 	buffer.WriteString(s)
+	
+	
+	fmt.Printf("sprintAtom - c: %v, c.Tag: %v, c.Val:%v \n", c, c.Tag, c.Val)
+	
+	if c.HasTag() {
+		t := fmt.Sprintf("#%v", c.Tag)
+		buffer.WriteString(t)
+	}
+	
 	return buffer.Bytes()
 }
 
 func sprintCons(c *types.Cell) []byte {
-
+/*
 	var buffer bytes.Buffer
 
 	if c.Tag != nil {
@@ -66,7 +75,7 @@ func sprintCons(c *types.Cell) []byte {
 		buffer.WriteString(s)
 		return buffer.Bytes()
 	}
-
+*/
 	return sprintList(c)
 }
 

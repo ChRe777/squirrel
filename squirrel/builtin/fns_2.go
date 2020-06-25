@@ -1,7 +1,7 @@
 package builtin
 
 import (
-//"fmt"
+ 	//"fmt"
 )
 
 import (
@@ -51,9 +51,8 @@ func List(xs, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *t
 //  	({name} (func {params}_{body})
 func Def(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
 	name := core.Cadr(e); argsAndBody := core.Cddr(e)
-	key := name; val := core.Cons(FUNC, argsAndBody)
-	
-	core.Tag(val, ID_FUNC)
+	key := name; val := core.Cons(core.Tag(core.Sym_(core.ID_FUNC), ID_FUNC), argsAndBody)
+
 	a = core.Add(list__(key, val), a)
 	
 	return eval(key, a)
@@ -118,9 +117,8 @@ func Mac(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *typ
 	name := core.Cadr(e); params_body := core.Cddr(e)	
 	
 	key := name
-	val := core.Cons(FUNC, params_body)	
-		
-	core.Tag(val, ID_MAC)				// A macros is a func tagged as macro (Paul Graham - Arc)
+	// A macros is a func tagged as macro (Paul Graham - Arc)
+	val := core.Cons(core.Tag(core.Sym_(core.ID_FUNC), ID_MAC), params_body)
 
 	aa := core.Add(list__(key, val), a)
 	

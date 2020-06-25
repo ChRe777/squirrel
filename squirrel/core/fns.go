@@ -169,6 +169,7 @@ func Cadar (e *types.Cell) *types.Cell { return car_(cdr_(car_(e)))       }
 func Cdddr (e *types.Cell) *types.Cell { return cdr_(cdr_(cdr_(e)))       } 
 func Caddr (e *types.Cell) *types.Cell { return car_(cdr_(cdr_(e)))       }
 func Caddar(e *types.Cell) *types.Cell { return car_(cdr_(cdr_(car_(e)))) }
+func Cadddr(e *types.Cell) *types.Cell { return car_(cdr_(cdr_(cdr_(e)))) }
 
 // -------------------------------------------------------------------------------------------------
 // Helpers

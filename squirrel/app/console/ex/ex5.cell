@@ -1,0 +1,8 @@
+(do
+    -- Does not work in Arc
+	(def closure (x)
+		(func (y) (cons x y))
+	)
+	-- exp -> ((closure x) y) ((x 1) (y 2) (test func) 
+	-- env -> (closure func) (a 1))
+)

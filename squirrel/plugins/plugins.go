@@ -5,13 +5,8 @@ import (
 )
 
 const (
-	PLUGIN_PATH				= "../../bin/"
+	PLUGIN_PATH				= "../../bin/"				// TODO: ReThink
 	PLUGIN_SUFFIX			= ".so"
-	PLUGIN_VERSION 			= "1.0.0"
-		
-	PLUGIN_IO_READER_WRITER = "reader_writer"
-	PLUGIN_OPS_BUILTIN 		= "ops_builtin"
-	PLUGIN_STORAGE			= "io_fs_loader_storer"	
 )
 
 const (
