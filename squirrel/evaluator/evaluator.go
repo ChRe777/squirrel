@@ -1,6 +1,10 @@
 package evaluator
 
 import (
+	"fmt"
+)
+
+import (
 	"github.com/mysheep/squirrel/builtin"
 	"github.com/mysheep/squirrel/core"
 	"github.com/mysheep/squirrel/interfaces"
@@ -120,6 +124,7 @@ func apply(exp, env *Cell) *Cell {
 	var args *Cell	
 	if isMac(fun) {								
 		args = Cdr(exp)							// A macros receives their values UNEVALUATED !!!
+		fmt.Printf("apply - args: %v \n", args)
 	} else {
 		args = EvList(Cdr(exp), env)			// A func received evaluated vars e.g. (a b) -> (1 2)
 	}

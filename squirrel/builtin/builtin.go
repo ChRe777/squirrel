@@ -2,7 +2,6 @@ package builtin
 
 import (
 	"errors"
-	"fmt"
 )
 
 import (
@@ -18,11 +17,11 @@ var (
 
 // -------------------------------------------------------------------------------------------------
 
-func Eval(e, a *types.Cell, eval FuncType) (*types.Cell, error)  {
+func Eval(exp, env *types.Cell, eval FuncType) (*types.Cell, error)  {
 
-	if c := core.Car(e); c.IsAtom() {
+	if c := core.Car(exp); c.IsAtom() {
 		if fn, found := builtinFuncs[*c]; found {
-			return fn(e, a, eval), nil
+			return fn(exp, env, eval), nil
 		}
 	}
 	
@@ -66,14 +65,13 @@ var builtinFuncs = map[types.Cell] MapFuncType {
 
 // -------------------------------------------------------------------------------------------------
 
-func No_(e, a *types.Cell, eval FuncType) *types.Cell {
-	x := eval(core.Cadr(e), a)
-	fmt.Printf("No - x:%v \n", x)
+func No_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	x := eval(core.Cadr(exp), env)
 	return No(x)
 }
 
-func Not_(e, a *types.Cell, eval FuncType) *types.Cell {
-	x := eval(core.Cadr(e), a)
+func Not_(exp, a *types.Cell, eval FuncType) *types.Cell {
+	x := eval(core.Cadr(exp), a)
 	return Not(x)
 }
 
@@ -108,38 +106,38 @@ func Assoc_(e, a *types.Cell, eval FuncType) *types.Cell {
 
 // -------------------------------------------------------------------------------------------------
 
-func Def_(e, a *types.Cell, eval FuncType) *types.Cell {
-	return Def(e, a, eval)
+func Def_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	return Def(exp, env, eval)
 }
 
-func Var_(e, a *types.Cell, eval FuncType) *types.Cell {
-	return Var(e, a, eval)
+func Var_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	return Var(exp, env, eval)
 }
 
-func Let_(e, a *types.Cell, eval FuncType) *types.Cell {
-	return Let(e, a, eval)
+func Let_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	return Let(exp, env, eval)
 }
 
-func Env_(e, a *types.Cell, eval FuncType) *types.Cell {
-	return Env(e, a)
+func Env_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	return Env(exp, env)
 }
 
-func Func_(e, a *types.Cell, eval FuncType) *types.Cell {
-	return Fun(e, a)
+func Func_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	return Fun(exp, env)
 }
 
-func Mac_(e, a *types.Cell, eval FuncType) *types.Cell {
-	return Mac(e, a, eval)
+func Mac_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	return Mac(exp, env, eval)
 }
 
-func Do_(e, a *types.Cell, eval FuncType) *types.Cell {
-	return Do(e, a, eval)
+func Do_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	return Do(exp, env, eval)
 }
 
 // -------------------------------------------------------------------------------------------------
 
-func Backquote_(e, a *types.Cell, eval FuncType) *types.Cell {
-	return Backquote(e, a, eval)
+func Backquote_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	return Backquote(exp, env, eval)
 }
 
 // -------------------------------------------------------------------------------------------------

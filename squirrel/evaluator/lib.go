@@ -18,8 +18,8 @@ func EvList(exp *Cell, env *Cell) *Cell {
 	return builtin.List(exp, env, eval)
 }
 
-func Bind(kvps *Cell, env *Cell) *Cell {
-	return builtin.Append(kvps, env)
+func Bind(kvs *Cell, env *Cell) *Cell {
+	return builtin.Append(kvs, env)
 }
 
 func Pair(xs, ys *Cell) *Cell {

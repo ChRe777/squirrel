@@ -1,7 +1,7 @@
 package builtin
 
 import (
- 	//"fmt"
+ 	"fmt"
 )
 
 import (
@@ -26,18 +26,18 @@ import (
 //	------------------------------------------------------------------------------------------------
 
 // List evals each item of a list
-func List(xs, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
+func List(xs, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
 
 	if xs.Equal(core.NIL) {
 		return core.NIL
 	}
 	
-	y := eval(core.Car(xs), a)
+	y := eval(core.Car(xs), env)
 	if y.IsErr() {
 		return y
 	}
 	
-	return core.Cons(y, List(core.Cdr(xs), a, eval))
+	return core.Cons(y, List(core.Cdr(xs), env, eval))
 }
 
 //	------------------------------------------------------------------------------------------------
@@ -46,13 +46,13 @@ func List(xs, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *t
 // e.g.
 //  	(def {name} {params}_{body})
 //  	({name} (func {params}_{body})
-func Def(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
-	name := core.Cadr(e); argsAndBody := core.Cddr(e)
+func Def(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
+	name := core.Cadr(exp); argsAndBody := core.Cddr(exp)
 	key := name; val := core.Cons(core.Tag(core.Sym_(core.ID_FUNC), ID_FUNC), argsAndBody)
 
-	a = core.Add(list__(key, val), a)
+	env = core.Add(list__(key, val), env)
 	
-	return eval(key, a)
+	return eval(key, env)
 }
 
 //	------------------------------------------------------------------------------------------------
@@ -64,13 +64,13 @@ func Def(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *typ
 // 		> (var a 1) 	-> 1
 // 		> (env) 		-> ((a 1) (t t))
 //
-func Var(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
-	key := core.Cadr(e)
-	val := eval(core.Caddr(e), a)
+func Var(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
+	key := core.Cadr(exp)
+	val := eval(core.Caddr(exp), env)
 	
-	a = core.Add(list__(key, val), a)
+	env = core.Add(list__(key, val), env)
 	
-	return eval(key, a)
+	return eval(key, env)
 }
 
 //	------------------------------------------------------------------------------------------------
@@ -80,12 +80,18 @@ func Var(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *typ
 //		> (let {key} {val} {body} )
 //		> (let xs '(1 2 3) (car xs)) 	->  1
 //		
-func Let(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
-	key := core.Cadr(e)
-	val := eval(core.Caddr(e), a)	
+func Let(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
 	
-	ee := core.Car(core.Cdddr(e))
-	aa := core.Cons(list__(key, val), a)
+	key := core.Cadr(exp)
+	val := eval(core.Caddr(exp), env)
+	aa := core.Cons(list__(key, val), env)
+	
+										// exp = (let x 1 (foo x))	
+	ee := core.Car(core.Cdddr(exp))		//  ee = (foo x)
+
+	fmt.Printf("Let - exp: %v\n", exp)
+	fmt.Printf("Let - ee: %v\n", ee)
+	fmt.Printf("Let - aa: %v\n", aa)
 	
 	return eval(ee, aa)
 }
@@ -96,8 +102,8 @@ func Let(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *typ
 //
 //		> (env) -> ((a 1) (b 1))
 //
-func Env(e, a *types.Cell) *types.Cell {
-	return a
+func Env(exp, env *types.Cell) *types.Cell {
+	return env
 }
 
 //	------------------------------------------------------------------------------------------------
@@ -107,8 +113,9 @@ func Env(e, a *types.Cell) *types.Cell {
 // e.g.
 //		(func (x) (car x))  -> func
 //
-func Fun(e, a *types.Cell) *types.Cell {
-	v := e
+func Fun(exp, env *types.Cell) *types.Cell {
+	v := exp
+	core.Tag(core.Car(exp), ID_FUNC)
 	core.Tag(v, ID_FUNC)
 	return v
 }
@@ -120,18 +127,18 @@ func Fun(e, a *types.Cell) *types.Cell {
 // 	e.g.
 //	 	(mac {name} {params}_{body})
 //
-func Mac(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
+func Mac(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
 
-	name := core.Cadr(e); params_body := core.Cddr(e)	
-	key := name
+	name := core.Cadr(exp);
 	
-	// A macros is a func tagged as macro (Paul Graham - Arc)
-	val := core.Cons(core.FUNC, params_body)
+	// A macros is env func tagged as macro (Paul Graham - Arc)
+	val := core.Tag(core.Cons(core.Tag(core.FUNC, ID_MAC), core.Cddr(exp)), ID_MAC)	// ToDo: ReThink - Tagging
 
-	val = core.Tag(val, ID_MAC)
-	aa := core.Add(list__(key, val), a)
+	// Add at front without can of pointer to env
+	// TODO: RETHINK
+	core.Add(list__(name, val), env) 			
 	
-	return eval(key, aa)
+	return eval(name, env)
 }
 
 //	------------------------------------------------------------------------------------------------
@@ -144,7 +151,7 @@ func Mac(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *typ
 //			(no nil)    <-- last
 //		)
 //
-func Do(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
+func Do(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
 
 	var doList func(e, last, a *types.Cell) *types.Cell
 
@@ -158,7 +165,7 @@ func Do(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *type
 		}	
 	}
 
-	return doList(core.Cdr(e), core.NIL, a)
+	return doList(core.Cdr(exp), core.NIL, env)
 }
 
 //	------------------------------------------------------------------------------------------------
