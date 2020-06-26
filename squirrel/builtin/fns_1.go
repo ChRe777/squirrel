@@ -1,23 +1,20 @@
 package builtin
 
 import (
-//	"fmt"
-)
-
-import (
 	"github.com/mysheep/squirrel/core" // builtin layer based on core layer
 	"github.com/mysheep/squirrel/types"
 )
+
 /*
 
-	Funcs:
+	Functions are:
 
-		Pair
-		No
-		Not
-		And
-		Append
-		Assoc
+	- Pair
+	- No
+	- Not
+	- And
+	- Append
+	- Assoc
 		
 */
 
@@ -94,8 +91,12 @@ func Assoc (x, ys *types.Cell) *types.Cell {
 }
 
 // -------------------------------------------------------------------------------------------------
+// Helper functions
+//
 
 func list__(x, y *types.Cell) *types.Cell {
 	return core.Cons(x, core.Cons (y, core.NIL))
 }
+
+// -------------------------------------------------------------------------------------------------
 

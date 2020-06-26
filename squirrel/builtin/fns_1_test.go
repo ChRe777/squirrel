@@ -39,3 +39,81 @@ func TestPair(t *testing.T) {
 }
 
 // -------------------------------------------------------------------------------------------------
+
+func TestNo(t *testing.T) {
+
+	specs := []struct {
+		xs		string
+		want  	string
+	} {
+		{"nil"	 	, "t"},
+		{"()"  		, "t"},
+		{"1"   		, "nil"},
+		{"(1 2)"  	, "nil"},
+	}	
+	
+	for _, spec := range specs {
+	
+		xs := parser.Parse([]byte(spec.xs))
+		
+		got := No(xs)
+		want := parser.Parse([]byte(spec.want))
+			
+		if got.NotEqual(want) {
+			t.Errorf("TestNo - got: %v, want: %v", got, spec.want)
+		}
+	}
+}
+
+// -------------------------------------------------------------------------------------------------
+
+func TestNot(t *testing.T) {
+
+	specs := []struct {
+		x		string
+		want  	string
+	} {
+		{"t"	 	, "nil"},
+		{"nil"   	, "t"},
+	}	
+	
+	for _, spec := range specs {
+	
+		x := parser.Parse([]byte(spec.x))
+		
+		got := Not(x)
+		want := parser.Parse([]byte(spec.want))
+			
+		if got.NotEqual(want) {
+			t.Errorf("TestNot - got: %v, want: %v", got, spec.want)
+		}
+	}
+}
+
+// -------------------------------------------------------------------------------------------------
+
+func TestAnd(t *testing.T) {
+
+	specs := []struct {
+		x		string
+		y		string
+		want  	string
+	} {
+		{"t", "t"	 , "t"  },
+		{"nil", "t"	 , "nil"},
+		{"t", "nil"  , "nil"},
+	}	
+	
+	for _, spec := range specs {
+	
+		x := parser.Parse([]byte(spec.x))
+		y := parser.Parse([]byte(spec.y))
+		
+		got := And(x,y)
+		want := parser.Parse([]byte(spec.want))
+			
+		if got.NotEqual(want) {
+			t.Errorf("TestAnd - got: %v, want: %v", got, spec.want)
+		}
+	}
+}

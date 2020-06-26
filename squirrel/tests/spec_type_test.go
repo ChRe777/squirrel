@@ -6,7 +6,6 @@ import (
 
 func TestType (t *testing.T) {
 	
-
 	specs := []spec {
 		{ "(type  1)"			, "number" 		},  
 		{ "(type 'a)"			, "symbol"		},
@@ -16,7 +15,6 @@ func TestType (t *testing.T) {
 	}
 	
 	test(specs, t)
-
 }
 
 func TestType2(t *testing.T) {

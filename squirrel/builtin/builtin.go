@@ -2,6 +2,7 @@ package builtin
 
 import (
 	"errors"
+	"fmt"
 )
 
 import (
@@ -35,8 +36,7 @@ type MapFuncType = func(*types.Cell, *types.Cell, FuncType) *types.Cell
 
 var builtinFuncs = map[types.Cell] MapFuncType {
 	
-	//
-	// fns1
+	// function group 1
 	//
 	*NO     : No_		,
 	*NOT    : Not_		,
@@ -46,8 +46,7 @@ var builtinFuncs = map[types.Cell] MapFuncType {
 	*ASSOC  : Assoc_	,
 	*APPEND : Append_	,
 	
-	//
-	// fns2
+	// function group 2
 	//
 	*VAR	: Var_		,
 	*DEF	: Def_ 		,
@@ -57,7 +56,6 @@ var builtinFuncs = map[types.Cell] MapFuncType {
 	*MAC	: Mac_		,
 	*DO		: Do_		,
 	
-	//
 	// macro
 	//
 	*BACKQUOTE			: Backquote_		,
@@ -70,6 +68,7 @@ var builtinFuncs = map[types.Cell] MapFuncType {
 
 func No_(e, a *types.Cell, eval FuncType) *types.Cell {
 	x := eval(core.Cadr(e), a)
+	fmt.Printf("No - x:%v \n", x)
 	return No(x)
 }
 
@@ -143,5 +142,4 @@ func Backquote_(e, a *types.Cell, eval FuncType) *types.Cell {
 	return Backquote(e, a, eval)
 }
 
-
-
+// -------------------------------------------------------------------------------------------------

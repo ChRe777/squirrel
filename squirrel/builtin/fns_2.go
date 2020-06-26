@@ -9,24 +9,21 @@ import (
 	"github.com/mysheep/squirrel/types"
 )
 
-/*
+//	------------------------------------------------------------------------------------------------
+//
+//  List of functions:
+//
+//		- List
+//		- Def
+//		- Var
+//		- Let
+//		- Env
+//		- Fun
+//		- Mac
+//		- Do
+//
 
-	- Cond
-	- List
-	
-	- Var
-	- Def
-	- Let
-	- Fun	
-	
-	- Env
-	- Mac
-	- Do
-	
-*/
-
-
-
+//	------------------------------------------------------------------------------------------------
 
 // List evals each item of a list
 func List(xs, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
@@ -43,7 +40,7 @@ func List(xs, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *t
 	return core.Cons(y, List(core.Cdr(xs), a, eval))
 }
 
-
+//	------------------------------------------------------------------------------------------------
 
 // evalDef eval 'def and creates a function in environment
 // e.g.
@@ -57,6 +54,8 @@ func Def(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *typ
 	
 	return eval(key, a)
 }
+
+//	------------------------------------------------------------------------------------------------
 
 // evset evals expression e.g. (set a 1)
 // add a key value pair on top of environment like push on a stack
@@ -73,6 +72,8 @@ func Var(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *typ
 	
 	return eval(key, a)
 }
+
+//	------------------------------------------------------------------------------------------------
 
 // Let eval 'let, see example below
 // 	e.g. 
@@ -99,27 +100,35 @@ func Env(e, a *types.Cell) *types.Cell {
 	return a
 }
 
-// Fun create a function
+//	------------------------------------------------------------------------------------------------
+
+// Fun creates a function without name
+//
 // e.g.
 //		(func (x) (car x))  -> func
+//
 func Fun(e, a *types.Cell) *types.Cell {
 	v := e
 	core.Tag(v, ID_FUNC)
 	return v
 }
 
+//	------------------------------------------------------------------------------------------------
+
 // Mac eval 'mac and create a macros in environment
+//
 // 	e.g.
 //	 	(mac {name} {params}_{body})
 //
 func Mac(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
 
 	name := core.Cadr(e); params_body := core.Cddr(e)	
-	
 	key := name
+	
 	// A macros is a func tagged as macro (Paul Graham - Arc)
-	val := core.Cons(core.Tag(core.Sym_(core.ID_FUNC), ID_MAC), params_body)
+	val := core.Cons(core.FUNC, params_body)
 
+	val = core.Tag(val, ID_MAC)
 	aa := core.Add(list__(key, val), a)
 	
 	return eval(key, aa)
@@ -128,11 +137,13 @@ func Mac(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *typ
 //	------------------------------------------------------------------------------------------------
 
 // Do evals a list of expression and returns the last expression	
+//
 //	e.g.
 //		(do
 //			(list 1 2)
-//			(no nil)
+//			(no nil)    <-- last
 //		)
+//
 func Do(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
 
 	var doList func(e, last, a *types.Cell) *types.Cell
@@ -150,4 +161,5 @@ func Do(e, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *type
 	return doList(core.Cdr(e), core.NIL, a)
 }
 
+//	------------------------------------------------------------------------------------------------
 
