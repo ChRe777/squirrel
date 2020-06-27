@@ -10,6 +10,9 @@ import (
 	"github.com/mysheep/squirrel/interfaces"
 )
 
+const (
+	REF_TO_UNDEFINED_ID = "reference to undefined identifier: %v"
+)
 // -------------------------------------------------------------------------------------------------
 
 var (
@@ -36,9 +39,9 @@ func Eval(exp, env *Cell) *Cell {
 // (cons x y)								// [((x y) 1 2) (foo (func (x y) (cons x y))) ...]
 // (cons 1 2)								// [((x y) 1 2) (foo (func (x y) (cons x y))) ...]
 // (1 . 2)									// [(foo (func (x y) (cons x y))) (a 3) (b 4) ...]
-	
-// Lexical Scoping - page 24 - The Art of Interpretor
-
+//	
+// Lexical Scoping - The Art of Interpretor (page 24)
+// --------------------------------------------------
 //   FUN                 ARGS
 // ( (func foo(x)(no x)) (1 2) )
 
@@ -84,83 +87,94 @@ func eval(exp, env *Cell) *Cell {
 	var err error
 
 	// Lookup Value of Symbol in Environment
+	//
 	if exp.IsAtom() {
 		return evalAtom(exp, env)
 	}
 	
-	// Plugin Operators bases on core and primitives
-	for _, evaluator_ := range evaluators { // Plugin Evaluators like Storage operators like load, save
+	// Try to evaluate functions in plugged in evaluator (like (load..) or (save ..))
+	//
+	for _, evaluator_ := range evaluators {
 		res, err := evaluator_.Eval(exp, env)
 		if err == nil {
 			return res
 		}
 	}
 
-	// try to eval builtin operators based on primitives (e.g. pair, no, not, append)
+	// Try to eval builtin operators based on primitives (e.g. pair, no, not, append)
+	//
 	res, err = builtin.Eval(exp, env, eval)
 	if err == nil {
-		return res // found
+		return res 
 	}
 
-	// try to eval primitive core operators (e.g. car, cdr, cons, ... )
+	// Try to eval primitive core operators (e.g. car, cdr, cons, ... )
+	//
 	res, err = core.Eval(exp, env, eval) 
 	if err == nil {
-		return res // found
+		return res
 	}
 
 	// User-defined functions or macros stored in evironment (e.g. ( .. (foo (func (x) (no x)))) ..)
+	//
 	return apply(exp, env)
 }
 
+//	------------------------------------------------------------------------------------------------
+
 func apply(exp, env *Cell) *Cell {
 
-	isMac := func(e *Cell) bool {
-		return Car(e).IsTagged(builtin.ID_MAC)
-	}
+	var args *Cell
 
-	// User-defined functions					// for example (foo  1 2) evaluates
-	fun := eval(Car(exp), env)					// to (func (x y) (cons x y))
+	fnOrMac := eval(Car(exp), env); isMacro := isMac(fnOrMac)				
 	
-	var args *Cell	
-	if isMac(fun) {								
-		args = Cdr(exp)							// A macros receives their values UNEVALUATED !!!
-		fmt.Printf("apply - args: %v \n", args)
+	if isMacro {								
+		args = Cdr(exp)									// A macro receives arguments UNEVALUATED !!!
 	} else {
-		args = EvList(Cdr(exp), env)			// A func received evaluated vars e.g. (a b) -> (1 2)
+		args = EvList(Cdr(exp), env)					// A func receives evaluated arguments
 	}
 
-	vars := Cadr(fun)
-
-	exp = Caddr(fun)
-	env = Bind(Pair(vars, args), env)
+	res := eval(Caddr(fnOrMac), Bind(Pair(Cadr(fnOrMac), args), env))
+							
+	if isMacro {										
+		res = eval(res, env)									
+	}
 	
-	res := eval(exp, env)						// (cons x y) or (backquote (cons (unquote x)(unquote y)))
-												// ((x 1) (y 2) ... (foo (func (x y) (cons x y)) ...)
-	if isMac(fun) {								// First eval only expand - fill in the args
-		res = eval(res, env)					// Now evaluated the expanded expression
-	}
-
 	return res
 }
 
 //	------------------------------------------------------------------------------------------------
 
+func isMac(e *Cell) bool {
+	return Car(e).IsTagged(builtin.ID_MAC)
+}
+
+//	------------------------------------------------------------------------------------------------
+	
+
 // evalAtom atom by return it or lookup in environment
-// e.g.
-//		> (env) 	-> ((a 1)(b 1))
-//  	> a 		-> 1
-//  	> b 		-> 2
 //
+//		Example "symbol table"
+//		----------------------
+//      
+//   	symbol  | value
+//      --------+-----------------------------------------------------------------------------------
+//		dotted 	| (func (x) (cons x x))
+//		map	   	| (func (fn xs)  (cond ((no xs) nil) ('t (cons (fn (car xs)) (map fn (cdr xs))))))
+//		a		| 1
+//		b		| 2
+//		xs		| (1 2 3)
+//	
 func evalAtom(exp, env *Cell) *Cell {
 
 	if exp.IsSymbol() {
 	
-		if exp.Equal(core.NIL) { return core.NIL }	// This can go into environment
+		if exp.Equal(core.NIL) { return core.NIL }	// Hint: This can go into environment
 		if exp.Equal(core.T)   { return core.T   }
 
-		x := Value(exp, env)
+		x := Value(exp, env)						// Lookup value of expression in env
 		if x.IsErr() {
-			return Err("reference to undefined identifier: %v", exp.Val) // TODO: Rename error message
+			return Err(REF_TO_UNDEFINED_ID, exp.Val) 			
 		}
 		return x
 	}

@@ -84,16 +84,20 @@ func Let(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) 
 	
 	key := core.Cadr(exp)
 	val := eval(core.Caddr(exp), env)
-	aa := core.Cons(list__(key, val), env)
 	
-										// exp = (let x 1 (foo x))	
-	ee := core.Car(core.Cdddr(exp))		//  ee = (foo x)
+	fmt.Printf("Let - key: %v, val: %v \n", key, val)
+	
+	aa := core.Cons(list__(key, val), env)									
+	ee := core.Car(core.Cdddr(exp))	
+	
+	fmt.Printf("Let - ee: %v, aa: %v \n", ee, aa)	
 
-	fmt.Printf("Let - exp: %v\n", exp)
-	fmt.Printf("Let - ee: %v\n", ee)
-	fmt.Printf("Let - aa: %v\n", aa)
+	//fn := core.Car(ee)
+	//args := eval(core.Cadr(exp), aa)
+	//dd := core.Cons(fn, args)
 	
-	return eval(ee, aa)
+	return eval(core.Car(core.Cdddr(exp)), 
+				core.Cons(list__(key, val), env))
 }
 
 // Env prints environment for debug purpose
