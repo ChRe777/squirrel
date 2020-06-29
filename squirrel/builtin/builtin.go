@@ -17,6 +17,11 @@ var (
 
 // -------------------------------------------------------------------------------------------------
 
+type FuncType 	 = func(*types.Cell, *types.Cell) *types.Cell
+type MapFuncType = func(*types.Cell, *types.Cell, FuncType) *types.Cell
+
+// -------------------------------------------------------------------------------------------------
+
 func Eval(exp, env *types.Cell, eval FuncType) (*types.Cell, error)  {
 
 	if c := core.Car(exp); c.IsAtom() {
@@ -29,9 +34,6 @@ func Eval(exp, env *types.Cell, eval FuncType) (*types.Cell, error)  {
 }
 
 // -------------------------------------------------------------------------------------------------
-
-type FuncType 	 = func(*types.Cell, *types.Cell) *types.Cell
-type MapFuncType = func(*types.Cell, *types.Cell, FuncType) *types.Cell
 
 var builtinFuncs = map[types.Cell] MapFuncType {
 	
@@ -123,7 +125,7 @@ func Env_(exp, env *types.Cell, eval FuncType) *types.Cell {
 }
 
 func Func_(exp, env *types.Cell, eval FuncType) *types.Cell {
-	return Fun(exp, env)
+	return Fun(exp, env, eval)
 }
 
 func Mac_(exp, env *types.Cell, eval FuncType) *types.Cell {

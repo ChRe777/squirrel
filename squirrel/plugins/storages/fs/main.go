@@ -15,17 +15,22 @@ import (
 
 // -------------------------------------------------------------------------------------------------
 
+type FuncType 	 = func(*types.Cell, *types.Cell) *types.Cell
+type MapFuncType = func(*types.Cell, *types.Cell, FuncType) *types.Cell
+
+// -------------------------------------------------------------------------------------------------
+
 type any string // Could be any type
 
 var Evaluator any // Name ist important to detected plugin
 
 // -------------------------------------------------------------------------------------------------
 
-func (p any) Eval(e, a *types.Cell) (*types.Cell, error) {
+func (p any) Eval(exp, env *types.Cell, eval FuncType) (*types.Cell, error)  {
 
-	if c := core.Car(e); c.IsAtom() {
+	if c := core.Car(exp); c.IsAtom() {
 		if op, found := builtOps[*c]; found {
-			return op(e, a), nil
+			return op(exp, env), nil
 		}
 	}
 

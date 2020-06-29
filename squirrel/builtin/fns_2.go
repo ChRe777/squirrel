@@ -117,12 +117,48 @@ func Env(exp, env *types.Cell) *types.Cell {
 // e.g.
 //		(func (x) (car x))  -> func
 //
-func Fun(exp, env *types.Cell) *types.Cell {
-	v := exp
-	core.Tag(core.Car(exp), ID_FUNC)
-	core.Tag(v, ID_FUNC)
-	return v
+func Fun(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
+
+	body := core.Caddr(exp)
+	vars := core.Cadr(exp)
+	
+	fnTagged := core.Tag(core.Sym_(ID_FUNC), ID_FUNC)
+	
+	fn := core.Cons(fnTagged, core.Cons(vars, core.Cons(body, core.Cons(env, core.NIL))))
+	
+	return fn
 }
+
+//
+// 	func eval (exp, env)			// exp 			= (func (x) (cons x y))
+//									// cadr(exp) 	= (x)
+//		...							// caddr(exp) 	= (cons x y)
+//
+// 		if car(exp).Equal(FUNC) {
+//			list('&procedure, cadr(exp), caddr(exp), env)		// Tack env at the end of procedure
+// 		}
+//									// (&procedure (x) (cons x y) ((a 1) (b 2) ...) )
+// 		...
+//
+//	}
+//
+// 	func apply(fun, args) {			// 	fun 	= (&procedure (x) (cons x y) ((a 1) (b 2) ...) )
+//									//  args 	= (1)
+//		...
+//
+//	 	if car(fun).Equal('&procedure) {
+//			eval(caddr(fun),							// (cons x y)
+//				bind(cadr(fun), args, cadddr(fun))		// bind( (x), (1), env)
+//			)
+//		}
+//
+//		...
+//s
+//	}
+
+
+// func foo (x) (cons x y)		//   named function
+// func (x) (cons x y)			// unnamed function
 
 //	------------------------------------------------------------------------------------------------
 

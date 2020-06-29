@@ -18,12 +18,17 @@ import (
 // Cell reader and writer plugin interface (as user interface for the language)
 // -------------------------------------------------------------------------------------------------
 
+type FuncType 	 = func(*types.Cell, *types.Cell) *types.Cell
+type MapFuncType = func(*types.Cell, *types.Cell, FuncType) *types.Cell
+
+// -------------------------------------------------------------------------------------------------
+
 type CellReader interface {
 	Read(s []byte) *types.Cell
 }
 
 type CellWriter interface {
-	Write(e *types.Cell) []byte
+	Write(exp *types.Cell) []byte
 }
 
 type CellReadWriter interface {
@@ -36,7 +41,8 @@ type CellReadWriter interface {
 // -------------------------------------------------------------------------------------------------
 
 type Evaluator interface {
-	Eval(e, a *types.Cell) (*types.Cell, error)  
+	//Eval(exp, env *types.Cell) (*types.Cell, error)  
+	Eval(exp, env *types.Cell, eval FuncType) (*types.Cell, error)
 }
 
 // -------------------------------------------------------------------------------------------------

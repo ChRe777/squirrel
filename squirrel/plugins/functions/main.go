@@ -7,32 +7,44 @@ import (
 import (
 	"github.com/mysheep/squirrel/core"
 	"github.com/mysheep/squirrel/types"
+	"github.com/mysheep/squirrel/plugins/functions/functions"
 )
 
 // -------------------------------------------------------------------------------------------------
 
-type any string // could any type
-
-var Evaluator any // Name is used to detect plugin type
+var (
+	OperatorNotFound = errors.New("operator not found")
+)
 
 // -------------------------------------------------------------------------------------------------
 
-func (p any) Eval(e, a *types.Cell) (*types.Cell, error) {
+type FuncType 	 = func(*types.Cell, *types.Cell) *types.Cell
+type MapFuncType = func(*types.Cell, *types.Cell, FuncType) *types.Cell
 
-	if c := core.Car(e); c.IsAtom() {
-		if op, found := builtFuncs[*c]; found {
-			return op(e, a), nil
+// -------------------------------------------------------------------------------------------------
+
+type any string 		// Could be any type
+
+var Evaluator any 		// Name is used to detect plugin type
+
+// -------------------------------------------------------------------------------------------------
+
+func (p any) Eval(exp, env *types.Cell, eval FuncType) (*types.Cell, error)  {
+
+	if c := core.Car(exp); c.IsAtom() {
+		if fn, found := functionMap[*c]; found {
+			return fn(exp, env, eval), nil
 		}
 	}
-
-	return nil, errors.New("Operator not found")
+	
+	return nil, OperatorNotFound
 }
 
 // -------------------------------------------------------------------------------------------------
 
-var builtFuncs = map[types.Cell] func(e, a *types.Cell) *types.Cell {
+var functionMap = map[types.Cell] MapFuncType {
 	
-	*MAP     		: Map_		,
+	*functions.MAP     		: Map_		,
 	// ...
 
 }
@@ -43,9 +55,9 @@ var builtFuncs = map[types.Cell] func(e, a *types.Cell) *types.Cell {
 
 // -------------------------------------------------------------------------------------------------
 
-func Map_ (e, a *types.Cell) *types.Cell {
-	fn := evaluator.Eval(builtin.Cadr (e), a)
-	xs := evaluator.Eval(builtin.Caddr(e), a)
-	return Map(fn, xs)
+func Map_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	fn := eval(core.Cadr (exp), env)
+	xs := eval(core.Caddr(exp), env)
+	return functions.Map(fn, xs, env, eval)
 }
 

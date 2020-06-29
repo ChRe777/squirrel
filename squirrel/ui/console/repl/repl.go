@@ -33,7 +33,7 @@ func Repl(plugins *plugins.Plugins) {
 		panic("No ReaderWriter plugin - It's a MUST plugin!!")
 	}
 
-	env := createEnvironmentList()	// TODO: Fix EMPTY Enviroment '()
+	env := createEnvironmentList()				// TODO: Fix EMPTY Environment '()
 	var parse = plugins.ReaderWriter.Read
 
 	printHelp()
@@ -53,10 +53,12 @@ func Repl(plugins *plugins.Plugins) {
 // -------------------------------------------------------------------------------------------------
 
 func createEnvironmentList() *types.Cell {
-	// (a 1)
-	a1 := generator.Cons(generator.Sym("a"), generator.Cons(generator.Num("1"), generator.NIL)) 	
-	// ((a 1))
-	return generator.Cons(a1, generator.NIL)
+	// ((nil nil)(t t))
+	//
+	tt := generator.Cons(generator.Sym("t"), generator.Cons(generator.Sym("t"), generator.NIL))	
+	nl := generator.Cons(generator.Sym("nil"), generator.Cons(generator.Sym("nil"), generator.NIL)) 	
+	//
+	return generator.Cons(nl, generator.Cons(tt, generator.NIL))
 }
 
 // -------------------------------------------------------------------------------------------------

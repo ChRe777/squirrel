@@ -1,1 +1,3 @@
-((map func) (a 1))
+(do
+	(cons 1 2)
+)

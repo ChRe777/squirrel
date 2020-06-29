@@ -78,6 +78,8 @@ func Eval(exp, env *Cell) *Cell {
 	
 func eval(exp, env *Cell) *Cell {
 
+	fmt.Printf("eval - %65s <- exp | env-> %v \n", fmt.Sprintf("%v", exp), env)
+
 	// Lisp dialects like Arc have env data type most languages don't:
 	// symbols.  We've already seen one: + is env symbol.  Symbols don't
 	// evaluate to themselves the way numbers and strings do.  They return
@@ -95,7 +97,7 @@ func eval(exp, env *Cell) *Cell {
 	// Try to evaluate functions in plugged in evaluator (like (load..) or (save ..))
 	//
 	for _, evaluator_ := range evaluators {
-		res, err := evaluator_.Eval(exp, env)
+		res, err := evaluator_.Eval(exp, env, eval)
 		if err == nil {
 			return res
 		}
@@ -125,7 +127,11 @@ func eval(exp, env *Cell) *Cell {
 func apply(exp, env *Cell) *Cell {
 
 	var args *Cell
-
+	
+	envFromFn := Cadddr(exp)
+	
+	fmt.Printf("apply - envFromFn: %v, env: %v \n", envFromFn, env)
+	
 	fnOrMac := eval(Car(exp), env); isMacro := isMac(fnOrMac)				
 	
 	if isMacro {								
@@ -134,7 +140,7 @@ func apply(exp, env *Cell) *Cell {
 		args = EvList(Cdr(exp), env)					// A func receives evaluated arguments
 	}
 
-	res := eval(Caddr(fnOrMac), Bind(Pair(Cadr(fnOrMac), args), env))
+	res := eval(Caddr(fnOrMac), Bind(Pair(Cadr(fnOrMac), args), envFromFn))
 							
 	if isMacro {										
 		res = eval(res, env)									
