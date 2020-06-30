@@ -115,17 +115,21 @@ func Env(exp, env *types.Cell) *types.Cell {
 // Fun creates a function without name
 //
 // e.g.
-//		(func (x) (car x))  -> func
+//		(func (x) (car x))
 //
 func Fun(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
 
-	body := core.Caddr(exp)
-	vars := core.Cadr(exp)
+	vars := core.Cadr(exp)										// e.g. (x)
+	body := core.Caddr(exp)										// e.g. (car x)
 	
-	fnTagged := core.Tag(core.Sym_(ID_FUNC), ID_FUNC)
+	fnTagged := core.Tag(core.Sym_(ID_FUNC), ID_FUNC)			// e.g. func#func <- USE TAG???
 	
-	fn := core.Cons(fnTagged, core.Cons(vars, core.Cons(body, core.Cons(env, core.NIL))))
-	
+	fn := core.Cons(fnTagged, 									// (func {vars} {body} {env})
+					core.Cons(vars, 
+							  core.Cons(body, 
+							  			core.Cons(env, 			// Tack env at the end (see AIM)
+							  					  core.NIL))))
+
 	return fn
 }
 
@@ -153,7 +157,7 @@ func Fun(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) 
 //		}
 //
 //		...
-//s
+//
 //	}
 
 
@@ -172,7 +176,9 @@ func Mac(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) 
 	name := core.Cadr(exp);
 	
 	// A macros is env func tagged as macro (Paul Graham - Arc)
-	val := core.Tag(core.Cons(core.Tag(core.FUNC, ID_MAC), core.Cddr(exp)), ID_MAC)	// ToDo: ReThink - Tagging
+	val := core.Tag(core.Cons(core.Tag(core.FUNC, ID_MAC), 
+							  core.Cddr(exp)), 
+					ID_MAC)												// ToDo: ReThink - Tagging
 
 	// Add at front without can of pointer to env
 	// TODO: RETHINK

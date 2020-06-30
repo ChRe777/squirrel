@@ -78,7 +78,7 @@ func Eval(exp, env *Cell) *Cell {
 	
 func eval(exp, env *Cell) *Cell {
 
-	fmt.Printf("eval - %65s <- exp | env-> %v \n", fmt.Sprintf("%v", exp), env)
+	fmt.Printf("eval - %65s <- exp | env -> %v \n", fmt.Sprintf("%v", exp), env)
 
 	// Lisp dialects like Arc have env data type most languages don't:
 	// symbols.  We've already seen one: + is env symbol.  Symbols don't
@@ -96,27 +96,38 @@ func eval(exp, env *Cell) *Cell {
 	
 	// Try to evaluate functions in plugged in evaluator (like (load..) or (save ..))
 	//
-	for _, evaluator_ := range evaluators {
+/*	for _, evaluator_ := range evaluators {
 		res, err := evaluator_.Eval(exp, env, eval)
 		if err == nil {
 			return res
 		}
 	}
+*/
 
-	// Try to eval builtin operators based on primitives (e.g. pair, no, not, append)
-	//
-	res, err = builtin.Eval(exp, env, eval)
-	if err == nil {
-		return res 
+	if core.Car(exp).IsAtom() {
+	
+		// Try to eval builtin operators based on primitives (e.g. pair, no, not, append)
+		//
+		res, err = builtin.Eval(exp, env, eval)
+		if err == nil {
+			return res 
+		}
+	
+		// Try to eval primitive core operators (e.g. car, cdr, cons, ... )
+		//
+		res, err = core.Eval(exp, env, eval) 
+		if err == nil {
+			return res
+		}
+	
 	}
-
-	// Try to eval primitive core operators (e.g. car, cdr, cons, ... )
+	
+	// primitive operators
+	// (cons 1 2)
 	//
-	res, err = core.Eval(exp, env, eval) 
-	if err == nil {
-		return res
-	}
-
+	// user-defined operators
+	// (foo 1 2)		// (def foo (x y) (cons x y))
+	//
 	// User-defined functions or macros stored in evironment (e.g. ( .. (foo (func (x) (no x)))) ..)
 	//
 	return apply(exp, env)
@@ -127,11 +138,7 @@ func eval(exp, env *Cell) *Cell {
 func apply(exp, env *Cell) *Cell {
 
 	var args *Cell
-	
-	envFromFn := Cadddr(exp)
-	
-	fmt.Printf("apply - envFromFn: %v, env: %v \n", envFromFn, env)
-	
+		
 	fnOrMac := eval(Car(exp), env); isMacro := isMac(fnOrMac)				
 	
 	if isMacro {								
@@ -140,7 +147,12 @@ func apply(exp, env *Cell) *Cell {
 		args = EvList(Cdr(exp), env)					// A func receives evaluated arguments
 	}
 
-	res := eval(Caddr(fnOrMac), Bind(Pair(Cadr(fnOrMac), args), envFromFn))
+
+	// fnOrMac (func#func (y) (cons x y) ((x 1) (closure (func#func (x) (func (y) (cons x y)))) (nil nil) (t t)))
+	envFromFn := Cadddr(fnOrMac)
+
+	res := eval(Caddr(fnOrMac), 
+				Bind(Pair(Cadr(fnOrMac), args), envFromFn))
 							
 	if isMacro {										
 		res = eval(res, env)									
