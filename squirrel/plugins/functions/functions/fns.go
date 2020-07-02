@@ -11,3 +11,5 @@ import (
 //var (
 //	mapFn = "(map	(func (f x)  (cond ((no x) nil) ('t (cons (f (car x)) (map f (cdr x)))))))"
 //)
+
+// (def foo (xs) (cond ((no xs) nil) ('t (cons (car xs) (foo (cdr xs))))))

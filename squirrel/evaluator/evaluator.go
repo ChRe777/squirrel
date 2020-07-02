@@ -154,10 +154,10 @@ func apply(exp, env *Cell) *Cell {
 
 
 	// fnOrMac (func#func (y) (cons x y) ((x 1) (closure (func#func (x) (func (y) (cons x y)))) (nil nil) (t t)))
-	envFromFn := Cadddr(fnOrMac)
+	envFromFnAndGlobalEnv := builtin.Append(Cadddr(fnOrMac), env)
 
 	res := eval(Caddr(fnOrMac), 
-				Bind(Pair(Cadr(fnOrMac), args), envFromFn))
+				Bind(Pair(Cadr(fnOrMac), args), envFromFnAndGlobalEnv))
 							
 	if isMacro {										
 		res = eval(res, env)									
