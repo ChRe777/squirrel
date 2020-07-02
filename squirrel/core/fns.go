@@ -125,7 +125,20 @@ func Cond(c, a *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *ty
 // -------------------------------------------------------------------------------------------------
 
 func Type(c *types.Cell) *types.Cell {
-	return Sym_(c.Type_())
+	if c.IsAtom() {
+ 		return Sym_(c.Type_())
+ 	} else {
+
+		// TODO: ReTHINK - SIMPLIFY
+		//
+ 		if Car(c).IsFunc() && Car(c).Val == ID_FUNC {
+ 			return Sym_(Car(c).Type_())	
+ 		}
+ 		
+ 		return Sym_(c.Type_())
+ 		
+ 		
+ 	}
 }
 
 func Tag(c *types.Cell, t string) *types.Cell {
@@ -152,6 +165,10 @@ func Str_(s string) *types.Cell {
 
 func Err_(s string, a ...interface{}) *types.Cell {
 	return generator.Err(s, a...)  // Don't forget the ... !!
+}
+
+func Fun_(s string) *types.Cell {
+	return generator.Fun(s)
 }
 
 

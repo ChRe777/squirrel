@@ -11,6 +11,10 @@ import (
 )
 
 const (
+	DEBUG = true
+)
+
+const (
 	REF_TO_UNDEFINED_ID = "reference to undefined identifier: %v"
 )
 // -------------------------------------------------------------------------------------------------
@@ -78,8 +82,10 @@ func Eval(exp, env *Cell) *Cell {
 	
 func eval(exp, env *Cell) *Cell {
 
-	fmt.Printf("eval - %65s <- exp | env -> %v \n", fmt.Sprintf("%v", exp), env)
-
+	if DEBUG {
+		fmt.Printf("eval - %65s <- exp | env -> %v \n", fmt.Sprintf("%v", exp), env)
+	}
+	
 	// Lisp dialects like Arc have env data type most languages don't:
 	// symbols.  We've already seen one: + is env symbol.  Symbols don't
 	// evaluate to themselves the way numbers and strings do.  They return
@@ -96,13 +102,12 @@ func eval(exp, env *Cell) *Cell {
 	
 	// Try to evaluate functions in plugged in evaluator (like (load..) or (save ..))
 	//
-/*	for _, evaluator_ := range evaluators {
+	for _, evaluator_ := range evaluators {
 		res, err := evaluator_.Eval(exp, env, eval)
 		if err == nil {
 			return res
 		}
 	}
-*/
 
 	if core.Car(exp).IsAtom() {
 	

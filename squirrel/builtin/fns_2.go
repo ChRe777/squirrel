@@ -1,7 +1,7 @@
 package builtin
 
 import (
- 	"fmt"
+ 	//"fmt"
 )
 
 import (
@@ -85,17 +85,6 @@ func Let(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) 
 	key := core.Cadr(exp)
 	val := eval(core.Caddr(exp), env)
 	
-	fmt.Printf("Let - key: %v, val: %v \n", key, val)
-	
-	aa := core.Cons(list__(key, val), env)									
-	ee := core.Car(core.Cdddr(exp))	
-	
-	fmt.Printf("Let - ee: %v, aa: %v \n", ee, aa)	
-
-	//fn := core.Car(ee)
-	//args := eval(core.Cadr(exp), aa)
-	//dd := core.Cons(fn, args)
-	
 	return eval(core.Car(core.Cdddr(exp)), 
 				core.Cons(list__(key, val), env))
 }
@@ -122,7 +111,7 @@ func Fun(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) 
 	vars := core.Cadr(exp)										// e.g. (x)
 	body := core.Caddr(exp)										// e.g. (car x)
 	
-	fnTagged := core.Tag(core.Sym_(ID_FUNC), ID_FUNC)			// e.g. func#func <- USE TAG???
+	fnTagged := core.Tag(core.Fun_(ID_FUNC), ID_FUNC)			// e.g. func#func <- USE TAG???
 	
 	fn := core.Cons(fnTagged, 									// (func {vars} {body} {env})
 					core.Cons(vars, 
@@ -175,11 +164,14 @@ func Mac(exp, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) 
 
 	name := core.Cadr(exp);
 	
+	fnTagged := core.Tag(core.Fun_(ID_FUNC), ID_MAC)
+	
 	// A macros is env func tagged as macro (Paul Graham - Arc)
-	val := core.Tag(core.Cons(core.Tag(core.FUNC, ID_MAC), 
-							  core.Cddr(exp)), 
+	val := core.Tag(core.Cons(fnTagged,core.Cddr(exp)), 
 					ID_MAC)												// ToDo: ReThink - Tagging
 
+	//val := core.Cons(fnTagged,core.Cddr(exp))
+					
 	// Add at front without can of pointer to env
 	// TODO: RETHINK
 	core.Add(list__(name, val), env) 			

@@ -7,9 +7,10 @@ import (
 func TestLet(t *testing.T) {
 
 	specs := []spec {
-		{ "(let x 1 x)"					, "1"	},
-		{ "(let x 1 (cons x x))"		, "(1 . 1)"	},
-		{ "(let x 1 (list x 2))"		, "(1 2)"	},
+		{ "(let x 1 x)"				, "1"	},
+		{ "(let x 1 (cons x x))"	, "(1 . 1)"	},
+		{ "(let x 1 (list x 2))"	, "(1 2)"	},
+		{ "(let x 1 `(,x ,x))"		, "(1 1)"	},
 	}
 	
 	test(specs, t)
@@ -18,7 +19,7 @@ func TestLet(t *testing.T) {
 func TestLet2(t *testing.T) {
 
 	specs := []spec2 {
-		{ "(mac foo (x y) `(list ,x ,y)"    , "(let x 1 (foo x x))"	, "(1 1)"	},
+		{ "(mac foo (x y) `(list ,x ,y))"    , "(let x 1 (foo x x))"	, "(1 1)"	},
 	}
 	
 	test2(specs, t)

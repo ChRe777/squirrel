@@ -11,16 +11,16 @@ func TestType (t *testing.T) {
 		{ "(type 'a)"			, "symbol"		},
 		{ "(type \"a\")"		, "string"		},
 		{ "(type '(a b))"		, "cons"		},
-		{ "(type (func (x) x))"	, "cons#func"	},	
+		{ "(type (func (x) x))"	, "func#func"	},	
 	}
 	
 	test(specs, t)
 }
 
-func TestType2(t *testing.T) {
+func TestMacType(t *testing.T) {
 
 	specs := []spec2 {
-		{ "(mac foo (x) `(no ,x))"	, "(type foo)"	, "cons#mac" },
+		{ "(mac foo (x) `(no ,x))"	, "(type foo)"	, "func#mac" },
 	}
 	
 	test2(specs, t)
