@@ -1,15 +1,33 @@
 package functions
 
 import (
-	"github.com/mysheep/squirrel/builtin"
-	"github.com/mysheep/squirrel/core"
+	"github.com/shopspring/decimal"
+)
+
+import (
+//	"github.com/mysheep/squirrel/builtin"
+	"github.com/mysheep/squirrel/generator"
 	"github.com/mysheep/squirrel/types"
 )
 
-// (def map (f xs) (cond ((no xs) nil) ('t (cons (f (car xs)) (map f (cdr xs))))))
+func Add(x, y *types.Cell) *types.Cell {
+	if x.IsNumber() && y.IsNumber() {
+		x_, _ := x.Val.(decimal.Decimal)
+		y_, _ := y.Val.(decimal.Decimal)
+		z_ := x_.Add(y_)
+		return generator.Num_(z_)
+	} else {
+		return generator.Err("both cells must be of type number")
+	}
+}
 
-//var (
-//	mapFn = "(map	(func (f x)  (cond ((no x) nil) ('t (cons (f (car x)) (map f (cdr x)))))))"
-//)
-
-// (def foo (xs) (cond ((no xs) nil) ('t (cons (car xs) (foo (cdr xs))))))
+func Sub(x, y *types.Cell) *types.Cell {
+	if x.IsNumber() && y.IsNumber() {
+		x_, _ := x.Val.(decimal.Decimal)
+		y_, _ := y.Val.(decimal.Decimal)
+		z_ := x_.Sub(y_)
+		return generator.Num_(z_)
+	} else {
+		return generator.Err("both cells must be of type number")
+	}
+}

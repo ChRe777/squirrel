@@ -7,7 +7,8 @@ import (
 // functions
 //
 const (
-	ID_MAP  	= "map"
+	ID_ADD  	= "add"
+	ID_SUB		= "sub"
 )
 
 //	------------------------------------------------------------------------------------------------
@@ -15,7 +16,8 @@ const (
 // functions
 //
 var (	
-	MAP 		= core.Sym_(ID_MAP)
+	ADD 		= core.Sym_(ID_ADD)
+	SUB			= core.Sym_(ID_SUB)
 )
 
 

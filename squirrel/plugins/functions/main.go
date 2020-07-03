@@ -44,20 +44,22 @@ func (p any) Eval(exp, env *types.Cell, eval FuncType) (*types.Cell, error)  {
 
 var functionMap = map[types.Cell] MapFuncType {
 	
-	*functions.MAP     		: Map_		,
-	// ...
+	*functions.ADD     	: Add_		,
+	*functions.SUB     	: Sub_		,
 
 }
 
-// TODO:
-
-//    mapFn    = "(map	(func (fn xs)  (cond ((no xs) nil) ('t (cons (fn (car xs)) (map fn (cdr xs)))))))"
-
 // -------------------------------------------------------------------------------------------------
 
-func Map_(exp, env *types.Cell, eval FuncType) *types.Cell {
-	fn := eval(core.Cadr (exp), env)
-	xs := eval(core.Caddr(exp), env)
-	return functions.Map(fn, xs, env, eval)
+func Add_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	x := eval(core.Cadr (exp), env)
+	y := eval(core.Caddr(exp), env)
+	return functions.Add(x, y)
+}
+
+func Sub_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	x := eval(core.Cadr (exp), env)
+	y := eval(core.Caddr(exp), env)
+	return functions.Sub(x, y)
 }
 
