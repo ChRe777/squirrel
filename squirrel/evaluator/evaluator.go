@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	DEBUG = false
+	DEBUG = true
 )
 
 const (
@@ -104,6 +104,7 @@ func eval(exp, env *Cell) *Cell {
 	//
 	for _, evaluator_ := range evaluators {
 		res, err := evaluator_.Eval(exp, env, eval)
+			
 		if err == nil {
 			return res
 		}

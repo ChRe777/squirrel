@@ -12,9 +12,8 @@ func TestCons(t *testing.T) {
 		{ "(car  (cons 'a '(b c) ))"				, "a"			},
 		{ "(cdr  (cons 'a '(b c) ))"				, "(b c)"   	},
 		{ "(cons 'a 'b)"							, "(a . b)" 	},
-		// TODO: FIX IT
-//		{ "(cons 'a (cons 'b 'c))"					, "(a b . c)" 	},
-//		{ "(cons 'a (cons 'b (cons 'c 'd)))"		, "(a b c . d)" },		
+		{ "(cons 'a (cons 'b 'c))"					, "(a b . c)" 	},
+		{ "(cons 'a (cons 'b (cons 'c 'd)))"		, "(a b c . d)" },		
 	}
 	
 	test(specs, t)

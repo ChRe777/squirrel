@@ -1,6 +1,10 @@
 package main
 
 import (
+	//"fmt"
+)
+
+import (
 	"errors"
 )
 
@@ -32,7 +36,7 @@ var Evaluator any 		// Name is used to detect plugin type
 func (p any) Eval(exp, env *types.Cell, eval FuncType) (*types.Cell, error)  {
 
 	if c := core.Car(exp); c.IsAtom() {
-		if fn, found := functionMap[*c]; found {
+		if fn, found := functionMap[*c]; found {	
 			return fn(exp, env, eval), nil
 		}
 	}
@@ -44,22 +48,23 @@ func (p any) Eval(exp, env *types.Cell, eval FuncType) (*types.Cell, error)  {
 
 var functionMap = map[types.Cell] MapFuncType {
 	
-	*functions.ADD     	: Add_		,
-	*functions.SUB     	: Sub_		,
+	*functions.ADD     	: AddList_	,
+	*functions.SUB     	: SubList_	,
 
 }
 
 // -------------------------------------------------------------------------------------------------
 
-func Add_(exp, env *types.Cell, eval FuncType) *types.Cell {
-	x := eval(core.Cadr (exp), env)
-	y := eval(core.Caddr(exp), env)
-	return functions.Add(x, y)
+func AddList_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	xs := core.Cdr(exp)		
+	return functions.AddList(xs, env, eval)
 }
 
-func Sub_(exp, env *types.Cell, eval FuncType) *types.Cell {
-	x := eval(core.Cadr (exp), env)
-	y := eval(core.Caddr(exp), env)
-	return functions.Sub(x, y)
+func SubList_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	xs := core.Cdr(exp)		
+	return functions.SubList(xs, env, eval)
 }
+
+// -------------------------------------------------------------------------------------------------
+
 
