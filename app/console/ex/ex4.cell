@@ -1,0 +1,16 @@
+(do
+
+	(def map (f x)  
+		(cond 
+			((no x) nil) 
+			('t (cons (f (car x)) (map f (cdr x))))
+		)
+	)
+	
+	(def scale (x xs)
+		(map (func (y) (cons x y)) 
+			 xs
+		)
+	)
+
+)

@@ -1,0 +1,12 @@
+(do 
+	(mac apply (fn xs) 
+		`(,fn ,@xs)
+	)
+	
+	(mac when (c e)
+		`(cond 
+			(,c  ,e)
+			('t nil)
+		)
+	)
+)

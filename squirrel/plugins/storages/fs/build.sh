@@ -1,1 +1,0 @@
-go build -buildmode=plugin -o ../../../bin/io_fs_loader_storer.1.0.0.so main.go

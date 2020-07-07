@@ -1,0 +1,20 @@
+(do
+	
+	(def map (f x)  
+		(cond 
+			((no x) nil) 
+			('t (cons (f (car x)) (map f (cdr x))))
+		)
+	)
+	
+	(var foo "foo")
+	(var bar "bar")
+	(var xs  '(1 2 3))
+
+	(def cc (x) (cons x x))
+	
+	(def addone (x) (add x 1))
+	
+	(map cc xs)
+	(map addone xs)
+)
