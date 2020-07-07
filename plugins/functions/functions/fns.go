@@ -42,6 +42,38 @@ func SubList(xs, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cel
 	return sub(x, AddList(core.Cdr(xs), env, eval))
 }
 
+// DivList divides all items 
+func DivList(xs, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
+
+	if xs.Equal(core.NIL) {
+		zero_ := decimal.NewFromInt(1)
+		return generator.Num_(zero_)
+	}
+	
+	x := eval(core.Car(xs), env)
+	if x.IsErr() {
+		return x
+	}
+	
+	return div(x, MulList(core.Cdr(xs), env, eval))
+}
+
+// MulList multiplies all items 
+func MulList(xs, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
+
+	if xs.Equal(core.NIL) {
+		zero_ := decimal.NewFromInt(1)
+		return generator.Num_(zero_)
+	}
+	
+	x := eval(core.Car(xs), env)
+	if x.IsErr() {
+		return x
+	}
+	
+	return mul(x, MulList(core.Cdr(xs), env, eval))
+}
+
 // -------------------------------------------------------------------------------------------------
 
 func add(x, y *types.Cell) *types.Cell {
@@ -60,6 +92,28 @@ func sub(x, y *types.Cell) *types.Cell {
 		x_, _ := x.Val.(decimal.Decimal)
 		y_, _ := y.Val.(decimal.Decimal)
 		z_ := x_.Sub(y_)
+		return generator.Num_(z_)
+	} else {
+		return generator.Err("x,y must be of type number")
+	}
+}
+
+func div(x, y *types.Cell) *types.Cell {
+	if x.IsNumber() && y.IsNumber() {
+		x_, _ := x.Val.(decimal.Decimal)
+		y_, _ := y.Val.(decimal.Decimal)
+		z_ := x_.Div(y_)
+		return generator.Num_(z_)
+	} else {
+		return generator.Err("x,y must be of type number")
+	}
+}
+
+func mul(x, y *types.Cell) *types.Cell {
+	if x.IsNumber() && y.IsNumber() {
+		x_, _ := x.Val.(decimal.Decimal)
+		y_, _ := y.Val.(decimal.Decimal)
+		z_ := x_.Mul(y_)
 		return generator.Num_(z_)
 	} else {
 		return generator.Err("x,y must be of type number")

@@ -9,7 +9,8 @@ import (
 const (
 	ID_ADD  	= "add"
 	ID_SUB		= "sub"
-	ID_ADDL  	= "addl"
+	ID_DIV  	= "div"
+	ID_MUL  	= "mul"
 )
 
 //	------------------------------------------------------------------------------------------------
@@ -19,7 +20,8 @@ const (
 var (	
 	ADD 		= core.Sym_(ID_ADD)
 	SUB			= core.Sym_(ID_SUB)
-	ADDL 		= core.Sym_(ID_ADDL)
+	DIV 		= core.Sym_(ID_DIV)
+	MUL 		= core.Sym_(ID_MUL)
 )
 
 

@@ -50,6 +50,8 @@ var functionMap = map[types.Cell] MapFuncType {
 	
 	*functions.ADD     	: AddList_	,
 	*functions.SUB     	: SubList_	,
+	*functions.DIV     	: DivList_	,
+	*functions.MUL     	: MulList_	,
 
 }
 
@@ -63,6 +65,16 @@ func AddList_(exp, env *types.Cell, eval FuncType) *types.Cell {
 func SubList_(exp, env *types.Cell, eval FuncType) *types.Cell {
 	xs := core.Cdr(exp)		
 	return functions.SubList(xs, env, eval)
+}
+
+func DivList_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	xs := core.Cdr(exp)		
+	return functions.DivList(xs, env, eval)
+}
+
+func MulList_(exp, env *types.Cell, eval FuncType) *types.Cell {
+	xs := core.Cdr(exp)		
+	return functions.MulList(xs, env, eval)
 }
 
 // -------------------------------------------------------------------------------------------------
