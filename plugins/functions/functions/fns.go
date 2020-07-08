@@ -10,6 +10,10 @@ import (
 	"github.com/mysheep/squirrel/types"
 )
 
+const (
+	MUST_BE_NUMBER_TYPES = "x,y must be of type number"
+)
+
 // AddList adds all items in list
 func AddList(xs, env *types.Cell, eval func(*types.Cell, *types.Cell) *types.Cell) *types.Cell {
 
@@ -83,7 +87,7 @@ func add(x, y *types.Cell) *types.Cell {
 		z_ := x_.Add(y_)
 		return generator.Num_(z_)
 	} else {
-		return generator.Err("x, y must be of type number")
+		return generator.Err(MUST_BE_NUMBER_TYPES)
 	}
 }
 
@@ -94,7 +98,7 @@ func sub(x, y *types.Cell) *types.Cell {
 		z_ := x_.Sub(y_)
 		return generator.Num_(z_)
 	} else {
-		return generator.Err("x,y must be of type number")
+		return generator.Err(MUST_BE_NUMBER_TYPES)
 	}
 }
 

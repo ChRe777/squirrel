@@ -145,7 +145,11 @@ func apply(exp, env *Cell) *Cell {
 
 	var args *Cell
 		
-	fnOrMac := eval(Car(exp), env); isMacro := isMac(fnOrMac)				
+	fnOrMac := eval(Car(exp), env); isMacro := isMac(fnOrMac)	
+	
+	if fnOrMac.IsErr() {	// not found or error
+		return fnOrMac
+	}		
 	
 	if isMacro {								
 		args = Cdr(exp)									// A macro receives arguments UNEVALUATED !!!
@@ -153,15 +157,15 @@ func apply(exp, env *Cell) *Cell {
 		args = EvList(Cdr(exp), env)					// A func receives evaluated arguments
 	}
 
-
 	// fnOrMac (func#func (y) (cons x y) ((x 1) (closure (func#func (x) (func (y) (cons x y)))) (nil nil) (t t)))
 	envFromFnAndGlobalEnv := builtin.Append(Cadddr(fnOrMac), env)
 
 	res := eval(Caddr(fnOrMac), 
 				Bind(Pair(Cadr(fnOrMac), args), envFromFnAndGlobalEnv))
-							
+						
 	if isMacro {										
-		res = eval(res, env)									
+		res = eval(res, env)	
+							
 	}
 	
 	return res

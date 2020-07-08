@@ -25,3 +25,13 @@ func TestMacType(t *testing.T) {
 	
 	test2(specs, t)
 }
+
+func TestFuncType(t *testing.T) {
+
+	specs := []spec2 {
+		{ "(def foo (x) (cons x x))"	, "(type foo)"	, "func#func" },
+	}
+	
+	test2(specs, t)
+}
+

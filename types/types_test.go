@@ -88,9 +88,9 @@ func TestString(t *testing.T) {
 	//  	 1       a
 	//  	ATOM    ATOM
 	
-	eol := &Cell{
+	nil_ := &Cell{
 		Type: Type{Cell: ATOM, Atom: SYMBOL},
-		Val : nil,
+		Val : "nil",
 		Car : nil,
 		Cdr : nil,
 	}
@@ -113,12 +113,11 @@ func TestString(t *testing.T) {
 		Type: Type{Cell: CONS},
 		Val : nil,
 		Car : aaa,
-		Cdr : eol,
+		Cdr : nil_,
 	}
 	
 	list := &Cell{
 		Type: Type{Cell: CONS},
-		Val : nil,
 		Car : one,
 		Cdr : cons,
 	}

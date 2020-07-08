@@ -6,25 +6,27 @@ import (
 
 func TestType_(t *testing.T) {
 
-	spec := []struct {
-		exp 	*Cell
-		want 	string
-	}{
-		{
-			&Cell{
-				Type: Type{Cell: ATOM, Atom: SYMBOL},
+	fn := &Cell{Type: Type{Cell: ATOM, Atom: FUNC},
 				Val : "func",
 				Tag : "func",
 				Car : nil,
-				Cdr : nil,
-			},
-			"func#func"
-		
-		}
+				Cdr : nil}
+				
+	specs := []struct {
+		exp 	*Cell
+		want 	string
+	}{
+		{ fn, "func#func"},
 	}
 	
-	if got != spec.want {
-		t.Errorf("Type - got: %v, want: %v", got, spec.want)
+	for _, spec := range specs {
+	
+		got := spec.exp.Type_()
+	
+		if got != spec.want {
+			t.Errorf("Type - got: %v, want: %v", got, spec.want)
+		}
+	
 	}
 	
 }
