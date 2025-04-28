@@ -92,10 +92,3 @@ see https://github.com/KyleBanks/depth
 
 	> depth .
 	> depth github.com/KyleBanks/depth/cmd/depth
-
-## VENDOR
-
-evaluator/evaluator_lib.go:8:2: cannot find package "github.com/squirrel/types" in any of:
-	/Users/christophreif/DevelopSource/Go/src/github.com/mysheep/squirrel/vendor/github.com/squirrel/types (vendor tree)
-	/usr/local/go/src/github.com/squirrel/types (from $GOROOT)
-	/Users/christophreif/DevelopSource/Go/src/github.com/squirrel/types (from $GOPATH)
